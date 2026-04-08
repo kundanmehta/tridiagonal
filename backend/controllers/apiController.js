@@ -44,7 +44,17 @@ exports.getCareers = async (req, res) => {
   res.json({ message: 'Success', data: [] });
 };
 
+const Contact = require('../models/Contact'); // Import Contact model
+
 exports.submitContact = async (req, res) => {
-  console.log('Contact form submitted:', req.body);
-  res.json({ message: 'Successfully received message' });
+  try {
+    const { firstName, lastName, email, message } = req.body;
+    const newContact = new Contact({ firstName, lastName, email, message });
+    await newContact.save(); // Actually saves to MongoDB
+    console.log('Contact form safely stored in Database:', newContact._id);
+    res.json({ message: 'Successfully received message' });
+  } catch (error) {
+    console.error('Error saving contact:', error);
+    res.status(500).json({ error: 'Failed to save contact message' });
+  }
 };

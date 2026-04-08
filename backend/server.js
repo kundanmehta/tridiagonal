@@ -15,15 +15,16 @@ app.use('/api', apiRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tridiagonal_replica', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('Connected to MongoDB');
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}).catch(err => {
-  console.error('MongoDB connection error:', err);
+// Start Server Immediately so UI APIs can function
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
+
+// Connect to MongoDB asynchronously
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tridiagonal_replica')
+  .then(() => {
+    console.log('✅ Connected to MongoDB Backend Database Successfully!');
+  })
+  .catch(err => {
+    console.error('⚠️ MongoDB connection error (Make sure MongoDB is running locally or Atlas URI is correct):', err.message);
+  });
