@@ -92,8 +92,8 @@ const navItems = [
       { title: 'News and Press Release', href: '/events?type=news-and-press-release' },
     ],
     featured: [
-      { title: 'Hannover Messe 2025', href: '#' },
-      { title: 'Tridiagonal Solutions Unveils New Brand Identity', href: '#' },
+      { title: 'Finite Element Analysis (FEA) in Oil & Gas', href: '#' },
+      { title: 'CFD Modeling to Improve Separator Performance', href: '#' },
     ],
   },
 ];
