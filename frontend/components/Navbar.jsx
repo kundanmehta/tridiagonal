@@ -89,7 +89,11 @@ const navItems = [
     links: [
       { title: 'About Us', href: '/about-us' },
       { title: 'Our Team', href: '/about-us#our-team' },
-      { title: 'News and Press Release', href: '/events?type=news-and-press-release' },
+      { title: 'News and Press Release', href: '/events?type=news-and-press-release', subAreas: [
+        { title: 'Hannover Messe 2025', href: '/events?type=news-and-press-release' },
+        { title: 'GRPC Event 2024', href: '/events?type=news-and-press-release' },
+        { title: 'Tridiagonal Solutions Unveils New Brand Identity', href: '/events?type=news-and-press-release' },
+      ]},
     ],
     featured: [
       { title: 'Finite Element Analysis (FEA) in Oil & Gas', href: '#' },
@@ -128,6 +132,10 @@ const mobileSubLinks = {
   'Who We Are': [
     { title: 'About Us', href: '/about-us' },
     { title: 'Our Team', href: '/about-us#our-team' },
+    { title: 'News and Press Release', href: '/events?type=news-and-press-release' },
+    { title: '↳ Hannover Messe 2025', href: '/events?type=news-and-press-release' },
+    { title: '↳ GRPC Event 2024', href: '/events?type=news-and-press-release' },
+    { title: '↳ Tridiagonal Solutions Unveils New Brand Identity', href: '/events?type=news-and-press-release' },
   ],
 };
 
@@ -167,6 +175,7 @@ export default function Navbar() {
   const [scrolled, setScrolled]       = useState(false);
   const [activeMenu, setActiveMenu]   = useState(null);
   const [activeIndustry, setActiveIndustry] = useState('Oil & Gas');
+  const [activeWhoWeAre, setActiveWhoWeAre] = useState(null);
   const [mobileOpen, setMobileOpen]   = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(null);
   const menuRef = useRef(null);
@@ -197,7 +206,14 @@ export default function Navbar() {
   }, []);
 
   const toggleMenu = (label) => {
-    setActiveMenu(prev => prev === label ? null : label);
+    setActiveMenu(prev => {
+      if (prev === label) {
+        setActiveWhoWeAre(null);
+        return null;
+      }
+      if (prev !== label) setActiveWhoWeAre(null);
+      return label;
+    });
   };
 
   const activeItem = navItems.find(n => n.label === activeMenu);
@@ -316,20 +332,24 @@ export default function Navbar() {
               {/* Col 1 – Heading */}
               <div className="mega-col-heading">
                 <h3>{item.heading}</h3>
+                {item.headingDesc && (
+                  <p className="mega-heading-desc">{item.headingDesc}</p>
+                )}
               </div>
 
               {/* Col 2 – Links */}
               <div className={`mega-links-grid${item.links.length <= 4 ? ' single-col' : ''}`}>
                 {item.links.map((link) => {
                   const isIndustry = item.label === 'Industries';
-                  const isActiveNested = isIndustry && activeIndustry === link.title;
+                  const isWhoWeAre = item.label === 'Who We Are';
+                  const isActiveNested = (isIndustry && activeIndustry === link.title) || (isWhoWeAre && activeWhoWeAre === link.title);
                   
                   if (link.subAreas) {
                     return (
                       <div
                         key={link.title}
                         className={`mega-link-item ${isActiveNested ? 'active' : ''}`}
-                        onClick={() => setActiveIndustry(link.title)}
+                        onClick={() => { if (isIndustry) setActiveIndustry(link.title); if (isWhoWeAre) setActiveWhoWeAre(link.title); }}
                         style={{ display: 'block', width: '100%' }}
                       >
                         <span className="link-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -367,6 +387,22 @@ export default function Navbar() {
                     </h4>
                     <div style={{ marginTop: '24px' }}>
                       {item.links.find(l => l.title === activeIndustry)?.subAreas?.map(sub => (
+                        <Link key={sub.title} href={sub.href} className="resource-link-item" onClick={() => setActiveMenu(null)} style={{ textDecoration: 'none' }}>
+                          {sub.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : item.label === 'Who We Are' && activeWhoWeAre && item.links.find(l => l.title === activeWhoWeAre)?.subAreas ? (
+                  <>
+                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', textTransform: 'none', letterSpacing: 'normal', fontSize: '1rem', fontWeight: '500' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
+                      Latest News
+                    </h4>
+                    <div style={{ marginTop: '24px' }}>
+                      {item.links.find(l => l.title === activeWhoWeAre)?.subAreas?.map(sub => (
                         <Link key={sub.title} href={sub.href} className="resource-link-item" onClick={() => setActiveMenu(null)} style={{ textDecoration: 'none' }}>
                           {sub.title}
                         </Link>

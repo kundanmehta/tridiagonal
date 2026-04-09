@@ -414,6 +414,38 @@ export default function HomePage() {
               padding-bottom: 50px;
             }
           }
+
+          /* ── Mobile fix ── */
+          @media (max-width: 899px) {
+            .home2-wwa-flex {
+              padding: 0 15px;
+              gap: 16px;
+            }
+            .home2-wwa-card {
+              min-height: unset;
+              display: flex;
+              flex-direction: column;
+            }
+            /* Make overlay relative so the card grows with its content.
+               Large padding-top keeps the background image visible above the text. */
+            .home2-wwa-overlay {
+              position: relative !important;
+              inset: unset !important;
+              flex: 1;
+              padding: 160px 20px 24px !important;
+              background: linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.12) 38%, rgba(0,0,0,0.82) 58%, rgba(0,0,0,0.95) 100%) !important;
+              justify-content: flex-start !important;
+            }
+            .wwa-card-title {
+              font-size: 20px !important;
+              margin-bottom: 8px !important;
+            }
+            .wwa-card-desc {
+              font-size: 14px !important;
+              line-height: 1.55 !important;
+              margin-bottom: 14px !important;
+            }
+          }
         `}} />
         <div className="content-wrapper-lg">
           <div className="dvr-line" />
@@ -670,6 +702,36 @@ export default function HomePage() {
           .home2-kh-grid .counter-item > hr, .home2-kh-grid .counter-item .dvr-line, .home2-kh-grid .counter-item::before {
             display: none !important;
           }
+
+          /* ── Mobile fix ── */
+          @media (max-width: 999px) {
+            .home2-kh-layout {
+              gap: 24px;
+            }
+            /* Remove the 380px fixed flex-basis – on column layout it becomes height, creating a large gap */
+            .home2-kh-left {
+              flex: none;
+              width: 100%;
+            }
+            .home2-kh-left > p {
+              font-size: 14px !important;
+              margin-bottom: 20px !important;
+            }
+            .home2-kh-grid .counter-item {
+              padding: 18px 8px;
+            }
+            .home2-kh-grid .counter-number {
+              font-size: 26px !important;
+            }
+            .home2-kh-grid .counter-suffix {
+              font-size: 12px !important;
+            }
+            .home2-kh-grid .counter-label {
+              font-size: 11px !important;
+              max-width: 110px;
+              margin-top: 4px !important;
+            }
+          }
         `}} />
 
         <div className="content-wrapper-lg">
@@ -677,10 +739,11 @@ export default function HomePage() {
             
             {/* Left Box */}
             <div className="home2-kh-left">
-              <h2 id="counters-heading" style={{ color: 'var(--color-teal)', marginBottom: '24px', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+              <div className="dvr-line" />
+              <h2 id="counters-heading" className="section-title" style={{ color: 'var(--color-teal)', marginBottom: '16px', fontSize: 'clamp(1.6rem, 7vw, 3.1rem)', fontWeight: '700', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                 Key Highlights
               </h2>
-              <p style={{ color: '#fff', opacity: '0.9', lineHeight: 1.6, marginBottom: '40px', fontSize: '18px' }}>
+              <p style={{ color: '#fff', opacity: '0.9', lineHeight: 1.6, marginBottom: '32px', fontSize: '18px' }}>
                 16+ years process consulting experience using advanced technologies
               </p>
               <Link href="/about-us" className="home2-kh-btn" style={{ 
@@ -850,6 +913,15 @@ export default function HomePage() {
           .home2-tp-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(0, 255, 204, 0.4);
+          }
+          @media (max-width: 899px) {
+            .home2-tp-btn {
+              font-size: 11px !important;
+              padding: 11px 18px !important;
+              letter-spacing: 0.02em !important;
+              white-space: nowrap !important;
+              gap: 8px !important;
+            }
           }
         `}} />
         <div className="content-wrapper-lg">

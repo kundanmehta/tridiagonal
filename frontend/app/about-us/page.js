@@ -260,7 +260,7 @@ export default function AboutUs() {
       </section>
 
       {/* LEADERSHIP TEAM */}
-      <section className="section-pad" style={{ background: '#1c1c1c' }}>
+      <section id="our-team" className="section-pad" style={{ background: '#1c1c1c' }}>
         <div className="content-wrapper-lg">
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h2 className="section-title" style={{ color: '#fff', fontSize: '40px', fontWeight: '700' }}>
