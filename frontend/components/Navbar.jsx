@@ -73,9 +73,9 @@ const navItems = [
     heading: 'Events',
     headingDesc: 'Look out for featured webinars and workshops to showcase expertise and best practices in AI-ML, CFD/FEA, etc.',
     links: [
-      { title: 'Upcoming Webinars', href: '/events?type=upcoming-webinars' },
-      { title: 'On Demand Webinars', href: '/events?type=on-demand-webinars' },
-      { title: 'News and Press Release', href: '/events?type=news-and-press-release' },
+      { title: 'Upcoming Webinars', href: '/events/upcoming-webinars' },
+      { title: 'On Demand Webinars', href: '/events/on-demand-webinars' },
+      { title: 'News and Press Release', href: '/events/news-and-press-release' },
     ],
     featured: [
       { title: 'Finite Element Analysis (FEA) in Oil & Gas', href: '#' },
@@ -89,10 +89,10 @@ const navItems = [
     links: [
       { title: 'About Us', href: '/about-us' },
       { title: 'Our Team', href: '/about-us#our-team' },
-      { title: 'News and Press Release', href: '/events?type=news-and-press-release', subAreas: [
-        { title: 'Hannover Messe 2025', href: '/events?type=news-and-press-release' },
-        { title: 'GRPC Event 2024', href: '/events?type=news-and-press-release' },
-        { title: 'Tridiagonal Solutions Unveils New Brand Identity', href: '/events?type=news-and-press-release' },
+      { title: 'News and Press Release', href: '/events/news-and-press-release', subAreas: [
+        { title: 'Hannover Messe 2025', href: '/events/news-and-press-release' },
+        { title: 'GRPC Event 2024', href: '/events/news-and-press-release' },
+        { title: 'Tridiagonal Solutions Unveils New Brand Identity', href: '/events/news-and-press-release' },
       ]},
     ],
     featured: [
@@ -125,17 +125,17 @@ const mobileSubLinks = {
     { title: 'Brochure', href: '/resources?type=brochure' },
   ],
   Events: [
-    { title: 'Upcoming Webinars', href: '/events?type=upcoming-webinars' },
-    { title: 'On Demand Webinars', href: '/events?type=on-demand' },
-    { title: 'News and Press Release', href: '/events?type=news' },
+    { title: 'Upcoming Webinars', href: '/events/upcoming-webinars' },
+    { title: 'On Demand Webinars', href: '/events/on-demand-webinars' },
+    { title: 'News and Press Release', href: '/events/news-and-press-release' },
   ],
   'Who We Are': [
     { title: 'About Us', href: '/about-us' },
     { title: 'Our Team', href: '/about-us#our-team' },
-    { title: 'News and Press Release', href: '/events?type=news-and-press-release' },
-    { title: '↳ Hannover Messe 2025', href: '/events?type=news-and-press-release' },
-    { title: '↳ GRPC Event 2024', href: '/events?type=news-and-press-release' },
-    { title: '↳ Tridiagonal Solutions Unveils New Brand Identity', href: '/events?type=news-and-press-release' },
+    { title: 'News and Press Release', href: '/events/news-and-press-release' },
+    { title: '↳ Hannover Messe 2025', href: '/events/news-and-press-release' },
+    { title: '↳ GRPC Event 2024', href: '/events/news-and-press-release' },
+    { title: '↳ Tridiagonal Solutions Unveils New Brand Identity', href: '/events/news-and-press-release' },
   ],
 };
 

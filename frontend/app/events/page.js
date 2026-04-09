@@ -41,7 +41,7 @@ export default function Events() {
                        </span>
                      </div>
                    </div>
-                   <button className="btn-primary" style={{ padding: '10px 24px', fontSize: '14px' }}>Register Now</button>
+                   <button suppressHydrationWarning className="btn-primary" style={{ padding: '10px 24px', fontSize: '14px' }}>Register Now</button>
                 </div>
              ))}
           </div>
