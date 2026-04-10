@@ -85,23 +85,6 @@ const serviceCards = [
   },
   {
     num: '03',
-    title: 'Software Solutions',
-    desc: 'Mixing Analysis (MixIT), SimSight (for Scale-up, Tech transfer, Asset characterization), Pipeline Erosion Risk Mitigation Tool (PERMIT).',
-    href: 'https://tridiagonalsoftware.com',
-    external: true,
-    bg: '#383838',
-  },
-  {
-    num: '04',
-    title: 'Digital Transformation – Tridiagonal.ai',
-    desc: 'At Tridiagonal.ai, we deliver next-gen AI and hybrid digital solutions for process industries leveraging domain expertise tightly coupled with Agentic AI.',
-    href: 'https://tridiagonal.ai',
-    external: true,
-    bg: '#1a1a1a',
-    cta: 'Visit Tridiagonal.ai',
-  },
-  {
-    num: '05',
     title: 'Partner Solutions',
     desc: 'Siemens Simcenter, FactSage (thermochemical simulations), Coreform — seamlessly integrate validated third-party software directly into your ecosystem.',
     href: '/partner-solutions',
@@ -273,21 +256,46 @@ export default function HomePage() {
           ============================================================ */}
       <section id="services" className="services-section" style={{ padding: '0' }} aria-labelledby="services-heading">
         <style dangerouslySetInnerHTML={{__html: `
-          @media (min-width: 1024px) {
-            .home2-services-grid { grid-template-columns: repeat(3, 1fr) !important; }
+          .home2-services-grid {
+            display: grid !important;
+            grid-template-columns: 1fr;
+            margin: 0 !important;
+            gap: 0;
+          }
+          @media (min-width: 640px) {
+            .home2-services-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          }
+          @media (min-width: 1100px) {
+            .home2-services-grid { grid-template-columns: repeat(4, 1fr) !important; }
+          }
+          .home2-services-grid .service-card-wrap {
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: none !important;
+          }
+          .home2-services-grid .service-card,
+          .home2-services-grid .service-cta-card {
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
           }
           .home2-card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
           }
           .home2-card-hover:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+            z-index: 10;
+            position: relative;
           }
           .home2-service-cta-hover {
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
           }
           .home2-service-cta-hover:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
+            z-index: 10;
+            position: relative;
           }
         `}} />
         {/* Section heading */}

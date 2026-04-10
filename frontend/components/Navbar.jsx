@@ -10,7 +10,7 @@ const navItems = [
     heading: 'Services',
     headingDesc: 'Applying a breadth of Process and Technology expertise to address the range of business needs in Process Industry.',
     links: [
-      { title: 'Advanced Modeling & Simulation (CFD/FEA)', sub: 'CFD, FEA, DEM, FSI, Digital Twin', href: '/services/modeling' },
+      { title: 'Advanced Modeling & Simulation (CFD/FEA)', sub: 'CFD, FEA, DEM, FSI, Digital Twin', href: '/services/advance-modeling-and-simulation' },
       { title: 'Technology Validation & Scale-up Centre', sub: 'Flow Assurance, Erosion, Corrosion, Green H₂', href: '/services/scale-up' },
       { title: 'Software – Scale-up & Tech Transfer', sub: 'MixIT, SimSight, PERMIT', href: 'https://tridiagonalsoftware.com', external: true },
       { title: 'Tridiagonal.ai – Domain-Driven AI', sub: 'Agentic AI, Digital Twins, Process Insights', href: 'https://tridiagonal.ai', external: true },
@@ -58,10 +58,10 @@ const navItems = [
     heading: 'Resources',
     headingDesc: 'Explore examples and success stories of how various technologies were applied to address the needs of our customers.',
     links: [
-      { title: 'Blogs', href: '/resources?type=blogs' },
-      { title: 'Case Studies', href: '/resources?type=case-study' },
+      { title: 'Blogs', href: '/resources/blogs' },
+      { title: 'Case Studies', href: '/resources/case-studies' },
       { title: 'Publications / Patents', href: '/publications-and-patents' },
-      { title: 'Brochure', href: '/resources?type=brochure' },
+      { title: 'Brochures', href: '/resources/brochures' },
     ],
     featured: [
       { title: 'Finite Element Analysis (FEA) in Oil & Gas', href: '#' },
@@ -104,7 +104,7 @@ const navItems = [
 
 const mobileSubLinks = {
   Services: [
-    { title: 'Advanced Modeling & Simulation', href: '/services/modeling' },
+    { title: 'Advanced Modeling & Simulation', href: '/services/advance-modeling-and-simulation' },
     { title: 'Technology Validation & Scale-up', href: '/services/scale-up' },
     { title: 'Software – Scale-up & Tech Transfer', href: 'https://tridiagonalsoftware.com' },
     { title: 'Tridiagonal.ai – Domain-Driven AI', href: 'https://tridiagonal.ai' },
@@ -119,10 +119,10 @@ const mobileSubLinks = {
     { title: 'Power & Renewables', href: '/industries/power' },
   ],
   Resources: [
-    { title: 'Blogs', href: '/resources?type=blogs' },
-    { title: 'Case Studies', href: '/resources?type=case-study' },
+    { title: 'Blogs', href: '/resources/blogs' },
+    { title: 'Case Studies', href: '/resources/case-studies' },
     { title: 'Publications / Patents', href: '/publications-and-patents' },
-    { title: 'Brochure', href: '/resources?type=brochure' },
+    { title: 'Brochures', href: '/resources/brochures' },
   ],
   Events: [
     { title: 'Upcoming Webinars', href: '/events/upcoming-webinars' },

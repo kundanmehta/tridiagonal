@@ -123,6 +123,14 @@ export default function AboutUs() {
   const [statsRef, statsInView] = useInView(0.1);
   const [timelineRef, timelineInView] = useInView(0.1);
   const [selectedLeader, setSelectedLeader] = useState(null);
+  const timelineScrollRef = useRef(null);
+
+  const scrollTimeline = (dir) => {
+    if (timelineScrollRef.current) {
+      const scrollAmount = 450; 
+      timelineScrollRef.current.scrollBy({ left: dir === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   return (
     <main style={{ paddingTop: 'var(--nav-height)' }}>
@@ -335,35 +343,136 @@ export default function AboutUs() {
         </div>
       )}
       
-      {/* TIMELINE / EVOLUTION - simplified for now */}
-      <section ref={timelineRef} className="section-pad" style={{ background: '#1a1a1a' }}>
+      {/* HORIZONTAL TIMELINE / EVOLUTION */}
+      <section ref={timelineRef} style={{ padding: 'clamp(40px, 8vw, 60px) 0', background: '#111', position: 'relative', overflow: 'hidden' }}>
          <div className="content-wrapper-lg">
-            <h2 className="section-title" style={{ textAlign: 'center', color: '#fff', marginBottom: '60px' }}>Tridiagonal Solutions Evolution</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', maxWidth: '800px', margin: '0 auto' }}>
-               {[
-                 { year: '2006', text: 'First company incubated out of CSIR-National Chemical Laboratory, Pune (India) under the leadership of Dr. Vivek Ranade.' },
-                 { year: '2008', text: 'Established Advanced Modeling & Simulation group (Computational Fluid Dynamics, Discrete Element Modeling, Mathematical Modeling, Hybrid Modeling, etc.)' },
-                 { year: '2010', text: 'Established center of excellence for flow assurance studies for Oil & Gas, mechanical integrity testing, new energy testing (TRL 3- TRL 9)' },
-                 { year: '2012', text: 'Developed CFD solver for Mixing analysis of stirred tanks' },
-                 { year: '2013', text: 'Launched industry’s first mixing analysis solution - MixIT with CFD solver for mixing analysis for stirred tanks' },
-                 { year: '2015', text: 'Plugging and abandonment contract for large E&P company' },
-                 { year: '2018', text: 'Established Manufacturing excellence and Digital Transformation group to provide process manufacturing digital solutions' },
-                 { year: '2022', text: 'Launched simulation knowledge management solution – Simsight for extracting value our of simulations' },
-                 { year: '2023', text: 'Established Center of excellence for various technology solution providers (Honeywell, Emerson, Yokogawa, Aveva, etc.)' },
-                 { year: '2024', text: 'New energy testing (TRL 3- TRL 9) set-up for CCUS. Unveiling Our New Brand Identity.' },
-                 { year: '2025', text: 'Tridiagonal.ai: A Domain-driven AI Company Transforming Industrial Operations' },
-               ].map((item, i) => (
-                 <div className="timeline-row" key={i} style={{ opacity: timelineInView ? 1 : 0, transform: timelineInView ? 'translateX(0)' : 'translateX(-20px)', transition: `all 0.5s ease ${i * 0.1}s` }}>
-                    <div className="year-text" style={{ color: 'var(--color-teal)', fontSize: '28px', fontWeight: 'bold' }}>{item.year}</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', marginBottom: 'clamp(30px, 6vw, 60px)' }}>
+              <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: '700', margin: 0 }}>Tridiagonal Solutions Evolution</h2>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button onClick={() => scrollTimeline('left')} style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#242424', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.3s' }} onMouseEnter={e=>e.currentTarget.style.background='var(--color-teal)'} onMouseLeave={e=>e.currentTarget.style.background='#242424'}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button onClick={() => scrollTimeline('right')} style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#242424', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.3s' }} onMouseEnter={e=>e.currentTarget.style.background='var(--color-teal)'} onMouseLeave={e=>e.currentTarget.style.background='#242424'}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div ref={timelineScrollRef} className="timeline-scroll-container" style={{ 
+              overflowX: 'auto', 
+              padding: '20px 0',
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none',
+              scrollBehavior: 'smooth'
+            }}>
+              <style dangerouslySetInnerHTML={{ __html: `
+                .timeline-scroll-container::-webkit-scrollbar { display: none; }
+                .timeline-block { width: 360px; }
+                .timeline-desc-card { width: 280px; padding: 24px; font-size: 15px; height: 210px; display: flex; align-items: center; justify-content: center; }
+                .timeline-track-flex { height: 650px; padding: 0 40px; }
+                
+                .timeline-line-bg, .timeline-line-fill { position: absolute; transform: translateY(-50%); }
+                .timeline-dot { position: absolute; left: 50%; transform: translate(-50%, -50%); }
+                .timeline-content {
+                  position: absolute;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  display: flex;
+                  align-items: center;
+                }
+
+                /* Mobile Base (<= 900px): Everything BELOW the line */
+                .timeline-line-bg, .timeline-line-fill { top: 20%; }
+                .timeline-dot { top: 20%; }
+                .timeline-content {
+                  top: calc(20% + 25px);
+                  flex-direction: column;
+                }
+                .tm-year { margin-bottom: clamp(10px, 3vw, 20px); margin-top: 0; }
+
+                @media (max-width: 900px) {
+                  .timeline-block { width: 320px; }
+                  .timeline-desc-card { width: 260px; padding: 20px; font-size: 14px; height: 210px; }
+                  .timeline-track-flex { height: 420px; padding: 0 20px; }
+                }
+                @media (max-width: 480px) {
+                  .timeline-block { width: 280px; }
+                  .timeline-desc-card { width: 230px; padding: 16px; font-size: 13.5px; height: 210px; }
+                  .timeline-track-flex { height: 380px; padding: 0 15px; }
+                }
+
+                /* Desktop Base (>900px): Staggered Top / Bottom */
+                @media (min-width: 901px) {
+                  .timeline-line-bg, .timeline-line-fill { top: 50%; }
+                  .timeline-dot { top: 50%; }
+                  .timeline-content { top: calc(50% + 25px); flex-direction: column; }
+                  
+                  .timeline-even {
+                    top: auto;
+                    bottom: calc(50% + 25px);
+                    flex-direction: column-reverse; /* Card top, year bottom */
+                  }
+                  .timeline-even .tm-year { margin-bottom: 0; margin-top: 20px; }
+                }
+              ` }} />
+
+              <div className="timeline-track-flex" style={{ display: 'flex', position: 'relative', minWidth: 'max-content', alignItems: 'center' }}>
+                
+                {/* Continuous Background Line */}
+                <div className="timeline-line-bg" style={{ left: '40px', right: '40px', height: '3px', background: 'rgba(255,255,255,0.1)' }}></div>
+                
+                {/* Animated Fill Line */}
+                <div className="timeline-line-fill" style={{ 
+                  left: '40px', height: '3px', background: 'var(--color-teal)',
+                  width: timelineInView ? 'calc(100% - 80px)' : '0%', transition: 'width 2.5s cubic-bezier(0.22, 1, 0.36, 1)' 
+                }}></div>
+
+                {[
+                  { year: '2006', text: 'First company incubated out of CSIR-National Chemical Laboratory, Pune (India) under the leadership of Dr. Vivek Ranade.' },
+                  { year: '2008', text: 'Established Advanced Modeling & Simulation group (Computational Fluid Dynamics, Discrete Element Modeling, Mathematical Modeling, Hybrid Modeling, etc.)' },
+                  { year: '2010', text: 'Established center of excellence for flow assurance studies for Oil & Gas, mechanical integrity testing, new energy testing (TRL 3- TRL 9)' },
+                  { year: '2012', text: 'Developed CFD solver for Mixing analysis of stirred tanks' },
+                  { year: '2013', text: 'Launched industry’s first mixing analysis solution - MixIT with CFD solver for mixing analysis for stirred tanks' },
+                  { year: '2015', text: 'Plugging and abandonment contract for large E&P company' },
+                  { year: '2018', text: 'Established Manufacturing excellence and Digital Transformation group to provide process manufacturing digital solutions' },
+                  { year: '2022', text: 'Launched simulation knowledge management solution – Simsight for extracting value our of simulations' },
+                  { year: '2023', text: 'Established Center of excellence for various technology solution providers (Honeywell, Emerson, Yokogawa, Aveva, etc.)' },
+                  { year: '2024', text: 'New energy testing (TRL 3- TRL 9) set-up for CCUS. Unveiling Our New Brand Identity.' },
+                  { year: '2025', text: 'Tridiagonal.ai: A Domain-driven AI Company Transforming Industrial Operations' },
+                ].map((item, i) => (
+                  <div className="timeline-block" key={i} style={{ 
+                    flexShrink: 0, 
+                    position: 'relative',
+                    height: '100%',
+                    opacity: timelineInView ? 1 : 0, 
+                    transform: timelineInView ? 'translateX(0)' : 'translateX(30px)', 
+                    transition: `all 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${i * 0.15}s`
+                  }}>
                     
-                    <div className="timeline-divider" style={{ display: 'flex', alignItems: 'center', height: '34px' }}>
-                       <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-teal)', flexShrink: 0 }}></div>
-                       <div className="timeline-horizontal-line" style={{ height: '2px', width: '100%', background: 'rgba(255,255,255,0.1)' }}></div>
+                    {/* Timeline Dot */}
+                    <div className="timeline-dot" style={{ 
+                      width: 'clamp(14px, 3vw, 20px)', height: 'clamp(14px, 3vw, 20px)', borderRadius: '50%', background: '#111', 
+                      border: '4px solid var(--color-teal)', zIndex: 2,
+                      boxShadow: '0 0 0 4px #111, 0 0 15px rgba(0, 255, 204, 0.5)' 
+                    }}></div>
+
+                    <div className={`timeline-content ${i % 2 === 0 ? 'timeline-even' : 'timeline-odd'}`}>
+                      <div className="tm-year" style={{ color: 'var(--color-teal)', fontSize: 'clamp(22px, 4.5vw, 32px)', fontWeight: '800', textShadow: '0 4px 15px rgba(0,255,204,0.2)' }}>
+                        {item.year}
+                      </div>
+
+                      <div className="timeline-desc-card" style={{ 
+                        background: '#1a1a1a', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.06)',
+                        textAlign: 'center', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6,
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                      }}>
+                         {item.text}
+                      </div>
                     </div>
 
-                    <div className="desc-text" style={{ color: '#fff', fontSize: '18px', lineHeight: 1.6, paddingTop: '3px' }}>{item.text}</div>
-                 </div>
-               ))}
+                  </div>
+                ))}
+              </div>
             </div>
          </div>
       </section>
