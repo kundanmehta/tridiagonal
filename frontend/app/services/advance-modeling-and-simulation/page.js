@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { CAPABILITIES_DATA } from './data';
 
 const NAV_SECTIONS = ['About Practice', 'Capabilities', 'Industries', 'Resources', 'Why Tridiagonal', 'Practice Heads', 'Contact Us'];
 
@@ -470,33 +471,7 @@ export default function AdvancedModelingPage() {
 
           {/* 3-column card grid */}
           <div className="capabilities-grid-layout">
-            {[
-              {
-                title: 'Computational Fluid Dynamics (CFD)',
-                desc: 'Multiphase flow, Phase change, combustion and reaction modeling are our routine areas of working. We help industry to analyze root cause of the failure. Our engineers provide deep insights for troubleshooting & process improvement.',
-                img: '/hubfs/CFD%20Evolution.png',
-              },
-              {
-                title: 'Discrete Element Method (DEM)',
-                desc: 'DEM is utilized in pharmaceuticals for powder mixing and tablet compression, in chemicals for particle handling and crystallization, and in CPG for packaging and mixing processes. It optimizes operations, ensuring uniformity and efficiency.',
-                img: '/hubfs/CFD%20DEM-1.gif',
-              },
-              {
-                title: 'Finite Element Analysis (FEA)',
-                desc: 'Our canvas covers the assessment of the structural integrity of equipment, vessels, and components under static and dynamic loads, preventing thermal failures with optimized heat transfer & temperature distribution.',
-                img: '/hubfs/FEA-1.png',
-              },
-              {
-                title: 'Multiphysics Simulation',
-                desc: 'Tridiagonal engineers are capable in solving fluid-structure interaction (FSI) problems, while coupling of DEM-FEA models the behavior of granular materials interacting with structures, provides a deeper understanding of stress distribution, particle flow, and potential equipment wear.',
-                img: '/hubfs/CFD%20FEA%20Coupled-1.png',
-              },
-              {
-                title: 'Digital Twin',
-                desc: 'Tridiagonal tech leaders can build a virtual replica of assets & processes in various industries to reduce simulation iterations using data interpolation. Methods like CFD, FEA & DEM can predict values that are not possible to gain from sensors.',
-                img: '/hubfs/Website%20Banner.png',
-              },
-            ].map((cap, i) => (
+            {CAPABILITIES_DATA.map((cap, i) => (
               <div key={i}
                 style={{
                   position: 'relative',
@@ -523,7 +498,7 @@ export default function AdvancedModelingPage() {
                   
                   {/* Cyan-to-Lime Gradient Button */}
                   <Link
-                    href="/resources/case-studies"
+                    href={`/services/advance-modeling-and-simulation/${cap.slug}`}
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: '8px',
                       background: 'linear-gradient(90deg, #0dd0e1, #8fe03c)',
@@ -533,6 +508,7 @@ export default function AdvancedModelingPage() {
                       fontSize: '13px',
                       fontWeight: '800',
                       letterSpacing: '0.5px',
+                      textTransform: 'none',
                       textDecoration: 'none',
                       width: 'fit-content',
                       boxShadow: '0 4px 15px rgba(13,208,225,0.2)',
@@ -548,8 +524,11 @@ export default function AdvancedModelingPage() {
               </div>
             ))}
 
+
+
             {/* 6th Card: Contact Us (Matching Image) */}
-            <div
+            <Link
+              href="/services/advance-modeling-and-simulation/cfd#contact-us"
               style={{
                 position: 'relative',
                 background: 'linear-gradient(135deg, #0c7196 0%, #6ca03e 100%)',
@@ -562,10 +541,10 @@ export default function AdvancedModelingPage() {
                 padding: '36px 32px',
                 transition: 'transform 0.3s, box-shadow 0.3s',
                 cursor: 'pointer',
+                textDecoration: 'none'
               }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 15px 35px rgba(108, 160, 62, 0.2)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
-              onClick={() => scrollTo('Contact Us')}
             >
               {/* Optional inner subtle gradient overlay to smooth colors */}
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.15) 100%)' }} />
@@ -578,7 +557,7 @@ export default function AdvancedModelingPage() {
                 </h3>
                 
                 <div style={{ marginTop: 'auto' }}>
-                  <button
+                  <div
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: '8px',
                       background: 'transparent',
@@ -592,17 +571,16 @@ export default function AdvancedModelingPage() {
                       cursor: 'pointer',
                       transition: 'background 0.3s, border-color 0.3s',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = '#fff'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.7)'; }}
                   >
                     Contact Us
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '2px' }}>
                       <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
-                  </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
+
 
           </div>
         </div>
@@ -1010,33 +988,33 @@ export default function AdvancedModelingPage() {
                   <div className="form-grid-row">
                     <div>
                       <label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' }}>First Name *</label>
-                      <input required placeholder="First Name" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})}
+                      <input suppressHydrationWarning required placeholder="First Name" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})}
                         style={{ width: '100%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '11px 14px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
                     </div>
                     <div>
                       <label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' }}>Last Name *</label>
-                      <input required placeholder="Last Name" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})}
+                      <input suppressHydrationWarning required placeholder="Last Name" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})}
                         style={{ width: '100%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '11px 14px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
                     </div>
                   </div>
                   <div>
                     <label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' }}>Email *</label>
-                    <input required type="email" placeholder="Corporate Email ID" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
+                    <input suppressHydrationWarning required type="email" placeholder="Corporate Email ID" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
                       style={{ width: '100%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '11px 14px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
                   </div>
                   <div>
                     <label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' }}>Contact Number</label>
-                    <input placeholder="Phone Number" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})}
+                    <input suppressHydrationWarning placeholder="Phone Number" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})}
                       style={{ width: '100%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '11px 14px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
                   </div>
                   <div>
                     <label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' }}>Company Name *</label>
-                    <input required placeholder="Company Name" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})}
+                    <input suppressHydrationWarning required placeholder="Company Name" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})}
                       style={{ width: '100%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '11px 14px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
                   </div>
                   <div>
                     <label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '6px' }}>Industry</label>
-                    <select value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})}
+                    <select suppressHydrationWarning value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})}
                       style={{ width: '100%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '11px 14px', color: formData.industry ? '#fff' : 'rgba(255,255,255,0.4)', fontSize: '14px', outline: 'none', boxSizing: 'border-box', cursor: 'pointer' }}>
                       <option value="">Please Select</option>
                       <option>Oil &amp; Gas</option>

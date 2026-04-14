@@ -7,11 +7,33 @@ import Image from 'next/image';
 const navItems = [
   {
     label: 'Services',
+    href: '#',
     heading: 'Services',
     headingDesc: 'Applying a breadth of Process and Technology expertise to address the range of business needs in Process Industry.',
     links: [
-      { title: 'Advanced Modeling & Simulation (CFD/FEA)', sub: 'CFD, FEA, DEM, FSI, Digital Twin', href: '/services/advance-modeling-and-simulation' },
-      { title: 'Technology Validation & Scale-up Centre', sub: 'Flow Assurance, Erosion, Corrosion, Green H₂', href: '/services/scale-up' },
+      { 
+        title: 'Advanced Modeling & Simulation (CFD/FEA)', 
+        sub: 'CFD, FEA, DEM, FSI, Digital Twin', 
+        href: '/services/advance-modeling-and-simulation',
+        subAreas: [
+          { title: 'Computational Fluid Dynamics (CFD)', href: '/services/advance-modeling-and-simulation/computational-fluid-dynamics-cfd' },
+          { title: 'Discrete Element Method (DEM)', href: '/services/advance-modeling-and-simulation/discrete-element-method-dem' },
+          { title: 'Finite Element Analysis (FEA)', href: '/services/advance-modeling-and-simulation/finite-element-analysis-fea' },
+          { title: 'Multiphysics Simulation', href: '/services/advance-modeling-and-simulation/multiphysics-simulation' },
+          { title: 'Digital Twin', href: '/services/advance-modeling-and-simulation/digital-twin' }
+        ]
+      },
+      { 
+        title: 'Technology Validation & Scale-up Centre', 
+        sub: 'Flow Assurance, Erosion, Corrosion, Green H₂', 
+        href: '/services/technology-validation-scale-up-centre',
+        subAreas: [
+          { title: 'Flow Assurance', href: '/services/technology-validation-scale-up-centre/flow-assurance-and-physical-testing' },
+          { title: 'Erosion Testing', href: '/services/technology-validation-scale-up-centre/erosion-sand-management' },
+          { title: 'Corrosion Testing', href: '/services/technology-validation-scale-up-centre/corrosion-testing' },
+          { title: 'Lab Scale Corrosion Testing', href: '/services/technology-validation-scale-up-centre/corrosion-testing' }
+        ]
+      },
       { title: 'Software – Scale-up & Tech Transfer', sub: 'MixIT, SimSight, PERMIT', href: 'https://tridiagonalsoftware.com', external: true },
       { title: 'Tridiagonal.ai – Domain-Driven AI', sub: 'Agentic AI, Digital Twins, Process Insights', href: 'https://tridiagonal.ai', external: true },
       { title: 'Partner Solutions', sub: 'Siemens, FactSage, Coreform', href: '/partner-solutions' },
@@ -24,6 +46,7 @@ const navItems = [
   },
   {
     label: 'Industries',
+    href: '#',
     heading: 'Industries',
     headingDesc: 'Our in-depth domain / process understanding of the various industries enable us to support digitaltransformation, validation (CFD/FEA, Physical testing) needs of our customers',
     links: [
@@ -31,19 +54,19 @@ const navItems = [
         title: 'Oil & Gas', 
         href: '#',
         subAreas: [
-          { title: 'Advance Modeling & Simulation (CFD/FEA)', href: '/services/modeling' },
-          { title: 'Technology Validation & Scale-up Centre', href: '/services/scale-up' }
+          { title: 'Advance Modeling & Simulation (CFD/FEA)', href: '/industries/oil-gas/advance-modeling-and-simulation' },
+          { title: 'Technology Validation & Scale-up Centre', href: '/industries/oil-gas/technology-validation-scale-up-centre' }
         ]
       },
       { title: 'Pharma and Medical Devices', href: '#', subAreas: [
           { title: 'Advance Modeling & Simulation (CFD/FEA)', href: '/services/modeling' },
-          { title: 'Technology Validation & Scale-up Centre', href: '/services/scale-up' }
+          { title: 'Technology Validation & Scale-up Centre', href: '/services/technology-validation-scale-up-centre' }
       ] },
       { title: 'Metals, Mining & Cement', href: '#', subAreas: [
           { title: 'Advance Modeling & Simulation (CFD/FEA)', href: '/services/modeling' }
       ] },
       { title: 'Food, Beverages & CPG', href: '#', subAreas: [
-          { title: 'Technology Validation & Scale-up Centre', href: '/services/scale-up' }
+          { title: 'Technology Validation & Scale-up Centre', href: '/services/technology-validation-scale-up-centre' }
       ] },
       { title: 'Chemicals & Petrochemicals', href: '#', subAreas: [
           { title: 'Advance Modeling & Simulation (CFD/FEA)', href: '/services/modeling' }
@@ -55,6 +78,7 @@ const navItems = [
   },
   {
     label: 'Resources',
+    href: '/resources',
     heading: 'Resources',
     headingDesc: 'Explore examples and success stories of how various technologies were applied to address the needs of our customers.',
     links: [
@@ -70,6 +94,7 @@ const navItems = [
   },
   {
     label: 'Events',
+    href: '#',
     heading: 'Events',
     headingDesc: 'Look out for featured webinars and workshops to showcase expertise and best practices in AI-ML, CFD/FEA, etc.',
     links: [
@@ -84,6 +109,7 @@ const navItems = [
   },
   {
     label: 'Who We Are',
+    href: '/about-us',
     heading: 'Who we are',
     headingDesc: 'Trusted partner for delivering technologies solutions to the process industry with the combination of skillsets, technologies and domain know-how.',
     links: [
@@ -105,7 +131,7 @@ const navItems = [
 const mobileSubLinks = {
   Services: [
     { title: 'Advanced Modeling & Simulation', href: '/services/advance-modeling-and-simulation' },
-    { title: 'Technology Validation & Scale-up', href: '/services/scale-up' },
+    { title: 'Technology Validation & Scale-up', href: '/services/technology-validation-scale-up-centre' },
     { title: 'Software – Scale-up & Tech Transfer', href: 'https://tridiagonalsoftware.com' },
     { title: 'Tridiagonal.ai – Domain-Driven AI', href: 'https://tridiagonal.ai' },
     { title: 'Partner Solutions', href: '/partner-solutions' },
@@ -174,7 +200,8 @@ function ChevronUpArrow({ size = 24, color = 'currentColor' }) {
 export default function Navbar() {
   const [scrolled, setScrolled]       = useState(false);
   const [activeMenu, setActiveMenu]   = useState(null);
-  const [activeIndustry, setActiveIndustry] = useState('Oil & Gas');
+  const [activeService, setActiveService] = useState(null);
+  const [activeIndustry, setActiveIndustry] = useState(null);
   const [activeWhoWeAre, setActiveWhoWeAre] = useState(null);
   const [mobileOpen, setMobileOpen]   = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(null);
@@ -216,6 +243,20 @@ export default function Navbar() {
     });
   };
 
+  const handleMouseEnter = (label) => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+    setActiveMenu(label);
+  };
+
+  const handleMouseLeave = () => {
+    closeTimer.current = setTimeout(() => {
+      setActiveMenu(null);
+    }, 150);
+  };
+
   const activeItem = navItems.find(n => n.label === activeMenu);
 
   return (
@@ -244,16 +285,18 @@ export default function Navbar() {
               <div
                 key={item.label}
                 className="nav-item has-mega-menu"
+                onMouseEnter={() => handleMouseEnter(item.label)}
+                onMouseLeave={handleMouseLeave}
               >
-                <button
-                  suppressHydrationWarning
+                <Link
+                  href={item.href}
                   className={`nav-link${activeMenu === item.label ? ' active' : ''}`}
                   aria-expanded={activeMenu === item.label}
                   aria-haspopup="true"
-                  onClick={() => toggleMenu(item.label)}
+                  onClick={() => setActiveMenu(null)}
                 >
                   {item.label}
-                </button>
+                </Link>
               </div>
             ))}
 
@@ -319,6 +362,8 @@ export default function Navbar() {
           <div
             key={item.label}
             className={`mega-dropdown-wrapper${activeMenu === item.label ? ' open' : ''}`}
+            onMouseEnter={() => handleMouseEnter(item.label)}
+            onMouseLeave={handleMouseLeave}
           >
             <div className="mega-dropdown-inner">
               <button 
@@ -340,23 +385,34 @@ export default function Navbar() {
               {/* Col 2 – Links */}
               <div className={`mega-links-grid${item.links.length <= 4 ? ' single-col' : ''}`}>
                 {item.links.map((link) => {
+                  const isService = item.label === 'Services';
                   const isIndustry = item.label === 'Industries';
                   const isWhoWeAre = item.label === 'Who We Are';
-                  const isActiveNested = (isIndustry && activeIndustry === link.title) || (isWhoWeAre && activeWhoWeAre === link.title);
+                  const isActiveNested = (isService && activeService === link.title) || (isIndustry && activeIndustry === link.title) || (isWhoWeAre && activeWhoWeAre === link.title);
                   
                   if (link.subAreas) {
                     return (
-                      <div
+                      <Link
                         key={link.title}
+                        href={link.href}
                         className={`mega-link-item ${isActiveNested ? 'active' : ''}`}
-                        onClick={() => { if (isIndustry) setActiveIndustry(link.title); if (isWhoWeAre) setActiveWhoWeAre(link.title); }}
+                        onClick={() => { 
+                          if (isService) setActiveService(link.title); 
+                          if (isIndustry) setActiveIndustry(link.title); 
+                          if (isWhoWeAre) setActiveWhoWeAre(link.title); 
+                          setActiveMenu(null);
+                        }}
+                        onMouseEnter={() => {
+                          if (isService) setActiveService(link.title);
+                          if (isIndustry) setActiveIndustry(link.title);
+                        }}
                         style={{ display: 'block', width: '100%' }}
                       >
-                        <span className="link-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span className="link-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: isActiveNested ? 'var(--color-teal)' : '#fff' }}>
                           {link.title}
-                          <ArrowRight size={14} />
+                          <ArrowRight size={14} color={isActiveNested ? 'var(--color-teal)' : '#fff'} />
                         </span>
-                      </div>
+                      </Link>
                     );
                   }
 
@@ -377,13 +433,29 @@ export default function Navbar() {
 
               {/* Col 3 – Featured resources or Sub Areas */}
               <div className="mega-featured-col">
-                {item.label === 'Industries' ? (
+                {item.label === 'Services' && activeService ? (
                   <>
                     <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', textTransform: 'none', letterSpacing: 'normal', fontSize: '1rem', fontWeight: '500' }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="15 18 9 12 15 6" />
                       </svg>
-                      Please select Service Areas
+                      Capability Areas
+                    </h4>
+                    <div style={{ marginTop: '24px' }}>
+                      {item.links.find(l => l.title === activeService)?.subAreas?.map(sub => (
+                        <Link key={sub.title} href={sub.href} className="resource-link-item" onClick={() => setActiveMenu(null)} style={{ textDecoration: 'none' }}>
+                          {sub.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : item.label === 'Industries' && activeIndustry ? (
+                  <>
+                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', textTransform: 'none', letterSpacing: 'normal', fontSize: '1rem', fontWeight: '500' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
+                      Service Areas
                     </h4>
                     <div style={{ marginTop: '24px' }}>
                       {item.links.find(l => l.title === activeIndustry)?.subAreas?.map(sub => (

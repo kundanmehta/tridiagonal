@@ -27,7 +27,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${sora.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${sora.variable} ${manrope.variable}`} data-scroll-behavior="smooth">
       <body suppressHydrationWarning>
         <Navbar />
         {children}

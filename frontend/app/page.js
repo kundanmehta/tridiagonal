@@ -73,14 +73,14 @@ const serviceCards = [
     num: '01',
     title: 'Advanced Modeling & Simulation (CFD/FEA)',
     desc: 'Computational Fluid Dynamics (CFD), Discrete Element Modeling (DEM), Finite Element Analysis (FEA), Fluid Structure Interaction (FSI), Reduced Order Modeling (ROM), Digital Twin.',
-    href: '/services/modeling',
+    href: '/services/advance-modeling-and-simulation',
     bg: '#383838',
   },
   {
     num: '02',
     title: 'Technology Validation & Scale-up Centre',
     desc: 'Flow Assurance Studies, Erosion, Corrosion, Wax deposition, Sand transportation, Hydrates, Green Hydrogen testing, Asphaltene studies.',
-    href: '/services/scale-up',
+    href: '/services/technology-validation-scale-up-centre',
     bg: '#1a1a1a',
   },
   {
@@ -113,9 +113,9 @@ const wwCards = [
 
 const counters = [
   { value: 2000, suffix: ' +', label: 'Multi-domain Projects' },
-  { value: 300,  suffix: ' +', label: 'Consultants Combination of Skillsets' },
-  { value: 100,   suffix: ' +M$', label: 'Customer Savings' },
-  { value: 250000,  suffix: ' +Sq.ft', label: 'Testing Lab For Oil & Gas' },
+  { value: 150, suffix: ' +', label: 'Consultants Combination of Skillsets' },
+  { value: 100, suffix: ' +M$', label: 'Customer Savings' },
+  { value: 250000, suffix: ' +Sq.ft', label: 'Testing Lab For Oil & Gas' },
 ];
 
 const clientLogos = [
@@ -255,7 +255,8 @@ export default function HomePage() {
           2. OUR SERVICES
           ============================================================ */}
       <section id="services" className="services-section" style={{ padding: '0' }} aria-labelledby="services-heading">
-        <style dangerouslySetInnerHTML={{__html: `
+        <style dangerouslySetInnerHTML={{
+          __html: `
           .home2-services-grid {
             display: grid !important;
             grid-template-columns: 1fr;
@@ -333,10 +334,10 @@ export default function HomePage() {
 
           {/* 6th card: Contact CTA */}
           <div className="service-card-wrap" role="listitem">
-            <Link href="/contact" style={{ display: 'block', height: '100%' }}>
+            <Link href="/contact-us" style={{ display: 'block', height: '100%' }}>
               <article
                 className="service-cta-card home2-service-cta-hover"
-                style={{ background: '#242424', position:'relative', overflow:'hidden' }}
+                style={{ background: '#242424', position: 'relative', overflow: 'hidden' }}
               >
                 <div
                   className="service-card-gradient-overlay"
@@ -349,8 +350,8 @@ export default function HomePage() {
                     To know more about our practice areas, contact us today!
                   </h3>
                 </div>
-                <div style={{ position:'relative', zIndex:2 }}>
-                  <span className="btn-outline-white" style={{ fontSize:'0.9rem', padding:'10px 22px' }}>
+                <div style={{ position: 'relative', zIndex: 2 }}>
+                  <span className="btn-outline-white" style={{ fontSize: '0.9rem', padding: '10px 22px' }}>
                     Contact Us <ArrowRight size={14} />
                   </span>
                 </div>
@@ -364,7 +365,8 @@ export default function HomePage() {
           3. WHO WE ARE
           ============================================================ */}
       <section aria-labelledby="wwa-heading" className="wwa-section">
-        <style dangerouslySetInnerHTML={{__html: `
+        <style dangerouslySetInnerHTML={{
+          __html: `
           .home2-wwa-flex {
             display: flex;
             flex-direction: column;
@@ -530,13 +532,13 @@ export default function HomePage() {
               <p className="section-desc" style={{ color: '#fff', fontSize: '18px', lineHeight: 1.6, marginBottom: '2rem' }}>
                 Welcome To Tridiagonal Solutions Fresh look! Check out our journey of delivering process excellence.
               </p>
-              
+
               <div style={{ marginBottom: '2rem' }}>
-                 <img src="/hubfs/old_new_tridiagonal.webp" alt="Tridiagonal Old and New Logo" style={{ maxWidth: '320px', height: 'auto', display: 'block', borderRadius: '4px' }} />
+                <img src="/hubfs/old_new_tridiagonal.webp" alt="Tridiagonal Old and New Logo" style={{ maxWidth: '320px', height: 'auto', display: 'block', borderRadius: '4px' }} />
               </div>
 
-              <Link href="/events/tridiagonal-solutions-new-identity" 
-                className="btn-primary" 
+              <Link href="/events/tridiagonal-solutions-new-identity"
+                className="btn-primary"
                 style={{ background: 'var(--gradient-brand)', color: '#000', fontWeight: '700', textTransform: 'uppercase', padding: '12px 28px', border: 'none' }}>
                 READ MORE <ArrowRight size={15} color="#000" />
               </Link>
@@ -553,16 +555,16 @@ export default function HomePage() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderRadius:'16px',
-                  position:'relative',
-                  overflow:'hidden',
+                  borderRadius: '16px',
+                  position: 'relative',
+                  overflow: 'hidden',
                   boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
                 }}
               >
-                <div className="video-play-btn" style={{ position:'relative', zIndex:2, background: 'rgba(255,255,255,0.9)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-teal)" aria-hidden="true" style={{ marginLeft: '4px' }}>
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
+                <div className="video-play-btn" style={{ position: 'relative', zIndex: 2, background: 'rgba(255,255,255,0.9)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-teal)" aria-hidden="true" style={{ marginLeft: '4px' }}>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
                 </div>
               </div>
             </div>
@@ -573,18 +575,18 @@ export default function HomePage() {
         {isVideoOpen && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsVideoOpen(false)}>
             <div style={{ width: '90%', maxWidth: '900px', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-               <button suppressHydrationWarning 
-                 onClick={() => setIsVideoOpen(false)}
-                 style={{ position: 'absolute', top: '-40px', right: '0', background: 'transparent', color: '#fff', border: 'none', fontSize: '32px', cursor: 'pointer' }}>
-                 &times;
-               </button>
-               <video 
-                 controls 
-                 autoPlay 
-                 style={{ width: '100%', height: 'auto', borderRadius: '8px', outline: 'none', background: '#000' }}>
-                 <source src="/hubfs/brand_video.mp4" type="video/mp4" />
-                 Your browser does not support the video tag.
-               </video>
+              <button suppressHydrationWarning
+                onClick={() => setIsVideoOpen(false)}
+                style={{ position: 'absolute', top: '-40px', right: '0', background: 'transparent', color: '#fff', border: 'none', fontSize: '32px', cursor: 'pointer' }}>
+                &times;
+              </button>
+              <video
+                controls
+                autoPlay
+                style={{ width: '100%', height: 'auto', borderRadius: '8px', outline: 'none', background: '#000' }}>
+                <source src="/hubfs/brand_video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
         )}
@@ -594,7 +596,8 @@ export default function HomePage() {
           6. KEY HIGHLIGHTS – Counters
           ============================================================ */}
       <section ref={counterRef} aria-labelledby="counters-heading" style={{ background: '#1a1a1a', padding: '60px 0 40px 0', position: 'relative' }}>
-        <style dangerouslySetInnerHTML={{__html: `
+        <style dangerouslySetInnerHTML={{
+          __html: `
           .home2-kh-layout {
             display: flex;
             flex-direction: column;
@@ -744,7 +747,7 @@ export default function HomePage() {
 
         <div className="content-wrapper-lg">
           <div className="home2-kh-layout">
-            
+
             {/* Left Box */}
             <div className="home2-kh-left">
               <div className="dvr-line" />
@@ -754,9 +757,9 @@ export default function HomePage() {
               <p style={{ color: '#fff', opacity: '0.9', lineHeight: 1.6, marginBottom: '32px', fontSize: '18px' }}>
                 16+ years process consulting experience using advanced technologies
               </p>
-              <Link href="/about-us" className="home2-kh-btn" style={{ 
-                background: 'var(--gradient-brand)', color: '#000', fontWeight: '700', 
-                textTransform: 'uppercase', padding: '14px 36px', borderRadius: '40px', 
+              <Link href="/about-us" className="home2-kh-btn" style={{
+                background: 'var(--gradient-brand)', color: '#000', fontWeight: '700',
+                textTransform: 'uppercase', padding: '14px 36px', borderRadius: '40px',
                 border: 'none', display: 'inline-flex', alignItems: 'center', gap: '10px',
                 fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none'
               }}>
@@ -770,7 +773,7 @@ export default function HomePage() {
                 <Counter key={c.label} value={c.value} suffix={c.suffix} label={c.label} inView={counterInView} />
               ))}
             </div>
-            
+
           </div>
         </div>
       </section>
@@ -781,7 +784,7 @@ export default function HomePage() {
       <section aria-label="Use Cases" style={{ background: '#242424', padding: '80px 0', overflow: 'hidden' }}>
         <div className="content-wrapper-lg">
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px' }}>
-            
+
             {/* Left Column: Heading & Text */}
             <div style={{ flex: '0 0 350px', display: 'flex', flexDirection: 'column' }}>
               <div className="dvr-line" style={{ marginBottom: '16px' }} />
@@ -806,24 +809,24 @@ export default function HomePage() {
 
             {/* Right Column: Carousel */}
             <div style={{ flex: '1', minWidth: '0', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ 
-                display: 'flex', transition: useCasesInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none', 
-                transform: `translateX(-${useCasesSlide * (100 / (useCasesCards.length + 3))}%)`, 
-                width: `calc(${(useCasesCards.length + 3)} * var(--uc-slide-width, 33.3333%))` 
+              <div style={{
+                display: 'flex', transition: useCasesInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+                transform: `translateX(-${useCasesSlide * (100 / (useCasesCards.length + 3))}%)`,
+                width: `calc(${(useCasesCards.length + 3)} * var(--uc-slide-width, 33.3333%))`
               }}>
                 {[...useCasesCards, useCasesCards[0], useCasesCards[1], useCasesCards[2]].map((card, idx) => (
                   <div className="use-cases-slide" key={idx} style={{ flex: `0 0 ${100 / (useCasesCards.length + 3)}%`, minWidth: 0, padding: '0 10px', display: 'flex', flexDirection: 'column' }}>
-                    
+
                     {/* Image / Card Container */}
-                    <div style={{ 
-                      borderRadius: '24px', 
+                    <div style={{
+                      borderRadius: '24px',
                       background: card.customGradient || (card.isCaseStudy ? 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)' : 'transparent'),
                       padding: card.isCaseStudy ? '4px' : '3px',
                       marginBottom: '20px',
                       display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0
                     }}>
-                      <div style={{ 
-                        background: card.isCaseStudy ? '#fff' : '#1c1c1c', 
+                      <div style={{
+                        background: card.isCaseStudy ? '#fff' : '#1c1c1c',
                         borderRadius: '20px', overflow: 'hidden', height: 'auto', minHeight: '300px',
                         position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', minWidth: 0
                       }}>
@@ -843,18 +846,18 @@ export default function HomePage() {
                     <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '500', lineHeight: 1.4, minHeight: '50px', wordBreak: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>
                       {card.title}
                     </h3>
-                    
+
                     <button suppressHydrationWarning onClick={() => {
-                        setUseCasesInTransition(true);
-                        setUseCasesSlide(idx % useCasesCards.length);
-                      }} style={{
+                      setUseCasesInTransition(true);
+                      setUseCasesSlide(idx % useCasesCards.length);
+                    }} style={{
                       marginTop: '20px', width: '40px', height: '40px', borderRadius: '50%',
                       background: 'var(--color-teal)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
                       cursor: 'pointer', flexShrink: 0
                     }}>
                       <ArrowRight size={18} color="#000" />
                     </button>
-                    
+
                   </div>
                 ))}
               </div>
@@ -888,7 +891,8 @@ export default function HomePage() {
           9. TECHNOLOGY PARTNERS SECTION
           ============================================================ */}
       <section aria-label="Technology Partners" style={{ background: '#1a1a1a', padding: '100px 0' }}>
-        <style dangerouslySetInnerHTML={{__html: `
+        <style dangerouslySetInnerHTML={{
+          __html: `
           .home2-tp-layout {
             display: flex;
             flex-direction: column;
@@ -934,7 +938,7 @@ export default function HomePage() {
         `}} />
         <div className="content-wrapper-lg">
           <div className="home2-tp-layout">
-            
+
             {/* Left Column: Title & Button */}
             <div style={{ flexShrink: 0, minWidth: '300px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
               {/* Title */}
@@ -976,7 +980,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            
+
           </div>
         </div>
       </section>
@@ -987,7 +991,7 @@ export default function HomePage() {
       <section aria-label="Resources" style={{ background: '#242424', padding: '80px 0' }} ref={resRef}>
         <div className="content-wrapper-lg">
           <div className="resources-layout">
-            
+
             {/* Left Column: Text & Buttons */}
             <div className="resources-left">
               <div className={`dvr-line ${resInView ? 'fade-in-up' : ''}`} style={{ marginBottom: '16px', opacity: resInView ? 1 : 0 }} />
@@ -1026,12 +1030,12 @@ export default function HomePage() {
 
             {/* Right Column: Dynamic Slider Card */}
             <div className="resources-right">
-              <div style={{ 
+              <div style={{
                 background: 'var(--gradient-brand)',
                 padding: '4px', borderRadius: '16px', width: '100%',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
               }}>
-                <div style={{ 
+                <div style={{
                   background: '#242424', borderRadius: '14px', overflow: 'hidden',
                   display: 'flex', flexDirection: 'column', minHeight: '520px',
                   position: 'relative'

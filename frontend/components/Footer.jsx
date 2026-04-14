@@ -42,16 +42,16 @@ function YouTubeIcon() {
 }
 
 const services = [
-  { title: 'Advanced Modeling & Simulation (CFD/FEA)', href: '/services/modeling' },
-  { title: 'Technology Validation & Scale-up Centre', href: '/services/scale-up' },
+  { title: 'Advanced Modeling & Simulation (CFD/FEA)', href: '/services/advance-modeling-and-simulation' },
+  { title: 'Technology Validation & Scale-up Centre', href: '/services/technology-validation-scale-up-centre' },
   { title: 'Tridiagonal.ai – Domain-Driven AI', href: 'https://tridiagonal.ai' },
   { title: 'Software – Scale-up & Tech Transfer', href: 'https://tridiagonalsoftware.com' },
   { title: 'Partner Solutions', href: '/partner-solutions' },
 ];
 
 const topics = [
-  { title: 'Computational Fluid Dynamics', href: '/services/modeling' },
-  { title: 'Green Hydrogen', href: '/services/scale-up' },
+  { title: 'Computational Fluid Dynamics', href: '/services/advance-modeling-and-simulation/computational-fluid-dynamics-cfd' },
+  { title: 'Green Hydrogen', href: '/services/technology-validation-scale-up-centre/new-energy-validation-and-eor' },
   { title: 'Fluid Structure Interaction', href: '#' },
 ];
 

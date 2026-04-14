@@ -365,20 +365,20 @@ ol {
 
 /* Mega Menu Dropdown */
 .mega-dropdown-wrapper {
-  position: fixed;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #363636;
-  border-top: 1px solid var(--color-teal);
-  z-index: 999;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-6px);
-  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
-  pointer-events: none;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    position: absolute;
+    top: 90%;
+    left: 0;
+    right: 0;
+    background: #363636;
+    border-top: 1px solid var(--color-teal);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    pointer-events: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .mega-dropdown-wrapper.open {
@@ -391,28 +391,28 @@ ol {
 .mega-dropdown-inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 2.5rem 30px 4rem;
+  padding: 3rem 40px 5rem;
   display: grid;
-  grid-template-columns: 280px 1fr 340px;
-  gap: 4rem;
+  grid-template-columns: 280px 1.2fr 400px;
+  gap: 3rem;
   position: relative;
 }
 
 .mega-close-btn {
-  position: absolute;
-  top: 1.5rem;
-  right: 30px;
-  background: none;
-  border: 1px solid var(--color-teal);
-  border-radius: 50%;
-  color: var(--color-teal);
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
+    position: absolute;
+    top: 1.5rem;
+    right: 5px;
+    background: none;
+    border: 1px solid var(--color-teal);
+    border-radius: 50%;
+    color: var(--color-teal);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .mega-close-btn:hover {
@@ -455,9 +455,9 @@ ol {
 .mega-link-item {
   display: flex;
   flex-direction: column;
-  padding: 16px 20px;
+  padding: 16px 32px 16px 20px;
   background: transparent;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   border-left: 3px solid transparent;
   transition: all 0.2s;
   cursor: pointer;
@@ -514,6 +514,19 @@ ol {
 }
 
 /* Featured resources col */
+.mega-featured-col {
+  position: relative;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(rgba(26, 26, 26, 0.85), rgba(26, 26, 26, 0.92)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
 .mega-featured-col h4 {
   font-size: 0.8rem;
   font-weight: 700;
@@ -525,26 +538,42 @@ ol {
 
 .resource-link-item {
   color: #fff;
-  text-decoration: underline;
-  -webkit-text-decoration-color: var(--color-teal);
-  text-decoration-color: var(--color-teal);
-  text-underline-offset: 6px;
+  text-decoration: none;
   cursor: pointer;
-  border-bottom: 1px solid #ffffff12;
-  padding: 10px 0;
-  font-size: .9rem;
-  font-weight: 700;
-  line-height: 1.8;
-  transition: color .2s;
-  display: block;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.resource-link-item::after {
+  content: '→';
+  font-size: 1.2rem;
+  color: var(--color-teal);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.resource-link-item:hover {
+  color: var(--color-teal);
+  padding-left: 8px;
+  border-bottom-color: var(--color-teal);
+}
+
+.resource-link-item:hover::after {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .resource-link-item:last-child {
   border-bottom: none;
-}
-
-.resource-link-item:hover {
-  color: #fff;
 }
 
 /* Mobile nav */
