@@ -1,0 +1,695 @@
+'use client';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function AdminHomePageEditor() {
+  const router = useRouter();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    fetch('/api/admin/homepage', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+      }
+    })
+    .then(res => res.json())
+    .then(json => {
+      // Fallback if protected route fails (e.g. testing)
+      if(!json.data) {
+         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/homepage`)
+          .then(r => r.json())
+          .then(pubJson => {
+            setData(pubJson.data || {});
+            setLoading(false);
+          });
+      } else {
+        setData(json.data || {});
+        setLoading(false);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage('');
+    
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/homepage`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (res.ok) {
+        setMessage('Home Page updated successfully!');
+      } else {
+        setMessage('Error saving changes.');
+      }
+    } catch (err) {
+      setMessage('Network error.');
+    }
+    setSaving(false);
+  };
+
+  const updateHero = (field, value) => {
+    setData(prev => ({ ...prev, hero: { ...prev.hero, [field]: value } }));
+  };
+
+  const updateArrayItem = (arrayName, index, field, value) => {
+    setData(prev => {
+      const newArray = [...(prev[arrayName] || [])];
+      newArray[index] = { ...newArray[index], [field]: value };
+      return { ...prev, [arrayName]: newArray };
+    });
+  };
+
+  const addArrayItem = (arrayName, emptyObject) => {
+    setData(prev => ({ ...prev, [arrayName]: [...(prev[arrayName] || []), emptyObject] }));
+  };
+
+  const removeArrayItem = (arrayName, index) => {
+    setData(prev => {
+      const newArray = [...(prev[arrayName] || [])];
+      newArray.splice(index, 1);
+      return { ...prev, [arrayName]: newArray };
+    });
+  };
+
+  if (loading) return <div style={{ padding: '3rem', color: '#64748b', fontSize: '1.1rem', fontWeight: 500 }}>Loading Home Page environment...</div>;
+
+  return (
+    <div className="admin-editor-wrap">
+      <style>{`
+        /* 
+         * Modern Light Dashboard Theme
+         */
+        body {
+          background-color: #f8fafc; /* Ensure background is crisp light gray */
+        }
+        .admin-editor-wrap {
+          max-width: 100%;
+          margin: 0 auto;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0f172a;
+          padding-bottom: 6rem; /* room for sticky footer */
+        }
+        
+        .admin-header {
+          margin-bottom: 2.5rem;
+        }
+        
+        .admin-title {
+          font-size: 2.25rem;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0 0 0.5rem 0;
+          letter-spacing: -0.03em;
+        }
+        
+        .admin-subtitle {
+          color: #64748b;
+          font-size: 1.05rem;
+          margin: 0;
+        }
+        
+        .admin-msg {
+          padding: 1rem 1.25rem;
+          margin-bottom: 2rem;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 0.95rem;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .msg-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .msg-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        .admin-section {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+          margin-bottom: 2.5rem;
+          overflow: hidden;
+          transition: box-shadow 0.2s ease;
+        }
+        .admin-section:hover {
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+        }
+        
+        .admin-section-header {
+          background: #f8fafc;
+          padding: 1.25rem 2rem;
+          border-bottom: 1px solid #e2e8f0;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+        
+        .admin-section-header h2 {
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #1e293b;
+          margin: 0;
+          letter-spacing: -0.01em;
+        }
+        
+        .admin-badge {
+          background: #00AEEF;
+          color: #ffffff;
+          width: 28px;
+          height: 28px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          font-size: 0.85rem;
+          font-weight: 700;
+          box-shadow: 0 2px 4px rgba(0, 174, 239, 0.3);
+        }
+        
+        .admin-form-body {
+          padding: 2rem;
+        }
+        
+        .admin-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.75rem;
+        }
+        @media (min-width: 768px) {
+          .admin-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .admin-col-full { grid-column: 1 / -1; }
+        
+        .admin-label {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #475569;
+          margin-bottom: 0.5rem;
+        }
+        
+        .admin-input, .admin-textarea {
+          width: 100%;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          padding: 0.75rem 1rem;
+          color: #0f172a;
+          font-size: 0.95rem;
+          font-family: inherit;
+          transition: all 0.2s;
+          box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+          box-sizing: border-box;
+        }
+        .admin-input:hover, .admin-textarea:hover {
+          border-color: #94a3b8;
+        }
+        .admin-input:focus, .admin-textarea:focus {
+          outline: none;
+          border-color: #00AEEF;
+          box-shadow: 0 0 0 4px rgba(0, 174, 239, 0.15);
+          background: #ffffff;
+        }
+        
+        .admin-video-preview {
+          width: 100%;
+          height: 140px;
+          object-fit: cover;
+          border-radius: 8px;
+          border: 1px solid #cbd5e1;
+          background: #e2e8f0;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .video-placeholder {
+          width: 100%;
+          height: 140px;
+          border-radius: 8px;
+          border: 2px dashed #cbd5e1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #94a3b8;
+          font-size: 0.9rem;
+          font-weight: 500;
+          background: #f8fafc;
+        }
+
+        .admin-bottom-bar {
+          position: fixed;
+          bottom: 0;
+          left: 260px; /* offset by sidebar */
+          right: 0;
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-top: 1px solid #e2e8f0;
+          padding: 1.25rem 3rem;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          z-index: 100;
+          box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);
+        }
+        
+        .admin-btn-save {
+          background: #00AEEF;
+          color: white;
+          font-weight: 600;
+          font-size: 0.95rem;
+          padding: 0.75rem 2.5rem;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 6px rgba(0, 174, 239, 0.25);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .admin-btn-save:hover:not(:disabled) {
+          background: #0093cf;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 10px rgba(0, 174, 239, 0.3);
+        }
+        .admin-btn-save:active:not(:disabled) {
+          transform: translateY(0);
+          box-shadow: 0 2px 4px rgba(0, 174, 239, 0.2);
+        }
+        .admin-btn-save:disabled {
+          background: #cbd5e1;
+          color: #64748b;
+          box-shadow: none;
+          cursor: not-allowed;
+        }
+        /* --- Array Cards Editor --- */
+        .admin-array-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        .admin-array-card {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 1.5rem;
+          position: relative;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+        }
+        .admin-array-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.25rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px dashed #cbd5e1;
+        }
+        .admin-array-card-title {
+          font-weight: 700;
+          color: #334155;
+          font-size: 1rem;
+          margin: 0;
+        }
+        .admin-btn-remove {
+          background: #fef2f2;
+          color: #ef4444;
+          border: 1px solid #fecaca;
+          padding: 0.4rem 0.8rem;
+          border-radius: 6px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .admin-btn-remove:hover {
+          background: #fee2e2;
+          color: #dc2626;
+        }
+        .admin-btn-add {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #ffffff;
+          border: 2px dashed #cbd5e1;
+          color: #475569;
+          font-weight: 600;
+          padding: 1rem 2rem;
+          border-radius: 8px;
+          cursor: pointer;
+          margin-top: 1rem;
+          transition: all 0.2s;
+          width: 100%;
+          justify-content: center;
+        }
+        .admin-btn-add:hover {
+          border-color: #00AEEF;
+          color: #00AEEF;
+          background: #f0f9ff;
+        }
+      `}</style>
+
+      <div className="admin-header">
+        <h1 className="admin-title">Home Page Settings</h1>
+        <p className="admin-subtitle">Manage static configurations and dynamic hero content for the landing page.</p>
+      </div>
+      
+      {message && (
+        <div className={`admin-msg ${message.includes('Error') ? 'msg-error' : 'msg-success'}`}>
+          <svg style={{ width: '20px', height: '20px', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             {message.includes('Error') 
+               ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+               : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+             }
+          </svg>
+          {message}
+        </div>
+      )}
+
+      <form onSubmit={handleSave}>
+        {/* HERO SECTION */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">1</span>
+            <h2>Hero Banner Details</h2>
+          </div>
+          
+          <div className="admin-form-body">
+            <div className="admin-grid">
+              <div>
+                <label className="admin-label">Headline First Line</label>
+                <input type="text" placeholder="e.g. Process Consulting and" value={data?.hero?.titleLine1 || ''} onChange={e => updateHero('titleLine1', e.target.value)} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Headline Gradient Text</label>
+                <input type="text" placeholder="e.g. Technology Solutions" value={data?.hero?.titleLine2 || ''} onChange={e => updateHero('titleLine2', e.target.value)} className="admin-input" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Hero Description</label>
+                <textarea placeholder="Write a short sub-headline..." value={data?.hero?.description || ''} onChange={e => updateHero('description', e.target.value)} rows={3} className="admin-textarea" />
+              </div>
+              <div>
+                <label className="admin-label">Background Video URL</label>
+                <input type="text" placeholder="/hubfs/your-video.mp4" value={data?.hero?.videoUrl || ''} onChange={e => updateHero('videoUrl', e.target.value)} className="admin-input" />
+                <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '6px' }}>Provide a direct absolute path to an mp4 asset.</p>
+              </div>
+              <div>
+                <label className="admin-label">Live Video Preview</label>
+                {data?.hero?.videoUrl ? (
+                   <video src={data?.hero?.videoUrl} muted autoPlay loop playsInline className="admin-video-preview"></video>
+                ) : (
+                   <div className="video-placeholder">No video connected</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SERVICE CARDS (Dynamic Array) */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">2</span>
+            <h2>Service Cards</h2>
+          </div>
+          
+          <div className="admin-form-body">
+            <div className="admin-array-list">
+              {(data?.serviceCards || []).map((card, idx) => (
+                <div key={idx} className="admin-array-card">
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Card #{idx + 1}</h3>
+                    <button type="button" onClick={() => removeArrayItem('serviceCards', idx)} className="admin-btn-remove">Remove Card</button>
+                  </div>
+                  
+                  <div className="admin-grid">
+                    <div>
+                      <label className="admin-label">Number / Identifier</label>
+                      <input type="text" value={card.num || ''} onChange={e => updateArrayItem('serviceCards', idx, 'num', e.target.value)} className="admin-input" placeholder="e.g. 01" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Redirection Link URL</label>
+                      <input type="text" value={card.href || ''} onChange={e => updateArrayItem('serviceCards', idx, 'href', e.target.value)} className="admin-input" placeholder="/services/endpoint" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Title</label>
+                      <input type="text" value={card.title || ''} onChange={e => updateArrayItem('serviceCards', idx, 'title', e.target.value)} className="admin-input" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Background Color Hex</label>
+                      <input type="text" value={card.bg || ''} onChange={e => updateArrayItem('serviceCards', idx, 'bg', e.target.value)} className="admin-input" placeholder="#383838" />
+                    </div>
+                    <div className="admin-col-full">
+                      <label className="admin-label">Card Description</label>
+                      <textarea value={card.desc || ''} onChange={e => updateArrayItem('serviceCards', idx, 'desc', e.target.value)} rows={2} className="admin-textarea" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              <button
+                type="button"
+                className="admin-btn-add"
+                onClick={() => addArrayItem('serviceCards', { num: 'XX', title: 'New Service', desc: '', href: '#', bg: '#383838' })}
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Add New Service Card
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* WHO WE ARE CARDS (Dynamic Array) */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">3</span>
+            <h2>Who We Are Cards</h2>
+          </div>
+          
+          <div className="admin-form-body">
+            <div className="admin-array-list">
+              {(data?.whoWeAreCards || []).map((card, idx) => (
+                <div key={idx} className="admin-array-card">
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Card #{idx + 1}</h3>
+                    <button type="button" onClick={() => removeArrayItem('whoWeAreCards', idx)} className="admin-btn-remove">Remove Card</button>
+                  </div>
+                  
+                  <div className="admin-grid">
+                    <div>
+                      <label className="admin-label">Title</label>
+                      <input type="text" value={card.title || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'title', e.target.value)} className="admin-input" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Background Image Layout / URL</label>
+                      <input type="text" value={card.backgroundImage || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'backgroundImage', e.target.value)} className="admin-input" placeholder="/hubfs/image.png" />
+                    </div>
+                    <div className="admin-col-full">
+                      <label className="admin-label">Card Description</label>
+                      <textarea value={card.desc || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'desc', e.target.value)} rows={3} className="admin-textarea" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Button Text</label>
+                      <input type="text" value={card.buttonText || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'buttonText', e.target.value)} className="admin-input" placeholder="VIEW MORE" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Button Link URL</label>
+                      <input type="text" value={card.buttonLink || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'buttonLink', e.target.value)} className="admin-input" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              <button
+                type="button"
+                className="admin-btn-add"
+                onClick={() => addArrayItem('whoWeAreCards', { title: 'New Pillar', desc: '', backgroundImage: '', buttonText: 'VIEW MORE', buttonLink: '#' })}
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Add New "Who We Are" Card
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* BRAND IDENTITY */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">4</span>
+            <h2>Brand Identity Block</h2>
+          </div>
+          
+          <div className="admin-form-body">
+            <div className="admin-grid">
+              <div>
+                <label className="admin-label">Section Title</label>
+                <input type="text" value={data?.brandIdentity?.title || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...prev.brandIdentity, title: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Thumb Preview Image Path</label>
+                <input type="text" value={data?.brandIdentity?.thumbnailImage || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...prev.brandIdentity, thumbnailImage: e.target.value}}))} className="admin-input" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Short Description</label>
+                <textarea value={data?.brandIdentity?.description || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...prev.brandIdentity, description: e.target.value}}))} rows={2} className="admin-textarea" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* KEY HIGHLIGHTS / COUNTERS */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">5</span>
+            <h2>Key Highlights & Counters</h2>
+          </div>
+          <div className="admin-form-body">
+            <div className="admin-grid" style={{ marginBottom: '2rem' }}>
+              <div>
+                <label className="admin-label">Main Title</label>
+                <input type="text" value={data?.keyHighlights?.title || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...prev.keyHighlights, title: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Subtitle Description</label>
+                <input type="text" value={data?.keyHighlights?.description || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...prev.keyHighlights, description: e.target.value}}))} className="admin-input" />
+              </div>
+            </div>
+            
+            <h3 className="admin-label" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem', marginBottom: '1rem', fontSize: '1rem' }}>Statistic Counters</h3>
+            <div className="admin-array-list">
+              {(data?.keyHighlights?.counters || []).map((card, idx) => (
+                <div key={idx} className="admin-array-card" style={{ background: '#fff' }}>
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Statistic #{idx + 1}</h3>
+                    <button type="button" onClick={() => {
+                        const newArray = [...(data.keyHighlights.counters || [])];
+                        newArray.splice(idx, 1);
+                        setData(p => ({...p, keyHighlights: {...p.keyHighlights, counters: newArray}}));
+                    }} className="admin-btn-remove">Remove Counter</button>
+                  </div>
+                  <div className="admin-grid" style={{ gridTemplateColumns: '1fr 1fr 2fr' }}>
+                    <div>
+                      <label className="admin-label">Numeric Value</label>
+                      <input type="number" value={card.value || 0} onChange={e => {
+                        const newArray = [...(data.keyHighlights.counters || [])];
+                        newArray[idx] = { ...newArray[idx], value: parseFloat(e.target.value) };
+                        setData(p => ({...p, keyHighlights: {...p.keyHighlights, counters: newArray}}));
+                      }} className="admin-input" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Suffix (e.g. '+M$')</label>
+                      <input type="text" value={card.suffix || ''} onChange={e => {
+                        const newArray = [...(data.keyHighlights.counters || [])];
+                        newArray[idx] = { ...newArray[idx], suffix: e.target.value };
+                        setData(p => ({...p, keyHighlights: {...p.keyHighlights, counters: newArray}}));
+                      }} className="admin-input" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Statistic Label / Text</label>
+                      <input type="text" value={card.label || ''} onChange={e => {
+                        const newArray = [...(data.keyHighlights.counters || [])];
+                        newArray[idx] = { ...newArray[idx], label: e.target.value };
+                        setData(p => ({...p, keyHighlights: {...p.keyHighlights, counters: newArray}}));
+                      }} className="admin-input" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="admin-btn-add" onClick={() => {
+                 const newArray = [...(data?.keyHighlights?.counters || []), { value: 0, suffix: '+', label: 'New Metric' }];
+                 setData(p => ({...p, keyHighlights: {...p.keyHighlights, counters: newArray}}));
+              }}>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Add Numeric Statistic
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* RESOURCE SLIDERS */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">6</span>
+            <h2>Resource Carousels</h2>
+          </div>
+          <div className="admin-form-body">
+            <div className="admin-array-list">
+              {(data?.resourceSlides || []).map((card, idx) => (
+                <div key={idx} className="admin-array-card">
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Slide #{idx + 1}</h3>
+                    <button type="button" onClick={() => removeArrayItem('resourceSlides', idx)} className="admin-btn-remove">Remove Slide</button>
+                  </div>
+                  <div className="admin-grid">
+                    <div>
+                      <label className="admin-label">Slide Badge Type</label>
+                      <input type="text" value={card.typeStr || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'typeStr', e.target.value)} className="admin-input" placeholder="e.g. WEBINARS" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Redirection Link</label>
+                      <input type="text" value={card.href || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'href', e.target.value)} className="admin-input" />
+                    </div>
+                    <div className="admin-col-full">
+                      <label className="admin-label">Article / Slide Title</label>
+                      <input type="text" value={card.title || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'title', e.target.value)} className="admin-input" />
+                    </div>
+                    <div className="admin-col-full">
+                      <label className="admin-label">Article Summary Description</label>
+                      <textarea value={card.desc || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'desc', e.target.value)} rows={2} className="admin-textarea" />
+                    </div>
+                    <div className="admin-col-full">
+                      <label className="admin-label">Featured Image URL</label>
+                      <input type="text" value={card.image || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'image', e.target.value)} className="admin-input" placeholder="/hubfs/your-image.png" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="admin-btn-add" onClick={() => addArrayItem('resourceSlides', { typeStr: 'NEW', title: 'New Slide', desc: '', image: '', href: '#' })}>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Add Resource Slide
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* BOTTOM ACTION BAR */}
+        <div className="admin-bottom-bar">
+          <button type="submit" disabled={saving} className="admin-btn-save">
+             {saving ? (
+               <svg style={{ animation: 'spin 1s linear infinite', width: '18px', height: '18px' }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+               </svg>
+             ) : (
+               <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+               </svg>
+             )}
+             {saving ? 'Publishing...' : 'Save All Changes'}
+          </button>
+        </div>
+        
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .opacity-25 { opacity: 0.25; }
+          .opacity-75 { opacity: 0.75; }
+        `}} />
+      </form>
+    </div>
+  );
+}

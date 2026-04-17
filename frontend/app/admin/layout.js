@@ -1,40 +1,253 @@
+'use client';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, FileText, Briefcase, Settings, Users, LogOut } from 'lucide-react';
+import {
+  LayoutDashboard, FileText, Settings, Factory, BookOpen,
+  Calendar, Briefcase, Users, Handshake, Image as ImageIcon,
+  Mail, Globe, LogOut, ChevronDown, Home, ChevronRight,
+} from 'lucide-react';
+
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
+const sidebarNav = [
+  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  {
+    label: 'Pages',
+    icon: FileText,
+    children: [
+      { label: 'Home Page', href: '/admin/pages/home', icon: Home },
+      // More pages will be added here one by one
+    ],
+  },
+  { label: 'Services', href: '/admin/services', icon: Settings },
+  { label: 'Industries', href: '/admin/industries', icon: Factory },
+  { label: 'Resources', href: '/admin/resources', icon: BookOpen },
+  { label: 'Events', href: '/admin/events', icon: Calendar },
+  { label: 'Careers', href: '/admin/careers', icon: Briefcase },
+  { label: 'Team', href: '/admin/team', icon: Users },
+  { label: 'Partner Solutions', href: '/admin/partners', icon: Handshake },
+  { label: 'Media Library', href: '/admin/media', icon: ImageIcon },
+  { label: 'Header & Footer', href: '/admin/header-footer', icon: Globe },
+  { label: 'Contact Submissions', href: '/admin/contacts', icon: Mail },
+];
 
 export default function AdminLayout({ children }) {
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-corporate-blue text-white flex flex-col fixed h-full z-10 transition-transform">
-        <div className="p-6 text-center border-b border-white/10">
-           <h2 className="text-xl font-bold tracking-widest text-corporate-cyan">TRIDIAGONAL</h2>
-           <p className="text-xs text-gray-400 mt-1 uppercase">Admin CMS Panel</p>
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [expandedSections, setExpandedSections] = useState({ Pages: true });
+
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      router.replace('/admin-login');
+      return;
+    }
+
+    fetch(`${API_URL}/api/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Unauthorized');
+        return res.json();
+      })
+      .then(data => {
+        setUser(data.user);
+        setLoading(false);
+      })
+      .catch(() => {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+        router.replace('/admin-login');
+      });
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
+    router.replace('/admin-login');
+  };
+
+  const toggleSection = (label) => {
+    setExpandedSections(prev => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: '#00AEEF', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+          <p style={{ color: '#64748b', fontSize: '14px' }}>Verifying access...</p>
         </div>
-        <nav className="flex-1 px-4 py-8 space-y-2">
-           <Link href="/admin" className="flex items-center px-4 py-3 rounded-lg hover:bg-white/10 transition-colors">
-              <LayoutDashboard size={20} className="mr-3" /> Dashboard
-           </Link>
-           <Link href="/admin/pages" className="flex items-center px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-gray-300">
-              <FileText size={20} className="mr-3" /> Pages (SEO)
-           </Link>
-           <Link href="/admin/services" className="flex items-center px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-gray-300">
-              <Settings size={20} className="mr-3" /> Services
-           </Link>
-           <Link href="/admin/contacts" className="flex items-center px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-gray-300">
-              <Users size={20} className="mr-3" /> Inquiries
-           </Link>
-           <Link href="/admin/careers" className="flex items-center px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-gray-300">
-              <Briefcase size={20} className="mr-3" /> Careers
-           </Link>
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+          .site-header, .cta-section, .site-footer, .footer-bottom { display: none !important; }
+        `}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', background: '#f1f5f9' }}>
+      {/* Hide public site chrome */}
+      <style>{`
+        .site-header, .cta-section, .site-footer, .footer-bottom { display: none !important; }
+        body { padding-top: 0 !important; }
+        main[style*="padding-top: var(--nav-height)"] { padding-top: 0 !important; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
+
+      {/* Sidebar */}
+      <aside style={{
+        width: '260px',
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #0a0f1c 0%, #111827 100%)',
+        color: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        zIndex: 50,
+        overflowY: 'auto',
+      }}>
+        {/* Logo area */}
+        <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <Link href="/admin" style={{ textDecoration: 'none' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', letterSpacing: '0.08em', color: '#00AEEF', margin: 0 }}>TRIDIAGONAL</h2>
+            <p style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Admin CMS Panel</p>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          {sidebarNav.map((item) => {
+            if (item.children) {
+              const isExpanded = expandedSections[item.label];
+              const isChildActive = item.children.some(c => pathname === c.href);
+              return (
+                <div key={item.label}>
+                  <button
+                    onClick={() => toggleSection(item.label)}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '10px 12px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: isChildActive ? 'rgba(0,174,239,0.08)' : 'transparent',
+                      color: isChildActive ? '#00AEEF' : '#94a3b8',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      textAlign: 'left',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <item.icon size={18} />
+                    <span style={{ flex: 1 }}>{item.label}</span>
+                    <ChevronDown size={14} style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </button>
+                  {isExpanded && (
+                    <div style={{ paddingLeft: '20px', marginTop: '2px' }}>
+                      {item.children.map((child) => {
+                        const isActive = pathname === child.href;
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              textDecoration: 'none',
+                              fontSize: '13px',
+                              fontWeight: isActive ? '600' : '400',
+                              color: isActive ? '#00AEEF' : '#64748b',
+                              background: isActive ? 'rgba(0,174,239,0.1)' : 'transparent',
+                              transition: 'all 0.2s',
+                            }}
+                          >
+                            <child.icon size={15} />
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '10px 12px',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontSize: '13px',
+                  fontWeight: isActive ? '600' : '500',
+                  color: isActive ? '#fff' : '#94a3b8',
+                  background: isActive ? 'rgba(0,174,239,0.15)' : 'transparent',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <item.icon size={18} />
+                {item.label}
+                {isActive && <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.5 }} />}
+              </Link>
+            );
+          })}
         </nav>
-        <div className="p-6 border-t border-white/10 cursor-pointer hover:text-red-400 transition-colors flex items-center">
-           <LogOut size={20} className="mr-3" /> Logout
+
+        {/* User + Logout */}
+        <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          {user && (
+            <div style={{ padding: '8px 12px', marginBottom: '8px' }}>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#e2e8f0', margin: 0 }}>{user.name}</p>
+              <p style={{ fontSize: '11px', color: '#64748b', margin: '2px 0 0' }}>{user.email}</p>
+            </div>
+          )}
+          <button
+            onClick={handleLogout}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px 12px',
+              borderRadius: '8px',
+              border: 'none',
+              background: 'rgba(239, 68, 68, 0.08)',
+              color: '#f87171',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontWeight: '500',
+              transition: 'all 0.2s',
+            }}
+          >
+            <LogOut size={18} />
+            Sign Out
+          </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 ml-64 p-10 bg-gray-50">
-         {children}
+      {/* Main Content */}
+      <main style={{ flex: 1, marginLeft: '260px', padding: '32px 40px', minHeight: '100vh' }}>
+        {children}
       </main>
     </div>
   );
