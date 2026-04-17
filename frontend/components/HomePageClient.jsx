@@ -134,6 +134,7 @@ export default function HomePageClient({ initialData }) {
   })) : wwCards;
   const metrics = initialData?.keyHighlights?.counters?.length > 0 ? initialData.keyHighlights.counters : counters;
   const clientLogosList = initialData?.clientLogos?.length > 0 ? initialData.clientLogos.map(l => l.name) : clientLogos;
+  const workOnUiCards = initialData?.workOnCards?.length > 0 ? initialData.workOnCards : workOnCards;
 
   const videoRef = useRef(null);
   const [counterRef, counterInView] = useInView(0.3);
@@ -329,7 +330,7 @@ export default function HomePageClient({ initialData }) {
         {/* Section heading */}
         <div className="content-wrapper-lg" style={{ paddingTop: '80px', paddingBottom: '48px' }}>
           <div className="dvr-line" />
-          <h2 id="services-heading" className="section-title">Our Services</h2>
+          <h2 id="services-heading" className="section-title">{initialData?.servicesHeading || 'Our Services'}</h2>
         </div>
 
         {/* Cards grid */}
@@ -359,9 +360,9 @@ export default function HomePageClient({ initialData }) {
             </div>
           ))}
 
-          {/* 6th card: Contact CTA */}
+          {/* CTA card: dynamic */}
           <div className="service-card-wrap" role="listitem">
-            <Link href="/contact-us" style={{ display: 'block', height: '100%' }}>
+            <Link href={initialData?.serviceCta?.buttonLink || '/contact-us'} style={{ display: 'block', height: '100%' }}>
               <article
                 className="service-cta-card home2-service-cta-hover"
                 style={{ background: '#242424', position: 'relative', overflow: 'hidden' }}
@@ -374,12 +375,12 @@ export default function HomePageClient({ initialData }) {
                 <div className="service-cta-card-content">
                   <div className="dvr-line" />
                   <h3 className="service-card-title" style={{ fontSize: '1.35rem' }}>
-                    To know more about our practice areas, contact us today!
+                    {initialData?.serviceCta?.text || 'To know more about our practice areas, contact us today!'}
                   </h3>
                 </div>
                 <div style={{ position: 'relative', zIndex: 2 }}>
                   <span className="btn-outline-white" style={{ fontSize: '0.9rem', padding: '10px 22px' }}>
-                    Contact Us <ArrowRight size={14} />
+                    {initialData?.serviceCta?.buttonText || 'Contact Us'} <ArrowRight size={14} />
                   </span>
                 </div>
               </article>
@@ -486,8 +487,8 @@ export default function HomePageClient({ initialData }) {
         `}} />
         <div className="content-wrapper-lg">
           <div className="dvr-line" />
-          <h2 id="wwa-heading" className="section-title">Who We Are</h2>
-          <p className="section-desc">Leveraging advanced technologies to support process industry needs.</p>
+          <h2 id="wwa-heading" className="section-title">{initialData?.whoWeAreHeading || 'Who We Are'}</h2>
+          <p className="section-desc">{initialData?.whoWeAreDescription || 'Leveraging advanced technologies to support process industry needs.'}</p>
         </div>
 
         <div className="home2-wwa-flex" role="list">
@@ -523,16 +524,16 @@ export default function HomePageClient({ initialData }) {
         <div className="content-wrapper-lg">
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '40px', fontWeight: '700', marginBottom: '15px' }}>
-              What would you like to work on?
+              {initialData?.workOnHeading || "What would you like to work on?"}
             </h2>
             <p className="section-desc" style={{ color: '#fff', fontSize: '18px', opacity: 0.9, textAlign: 'center' }}>
-              Execution and Implementation partner for your business problems.
+              {initialData?.workOnDescription || "Execution and Implementation partner for your business problems."}
             </p>
           </div>
 
           <div className="work-cards-grid">
-            {workOnCards.map((card, idx) => (
-              <Link href="#" key={idx} className="work-card" style={{ background: card.bg }}>
+            {workOnUiCards.map((card, idx) => (
+              <Link href={card.link || '#'} key={idx} className="work-card" style={{ background: card.bg }}>
                 <img src={card.icon} alt={card.title} className="work-card-icon" />
                 <h4 className="work-card-title">{card.title}</h4>
                 <p className="work-card-desc">{card.desc}</p>
@@ -553,21 +554,21 @@ export default function HomePageClient({ initialData }) {
           <div className="two-col-grid" style={{ alignItems: 'center', gap: '3rem' }}>
             {/* Text side */}
             <div>
-              <h2 className="section-title" style={{ color: 'var(--color-teal)', marginBottom: '1.25rem', fontSize: '50px' }}>
-                Unveiling Our New<br />Brand Identity
+              <h2 className="section-title" style={{ color: 'var(--color-teal)', marginBottom: '1.25rem', fontSize: '50px', whiteSpace: 'pre-line' }}>
+                {initialData?.brandIdentity?.title || "Unveiling Our New\nBrand Identity"}
               </h2>
               <p className="section-desc" style={{ color: '#fff', fontSize: '18px', lineHeight: 1.6, marginBottom: '2rem' }}>
-                Welcome To Tridiagonal Solutions Fresh look! Check out our journey of delivering process excellence.
+                {initialData?.brandIdentity?.description || "Welcome To Tridiagonal Solutions Fresh look! Check out our journey of delivering process excellence."}
               </p>
 
               <div style={{ marginBottom: '2rem' }}>
-                <img src="/hubfs/old_new_tridiagonal.webp" alt="Tridiagonal Old and New Logo" style={{ maxWidth: '320px', height: 'auto', display: 'block', borderRadius: '4px' }} />
+                <img src={initialData?.brandIdentity?.logoImage || "/hubfs/old_new_tridiagonal.webp"} alt="Tridiagonal Old and New Logo" style={{ maxWidth: '320px', height: 'auto', display: 'block', borderRadius: '4px' }} />
               </div>
 
-              <Link href="/events/tridiagonal-solutions-new-identity"
+              <Link href={initialData?.brandIdentity?.ctaLink || "/events/tridiagonal-solutions-new-identity"}
                 className="btn-primary"
                 style={{ background: 'var(--gradient-brand)', color: '#000', fontWeight: '700', textTransform: 'uppercase', padding: '12px 28px', border: 'none' }}>
-                READ MORE <ArrowRight size={15} color="#000" />
+                {initialData?.brandIdentity?.ctaText || "READ MORE"} <ArrowRight size={15} color="#000" />
               </Link>
             </div>
 
@@ -577,7 +578,7 @@ export default function HomePageClient({ initialData }) {
                 style={{
                   width: '100%',
                   height: '420px',
-                  background: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("/hubfs/Capture-1.webp") center/cover no-repeat',
+                  background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("${initialData?.brandIdentity?.thumbnailImage || '/hubfs/Capture-1.webp'}") center/cover no-repeat`,
                   backgroundColor: '#ccc',
                   display: 'flex',
                   alignItems: 'center',
@@ -611,7 +612,7 @@ export default function HomePageClient({ initialData }) {
                 controls
                 autoPlay
                 style={{ width: '100%', height: 'auto', borderRadius: '8px', outline: 'none', background: '#000' }}>
-                <source src="/hubfs/brand_video.mp4" type="video/mp4" />
+                <source src={initialData?.brandIdentity?.modalVideoUrl || "/hubfs/brand_video.mp4"} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -779,18 +780,18 @@ export default function HomePageClient({ initialData }) {
             <div className="home2-kh-left">
               <div className="dvr-line" />
               <h2 id="counters-heading" className="section-title" style={{ color: 'var(--color-teal)', marginBottom: '16px', fontSize: 'clamp(1.6rem, 7vw, 3.1rem)', fontWeight: '700', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
-                Key Highlights
+                {initialData?.keyHighlights?.title || "Key Highlights"}
               </h2>
               <p style={{ color: '#fff', opacity: '0.9', lineHeight: 1.6, marginBottom: '32px', fontSize: '18px' }}>
-                16+ years process consulting experience using advanced technologies
+                {initialData?.keyHighlights?.description || "16+ years process consulting experience using advanced technologies"}
               </p>
-              <Link href="/about-us" className="home2-kh-btn" style={{
+              <Link href={initialData?.keyHighlights?.ctaLink || "/about-us"} className="home2-kh-btn" style={{
                 background: 'var(--gradient-brand)', color: '#000', fontWeight: '700',
                 textTransform: 'uppercase', padding: '14px 36px', borderRadius: '40px',
                 border: 'none', display: 'inline-flex', alignItems: 'center', gap: '10px',
                 fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none'
               }}>
-                ABOUT US <ArrowRight size={14} color="#000" />
+                {initialData?.keyHighlights?.ctaText || "ABOUT US"} <ArrowRight size={14} color="#000" />
               </Link>
             </div>
 

@@ -34,7 +34,18 @@ export default function AdminHomePageEditor() {
           backgroundType: fetchedData.hero?.backgroundType || "video",
         },
         serviceCards: fetchedData.serviceCards || [],
+        servicesHeading: fetchedData.servicesHeading || "Our Services",
+        serviceCta: {
+          text: fetchedData.serviceCta?.text || "To know more about our practice areas, contact us today!",
+          buttonText: fetchedData.serviceCta?.buttonText || "Contact Us",
+          buttonLink: fetchedData.serviceCta?.buttonLink || "/contact-us",
+        },
         whoWeAreCards: fetchedData.whoWeAreCards || [],
+        whoWeAreHeading: fetchedData.whoWeAreHeading || "Who We Are",
+        whoWeAreDescription: fetchedData.whoWeAreDescription || "Leveraging advanced technologies to support process industry needs.",
+        workOnHeading: fetchedData.workOnHeading || "What would you like to work on?",
+        workOnDescription: fetchedData.workOnDescription || "Execution and Implementation partner for your business problems.",
+        workOnCards: fetchedData.workOnCards || [],
         resourceSlides: fetchedData.resourceSlides || [],
         keyHighlights: fetchedData.keyHighlights || { counters: [] },
         brandIdentity: fetchedData.brandIdentity || {},
@@ -552,10 +563,16 @@ export default function AdminHomePageEditor() {
         <div className="admin-section">
           <div className="admin-section-header">
             <span className="admin-badge">2</span>
-            <h2>Service Cards</h2>
+            <h2>Services Section</h2>
           </div>
           
           <div className="admin-form-body">
+            <div>
+              <label className="admin-label">Section Heading</label>
+              <input type="text" value={data?.servicesHeading || ''} onChange={e => setData(prev => ({ ...prev, servicesHeading: e.target.value }))} className="admin-input" placeholder="Our Services" />
+            </div>
+
+            <h3 style={{ marginTop: '1.5rem', marginBottom: '0.5rem', fontSize: '1rem', fontWeight: 600, color: '#333' }}>Service Cards</h3>
             <div className="admin-array-list">
               {(data?.serviceCards || []).map((card, idx) => (
                 <div key={idx} className="admin-array-card">
@@ -598,17 +615,45 @@ export default function AdminHomePageEditor() {
                 Add New Service Card
               </button>
             </div>
+
+            <h3 style={{ marginTop: '2rem', marginBottom: '0.5rem', fontSize: '1rem', fontWeight: 600, color: '#333' }}>CTA Card (4th Card)</h3>
+            <div className="admin-grid">
+              <div className="admin-col-full">
+                <label className="admin-label">CTA Text</label>
+                <input type="text" value={data?.serviceCta?.text || ''} onChange={e => setData(prev => ({ ...prev, serviceCta: { ...(prev?.serviceCta || {}), text: e.target.value } }))} className="admin-input" placeholder="To know more about our practice areas, contact us today!" />
+              </div>
+              <div>
+                <label className="admin-label">Button Text</label>
+                <input type="text" value={data?.serviceCta?.buttonText || ''} onChange={e => setData(prev => ({ ...prev, serviceCta: { ...(prev?.serviceCta || {}), buttonText: e.target.value } }))} className="admin-input" placeholder="Contact Us" />
+              </div>
+              <div>
+                <label className="admin-label">Button Link</label>
+                <input type="text" value={data?.serviceCta?.buttonLink || ''} onChange={e => setData(prev => ({ ...prev, serviceCta: { ...(prev?.serviceCta || {}), buttonLink: e.target.value } }))} className="admin-input" placeholder="/contact-us" />
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* WHO WE ARE CARDS (Dynamic Array) */}
+        {/* WHO WE ARE SECTION */}
         <div className="admin-section">
           <div className="admin-section-header">
             <span className="admin-badge">3</span>
-            <h2>Who We Are Cards</h2>
+            <h2>Who We Are Section</h2>
           </div>
           
           <div className="admin-form-body">
+            <div className="admin-grid">
+              <div>
+                <label className="admin-label">Section Heading</label>
+                <input type="text" value={data?.whoWeAreHeading || ''} onChange={e => setData(prev => ({ ...prev, whoWeAreHeading: e.target.value }))} className="admin-input" placeholder="Who We Are" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Section Description</label>
+                <textarea value={data?.whoWeAreDescription || ''} onChange={e => setData(prev => ({ ...prev, whoWeAreDescription: e.target.value }))} rows={2} className="admin-textarea" placeholder="Leveraging advanced technologies..." />
+              </div>
+            </div>
+
+            <h3 style={{ marginTop: '1.5rem', marginBottom: '0.5rem', fontSize: '1rem', fontWeight: 600, color: '#333' }}>Cards</h3>
             <div className="admin-array-list">
               {(data?.whoWeAreCards || []).map((card, idx) => (
                 <div key={idx} className="admin-array-card">
@@ -623,8 +668,33 @@ export default function AdminHomePageEditor() {
                       <input type="text" value={card.title || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'title', e.target.value)} className="admin-input" />
                     </div>
                     <div>
-                      <label className="admin-label">Background Image Layout / URL</label>
-                      <input type="text" value={card.backgroundImage || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'backgroundImage', e.target.value)} className="admin-input" placeholder="/hubfs/image.png" />
+                      <label className="admin-label">Background Image URL</label>
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                        <input type="text" value={card.backgroundImage || ''} onChange={e => updateArrayItem('whoWeAreCards', idx, 'backgroundImage', e.target.value)} className="admin-input" placeholder="/hubfs/image.png" />
+                        <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                          Upload
+                          <input type="file" accept="image/*" onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            try {
+                              const res = await fetch(`${API_URL}/api/upload`, {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
+                                body: formData,
+                              });
+                              const json = await res.json();
+                              if (json.url) updateArrayItem('whoWeAreCards', idx, 'backgroundImage', json.url);
+                            } catch (err) { console.error(err); }
+                          }} style={{ display: 'none' }} />
+                        </label>
+                      </div>
+                      {card.backgroundImage ? (
+                        <img src={card.backgroundImage} alt="Card Preview" style={{ height: '200px', objectFit: 'cover', borderRadius: '8px', width: '100%' }} />
+                      ) : (
+                        <div className="video-placeholder" style={{ height: '200px' }}>No image connected</div>
+                      )}
                     </div>
                     <div className="admin-col-full">
                       <label className="admin-label">Card Description</label>
@@ -654,6 +724,96 @@ export default function AdminHomePageEditor() {
           </div>
         </div>
 
+        {/* WORK ON SECTION */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">3.5</span>
+            <h2>Work On Section</h2>
+          </div>
+          
+          <div className="admin-form-body">
+            <div className="admin-grid">
+              <div>
+                <label className="admin-label">Section Heading</label>
+                <input type="text" value={data?.workOnHeading || ''} onChange={e => setData(prev => ({ ...prev, workOnHeading: e.target.value }))} className="admin-input" placeholder="What would you like to work on?" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Section Description</label>
+                <textarea value={data?.workOnDescription || ''} onChange={e => setData(prev => ({ ...prev, workOnDescription: e.target.value }))} rows={2} className="admin-textarea" placeholder="Execution and Implementation partner..." />
+              </div>
+            </div>
+
+            <h3 style={{ marginTop: '1.5rem', marginBottom: '0.5rem', fontSize: '1rem', fontWeight: 600, color: '#333' }}>Cards</h3>
+            <div className="admin-array-list">
+              {(data?.workOnCards || []).map((card, idx) => (
+                <div key={idx} className="admin-array-card">
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Card #{idx + 1}</h3>
+                    <button type="button" onClick={() => removeArrayItem('workOnCards', idx)} className="admin-btn-remove">Remove Card</button>
+                  </div>
+                  
+                  <div className="admin-grid">
+                    <div>
+                      <label className="admin-label">Title</label>
+                      <input type="text" value={card.title || ''} onChange={e => updateArrayItem('workOnCards', idx, 'title', e.target.value)} className="admin-input" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Icon URL / Image</label>
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                        <input type="text" value={card.icon || ''} onChange={e => updateArrayItem('workOnCards', idx, 'icon', e.target.value)} className="admin-input" placeholder="/images/icon.svg" />
+                        <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                          Upload
+                          <input type="file" accept="image/*" onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            try {
+                              const res = await fetch(`${API_URL}/api/upload`, {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
+                                body: formData,
+                              });
+                              const json = await res.json();
+                              if (json.url) updateArrayItem('workOnCards', idx, 'icon', json.url);
+                            } catch (err) { console.error(err); }
+                          }} style={{ display: 'none' }} />
+                        </label>
+                      </div>
+                      {card.icon && (
+                        <div style={{ background: card.bg || '#333', padding: '10px', borderRadius: '4px', display: 'inline-block' }}>
+                          <img src={card.icon} alt="Card Icon Preview" style={{ height: '40px', objectFit: 'contain' }} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="admin-col-full">
+                      <label className="admin-label">Card Description</label>
+                      <textarea value={card.desc || ''} onChange={e => updateArrayItem('workOnCards', idx, 'desc', e.target.value)} rows={3} className="admin-textarea" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Background Color Hex</label>
+                      <input type="text" value={card.bg || ''} onChange={e => updateArrayItem('workOnCards', idx, 'bg', e.target.value)} className="admin-input" placeholder="#16333c" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Card Arrow Link/URL</label>
+                      <input type="text" value={card.link || ''} onChange={e => updateArrayItem('workOnCards', idx, 'link', e.target.value)} className="admin-input" placeholder="#" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              <button
+                type="button"
+                className="admin-btn-add"
+                onClick={() => addArrayItem('workOnCards', { title: 'New Area', desc: '', icon: '', bg: '#16333c', link: '#' })}
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Add New "Work On" Card
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* BRAND IDENTITY */}
         <div className="admin-section">
           <div className="admin-section-header">
@@ -665,16 +825,105 @@ export default function AdminHomePageEditor() {
             <div className="admin-grid">
               <div>
                 <label className="admin-label">Section Title</label>
-                <input type="text" value={data?.brandIdentity?.title || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...prev.brandIdentity, title: e.target.value}}))} className="admin-input" />
-              </div>
-              <div>
-                <label className="admin-label">Thumb Preview Image Path</label>
-                <input type="text" value={data?.brandIdentity?.thumbnailImage || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...prev.brandIdentity, thumbnailImage: e.target.value}}))} className="admin-input" />
+                <textarea value={data?.brandIdentity?.title || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), title: e.target.value}}))} className="admin-textarea" rows={2} />
               </div>
               <div className="admin-col-full">
                 <label className="admin-label">Short Description</label>
-                <textarea value={data?.brandIdentity?.description || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...prev.brandIdentity, description: e.target.value}}))} rows={2} className="admin-textarea" />
+                <textarea value={data?.brandIdentity?.description || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), description: e.target.value}}))} rows={2} className="admin-textarea" />
               </div>
+
+              {/* Left Side Component */}
+              <div className="admin-col-full" style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px' }}>
+                <h3 style={{ fontSize: '1rem', marginBottom: '10px' }}>Left Section (Logo & CTA)</h3>
+                <div className="admin-grid">
+                  <div>
+                    <label className="admin-label">Logo Image Upload</label>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                      <input type="text" value={data?.brandIdentity?.logoImage || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), logoImage: e.target.value}}))} className="admin-input" placeholder="/hubfs/old_new_tridiagonal.webp" />
+                      <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                        Upload
+                        <input type="file" accept="image/*" onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          try {
+                            const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }, body: formData});
+                            const json = await res.json();
+                            if (json.url) setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), logoImage: json.url}}));
+                          } catch (err) { console.error(err); }
+                        }} style={{ display: 'none' }} />
+                      </label>
+                    </div>
+                    {data?.brandIdentity?.logoImage && (
+                      <div style={{ background: '#242424', padding: '10px', borderRadius: '4px' }}>
+                        <img src={data.brandIdentity.logoImage} alt="Logo preview" style={{ height: '60px', objectFit: 'contain' }} />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <label className="admin-label">CTA Button Text</label>
+                    <input type="text" value={data?.brandIdentity?.ctaText || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), ctaText: e.target.value}}))} className="admin-input" placeholder="READ MORE" />
+                  </div>
+                  <div>
+                    <label className="admin-label">CTA Button Link</label>
+                    <input type="text" value={data?.brandIdentity?.ctaLink || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), ctaLink: e.target.value}}))} className="admin-input" placeholder="/events/tridiagonal-solutions-new-identity" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side Video Component */}
+              <div className="admin-col-full" style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '10px' }}>
+                <h3 style={{ fontSize: '1rem', marginBottom: '10px' }}>Right Section (Video)</h3>
+                <div className="admin-grid">
+                  <div>
+                    <label className="admin-label">Video File Upload (.mp4)</label>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                      <input type="text" value={data?.brandIdentity?.modalVideoUrl || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), modalVideoUrl: e.target.value}}))} className="admin-input" placeholder="/hubfs/brand_video.mp4" />
+                      <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                        Upload
+                        <input type="file" accept="video/*" onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          try {
+                            const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }, body: formData});
+                            const json = await res.json();
+                            if (json.url) setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), modalVideoUrl: json.url}}));
+                          } catch (err) { console.error(err); }
+                        }} style={{ display: 'none' }} />
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="admin-label">Video Thumbnail / Poster Image</label>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                      <input type="text" value={data?.brandIdentity?.thumbnailImage || ''} onChange={e => setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), thumbnailImage: e.target.value}}))} className="admin-input" placeholder="/hubfs/Capture-1.webp" />
+                      <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                        Upload
+                        <input type="file" accept="image/*" onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          try {
+                            const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }, body: formData});
+                            const json = await res.json();
+                            if (json.url) setData(prev => ({...prev, brandIdentity: {...(prev?.brandIdentity || {}), thumbnailImage: json.url}}));
+                          } catch (err) { console.error(err); }
+                        }} style={{ display: 'none' }} />
+                      </label>
+                    </div>
+                    {data?.brandIdentity?.thumbnailImage && (
+                      <div style={{ background: '#242424', padding: '10px', borderRadius: '4px' }}>
+                         <img src={data.brandIdentity.thumbnailImage} alt="Video Thumbnail Poster" style={{ width: '100%', height: '180px', objectFit: 'cover' }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -689,11 +938,19 @@ export default function AdminHomePageEditor() {
             <div className="admin-grid" style={{ marginBottom: '2rem' }}>
               <div>
                 <label className="admin-label">Main Title</label>
-                <input type="text" value={data?.keyHighlights?.title || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...prev.keyHighlights, title: e.target.value}}))} className="admin-input" />
+                <input type="text" value={data?.keyHighlights?.title || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...(prev?.keyHighlights || {}), title: e.target.value}}))} className="admin-input" />
               </div>
               <div>
                 <label className="admin-label">Subtitle Description</label>
-                <input type="text" value={data?.keyHighlights?.description || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...prev.keyHighlights, description: e.target.value}}))} className="admin-input" />
+                <input type="text" value={data?.keyHighlights?.description || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...(prev?.keyHighlights || {}), description: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">CTA Button Text</label>
+                <input type="text" value={data?.keyHighlights?.ctaText || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...(prev?.keyHighlights || {}), ctaText: e.target.value}}))} className="admin-input" placeholder="ABOUT US" />
+              </div>
+              <div>
+                <label className="admin-label">CTA Button Link</label>
+                <input type="text" value={data?.keyHighlights?.ctaLink || ''} onChange={e => setData(prev => ({...prev, keyHighlights: {...(prev?.keyHighlights || {}), ctaLink: e.target.value}}))} className="admin-input" placeholder="/about-us" />
               </div>
             </div>
             

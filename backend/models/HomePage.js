@@ -15,6 +15,8 @@ const HomePageSchema = new mongoose.Schema({
     backgroundType: { type: String, default: "video", enum: ["video", "image"] },
   },
   
+  servicesHeading: { type: String, default: "Our Services" },
+
   serviceCards: [{
     num: String,
     title: String,
@@ -29,6 +31,9 @@ const HomePageSchema = new mongoose.Schema({
     buttonLink: { type: String, default: "/contact-us" },
   },
   
+  whoWeAreHeading: { type: String, default: "Who We Are" },
+  whoWeAreDescription: { type: String, default: "Leveraging advanced technologies to support process industry needs." },
+
   whoWeAreCards: [{
     title: String,
     desc: String,
@@ -37,13 +42,17 @@ const HomePageSchema = new mongoose.Schema({
     buttonLink: String,
   }],
 
+  workOnHeading: { type: String, default: "What would you like to work on?" },
+  workOnDescription: { type: String, default: "Execution and Implementation partner for your business problems." },
   workOnCards: [{
     title: String,
     desc: String,
     icon: String,
     bg: String,
-    href: String,
+    link: String,
   }],
+
+
 
   brandIdentity: {
     title: { type: String, default: "Unveiling Our New\nBrand Identity" },
