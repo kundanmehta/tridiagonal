@@ -8,27 +8,40 @@ export default function AdminHomePageEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
   useEffect(() => {
-    fetch('/api/admin/homepage', {
+    // Corrected to fetch from the actual API endpoint
+    fetch(`${API_URL}/api/homepage`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
       }
     })
     .then(res => res.json())
     .then(json => {
-      // Fallback if protected route fails (e.g. testing)
-      if(!json.data) {
-         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/homepage`)
-          .then(r => r.json())
-          .then(pubJson => {
-            setData(pubJson.data || {});
-            setLoading(false);
-          });
-      } else {
-        setData(json.data || {});
-        setLoading(false);
-      }
+      // Initialize with defaults if hero object or other properties are missing
+      const fetchedData = json.data || {};
+      const mergedData = {
+        ...fetchedData,
+        hero: {
+          titleLine1: fetchedData.hero?.titleLine1 || "Process Consulting and",
+          titleLine2: fetchedData.hero?.titleLine2 || "Technology Solutions",
+          description: fetchedData.hero?.description || "We deliver 'Value' by leveraging advanced technologies to address process related challenges.",
+          ctaText: fetchedData.hero?.ctaText || "LEARN MORE",
+          ctaLink: fetchedData.hero?.ctaLink || "#services",
+          videoUrl: fetchedData.hero?.videoUrl || "/hubfs/home-hero-video-1.mp4",
+          imageUrl: fetchedData.hero?.imageUrl || "/hubfs/Capture-1.webp",
+          backgroundType: fetchedData.hero?.backgroundType || "video",
+        },
+        serviceCards: fetchedData.serviceCards || [],
+        whoWeAreCards: fetchedData.whoWeAreCards || [],
+        resourceSlides: fetchedData.resourceSlides || [],
+        keyHighlights: fetchedData.keyHighlights || { counters: [] },
+        brandIdentity: fetchedData.brandIdentity || {},
+      };
+      
+      setData(mergedData);
+      setLoading(false);
     })
     .catch(err => {
       console.error(err);
@@ -42,7 +55,7 @@ export default function AdminHomePageEditor() {
     setMessage('');
     
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/homepage`, {
+      const res = await fetch(`${API_URL}/api/homepage`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -62,12 +75,83 @@ export default function AdminHomePageEditor() {
     setSaving(false);
   };
 
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      setSaving(true);
+      setMessage('Uploading video...');
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
+        body: formData
+      });
+      
+      const json = await res.json();
+      if (res.ok) {
+        // Assume backend returns something like `/uploads/12345.mp4`
+        const fullUrl = `${API_URL}${json.url}`;
+        updateHero('videoUrl', fullUrl);
+        setMessage('Video uploaded successfully!');
+      } else {
+        setMessage(json.error || 'Failed to upload video');
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage('Network error during upload');
+    }
+    setSaving(false);
+  };
+
   const updateHero = (field, value) => {
-    setData(prev => ({ ...prev, hero: { ...prev.hero, [field]: value } }));
+    setData(prev => {
+      const hero = prev?.hero || {};
+      return { ...prev, hero: { ...hero, [field]: value } };
+    });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      setSaving(true);
+      setMessage('Uploading image...');
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
+        body: formData
+      });
+      
+      const json = await res.json();
+      if (res.ok) {
+        const fullUrl = `${API_URL}${json.url}`;
+        updateHero('imageUrl', fullUrl);
+        setMessage('Image uploaded successfully!');
+      } else {
+        setMessage(json.error || 'Failed to upload image');
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage('Network error during upload');
+    }
+    setSaving(false);
   };
 
   const updateArrayItem = (arrayName, index, field, value) => {
     setData(prev => {
+      if (!prev) return prev;
       const newArray = [...(prev[arrayName] || [])];
       newArray[index] = { ...newArray[index], [field]: value };
       return { ...prev, [arrayName]: newArray };
@@ -75,11 +159,15 @@ export default function AdminHomePageEditor() {
   };
 
   const addArrayItem = (arrayName, emptyObject) => {
-    setData(prev => ({ ...prev, [arrayName]: [...(prev[arrayName] || []), emptyObject] }));
+    setData(prev => {
+      if (!prev) return prev;
+      return { ...prev, [arrayName]: [...(prev[arrayName] || []), emptyObject] };
+    });
   };
 
   const removeArrayItem = (arrayName, index) => {
     setData(prev => {
+      if (!prev) return prev;
       const newArray = [...(prev[arrayName] || [])];
       newArray.splice(index, 1);
       return { ...prev, [arrayName]: newArray };
@@ -402,18 +490,60 @@ export default function AdminHomePageEditor() {
                 <textarea placeholder="Write a short sub-headline..." value={data?.hero?.description || ''} onChange={e => updateHero('description', e.target.value)} rows={3} className="admin-textarea" />
               </div>
               <div>
-                <label className="admin-label">Background Video URL</label>
-                <input type="text" placeholder="/hubfs/your-video.mp4" value={data?.hero?.videoUrl || ''} onChange={e => updateHero('videoUrl', e.target.value)} className="admin-input" />
-                <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '6px' }}>Provide a direct absolute path to an mp4 asset.</p>
+                <label className="admin-label">CTA Button Text</label>
+                <input type="text" placeholder="e.g. LEARN MORE" value={data?.hero?.ctaText || ''} onChange={e => updateHero('ctaText', e.target.value)} className="admin-input" />
               </div>
               <div>
-                <label className="admin-label">Live Video Preview</label>
-                {data?.hero?.videoUrl ? (
-                   <video src={data?.hero?.videoUrl} muted autoPlay loop playsInline className="admin-video-preview"></video>
-                ) : (
-                   <div className="video-placeholder">No video connected</div>
-                )}
+                <label className="admin-label">CTA Button Link</label>
+                <input type="text" placeholder="e.g. #services or /contact" value={data?.hero?.ctaLink || ''} onChange={e => updateHero('ctaLink', e.target.value)} className="admin-input" />
               </div>
+              <div>
+                <label className="admin-label">Hero Background Type</label>
+                <div style={{ display: 'flex', gap: '20px', marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 500 }}>
+                    <input type="radio" name="bgType" value="video" checked={data?.hero?.backgroundType === 'video'} onChange={() => updateHero('backgroundType', 'video')} />
+                    Video Background
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 500 }}>
+                    <input type="radio" name="bgType" value="image" checked={data?.hero?.backgroundType === 'image'} onChange={() => updateHero('backgroundType', 'image')} />
+                    Photo Background
+                  </label>
+                </div>
+              </div>
+
+              {data?.hero?.backgroundType === 'video' ? (
+                <div>
+                  <label className="admin-label">Background Video URL</label>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                    <input type="text" placeholder="/hubfs/your-video.mp4" value={data?.hero?.videoUrl || ''} onChange={e => updateHero('videoUrl', e.target.value)} className="admin-input" />
+                    <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                      Upload Video
+                      <input type="file" accept="video/*" onChange={handleVideoUpload} style={{ display: 'none' }} />
+                    </label>
+                  </div>
+                  {data?.hero?.videoUrl ? (
+                     <video src={data?.hero?.videoUrl} muted autoPlay loop playsInline className="admin-video-preview" style={{ height: '200px' }}></video>
+                  ) : (
+                     <div className="video-placeholder" style={{ height: '200px' }}>No video connected</div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <label className="admin-label">Background Image URL</label>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                    <input type="text" placeholder="/hubfs/your-image.png" value={data?.hero?.imageUrl || ''} onChange={e => updateHero('imageUrl', e.target.value)} className="admin-input" />
+                    <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                      Upload Image
+                      <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+                    </label>
+                  </div>
+                  {data?.hero?.imageUrl ? (
+                     <img src={data?.hero?.imageUrl} alt="Hero Preview" className="admin-video-preview" style={{ height: '200px', objectFit: 'cover' }} />
+                  ) : (
+                     <div className="video-placeholder" style={{ height: '200px' }}>No image connected</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

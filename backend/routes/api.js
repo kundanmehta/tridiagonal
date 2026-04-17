@@ -18,9 +18,12 @@ router.get('/industries/:slug', apiController.getIndustryBySlug);
 // Contact form (public submit)
 router.post('/contact', apiController.submitContact);
 
+const upload = require('../config/multer');
+
 // --- Admin & CMS Protected Routes ---
 router.get('/contacts', verifyToken, apiController.getContacts);
 router.get('/homepage', apiController.getHomePage); 
 router.put('/homepage', verifyToken, apiController.updateHomePage); 
+router.post('/upload', verifyToken, upload.single('file'), apiController.uploadFile);
 
 module.exports = router;

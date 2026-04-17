@@ -22,6 +22,8 @@ async function seed() {
         ctaText: "LEARN MORE",
         ctaLink: "#services",
         videoUrl: "/hubfs/home-hero-video-1.mp4",
+        imageUrl: "/hubfs/Capture-1.webp",
+        backgroundType: "video",
       },
       serviceCards: [
         {

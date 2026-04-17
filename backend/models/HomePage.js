@@ -11,6 +11,8 @@ const HomePageSchema = new mongoose.Schema({
     ctaText: { type: String, default: "LEARN MORE" },
     ctaLink: { type: String, default: "#services" },
     videoUrl: { type: String, default: "/hubfs/home-hero-video-1.mp4" },
+    imageUrl: { type: String, default: "" },
+    backgroundType: { type: String, default: "video", enum: ["video", "image"] },
   },
   
   serviceCards: [{

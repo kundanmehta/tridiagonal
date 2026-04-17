@@ -142,6 +142,17 @@ export default function HomePageClient({ initialData }) {
   const [resInTransition, setResInTransition] = useState(true);
   const [resRef, resInView] = useInView(0.2);
 
+  // Dynamic Hero Data
+  const heroData = initialData?.hero || {};
+  const heroTitleLine1 = heroData.titleLine1 || "Process Consulting and";
+  const heroTitleLine2 = heroData.titleLine2 || "Technology Solutions";
+  const heroDesc = heroData.description || "We deliver \u2018Value\u2019 by leveraging advanced technologies to address process related challenges.";
+  const heroVideo = heroData.videoUrl || "";
+  const heroImage = heroData.imageUrl || "/hubfs/Capture-1.webp";
+  const heroBgType = heroData.backgroundType || "video";
+  const heroCtaText = heroData.ctaText || "LEARN MORE";
+  const heroCtaLink = heroData.ctaLink || "#services";
+
   const heroResSlides = initialData?.resourceSlides?.length > 0 ? initialData.resourceSlides.map(s => ({ type: s.typeStr, title: s.title, desc: s.desc, image: s.image })) : [
     { type: 'BLOGS', title: 'Fluid Structure Interaction Analysis (FSI):\nMaximizing Efficiency and Safety in Critical Industries', desc: 'In the fast-paced industrial landscape, the challenges faced by sectors such as oil and gas, crude refining, power...', image: '/hubfs/CFD FEA Coupled-1.png' },
     { type: 'WEBINARS', title: 'Advanced CFD Modeling For Reactor Safety', desc: 'Discover how computational modeling is preventing catastrophic failures and streamlining the maintenance of critical systems...', image: '/hubfs/Blog CFD DEM.png' },
@@ -154,9 +165,9 @@ export default function HomePageClient({ initialData }) {
   const workOnCards = [
     { title: 'Computational Fluid Dynamics (CFD)', desc: 'Fluid flow analysis, Multiphase flow analysis, Combustion modeling, Aerodynamics & heat transfer analysis, Mixing & separation process studies, Emission control', icon: '/images/quarkus-svgrepo-com.svg', bg: '#16333c' },
     { title: 'Discrete Element Method (DEM)', desc: 'Granular material behavior simulation, Tablet compression & coating, Powder handling & mixing, Crystallization & spray drying, Packaging & supply chain optimization, Process safety & efficiency improvement', icon: '/hubfs/medicine-health-medical-drug-pharmacy-pill-capsule-svgrepo-com.svg', bg: '#25352c' },
-    { title: 'Finite Element Analysis (FEA)', desc: 'Structural integrity assessment, Fatigue failure analysis, Thermal & static analysis, Dynamic & non-linear analysis, Heat transfer & temperature distribution, Coupled FEAΓÇôCFDΓÇôDEM studies', icon: '/hubfs/Optimized-Images-Solution/home/AI-based Process Optimization and Control home.svg', bg: '#363c26' },
+    { title: 'Finite Element Analysis (FEA)', desc: 'Structural integrity assessment, Fatigue failure analysis, Thermal & static analysis, Dynamic & non-linear analysis, Heat transfer & temperature distribution, Coupled FEA–CFD–DEM studies', icon: '/hubfs/Optimized-Images-Solution/home/AI-based Process Optimization and Control home.svg', bg: '#363c26' },
     { title: 'New Energy Testing (TRL 3-9) CCUS and Green Hydrogen', desc: 'Advancing Technology from TRL3 to TRL 9, CCUS-Carbon Capture Utilization and Storage, Enhanced Oil Recovery (EOR), Sustainable Energy Transition, Carbon Offset Implementation, Green Hydrogen Technology Testing & Validation, Renewable Power Integration Battery Testing.', icon: '/images/New Energy Testing (TRL 3-9) CCUS and Green Hydrogen.svg', bg: '#16333c' },
-    { title: 'Sand Blast Testing', desc: 'Coating thickness loss evaluation, Weight & thickness gauge measurement, Sand impingement cell testing, Variable airflow (10ΓÇô50 m/s), Particle size control (>100 ╬╝m), Sand rate adjustment (>1 Kg/h), Impingement angle variation (0ΓÇô90┬░)', icon: '/hubfs/sand-clock-svgrepo-com.svg', bg: '#25352c' },
+    { title: 'Sand Blast Testing', desc: 'Coating thickness loss evaluation, Weight & thickness gauge measurement, Sand impingement cell testing, Variable airflow (10–50 m/s), Particle size control (>100 μm), Sand rate adjustment (>1 Kg/h), Impingement angle variation (0–90°)', icon: '/hubfs/sand-clock-svgrepo-com.svg', bg: '#25352c' },
     { title: 'Asphaltene Testing Facility', desc: 'Enhance asphaltene management with our advanced global testing capabilities, designed to evaluate deposition behavior and optimize flow assurance strategies.', icon: '/hubfs/Optimized-Images-Solution/home/Scale-up and Tech Transfer home.svg', bg: '#363c26' },
     { title: 'Multiphase flow and combustion modeling', desc: 'It includes Analyze two-phase flow of steam and water in boilers, simulate the flow of oil, water, and gas through a subsea pipeline and maximize the separation efficiency, whereas Combustion modeling includes flame impingement on radiant tube section leads to high tube metal temperatures which cause tube deformation, distortion, and rupture. And to study temperature distribution. We are using tools like ANSYS and Star CCM for simulation', icon: '/hubfs/Optimized-Images-Solution/home/Multiphase flow & combustion modeling home.svg', bg: '#16333c' },
     { title: 'Fluid-Structure Interaction', desc: 'Simulating the complex interplay between fluids and structures using effective coupling of CFD and FEA. We do static structural analysis to check safety of separator under high pressure operating condition. We are using tools like ANSYS, Star CCM and LS Dyna for simulation.', icon: '/hubfs/Optimized-Images-Solution/home/Fluid-structure interaction home.svg', bg: '#25352c' },
@@ -221,33 +232,40 @@ export default function HomePageClient({ initialData }) {
         style={{ paddingTop: 0 }}
         aria-label="Hero"
       >
-        {/* Video background */}
-        <div className="hero-video-wrap" aria-hidden="true">
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          >
-            <source src="/hubfs/home-hero-video-1.mp4" type="video/mp4" />
-          </video>
+        {/* Background Support: Video or Image Choice */}
+        <div className="hero-video-wrap" aria-hidden="true" style={{ background: `url("${heroImage}") center/cover no-repeat` }}>
+          {heroBgType === 'video' && heroVideo ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              poster={heroImage}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            >
+              <source src={heroVideo} type="video/mp4" />
+            </video>
+          ) : (
+            heroBgType === 'image' && heroImage && (
+              <img src={heroImage} alt="Hero Background" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            )
+          )}
         </div>
         <div className="hero-overlay" aria-hidden="true" />
 
         <div className="content-wrapper-xl" style={{ position: 'relative', zIndex: 10, width: '100%', marginTop: '60px' }}>
           <h1 className="hero-title fade-in-up delay-100">
-            Process Consulting and<br />
-            <span className="gradient-text">Technology Solutions</span>
+            {heroTitleLine1}<br />
+            <span className="gradient-text">{heroTitleLine2}</span>
           </h1>
           <p className="hero-desc fade-in-up delay-200" style={{ color: '#fff', fontWeight: '500', fontSize: '1.25rem', marginTop: '1rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-            We deliver ΓÇÿValueΓÇÖ by leveraging advanced technologies to address process related challenges.
+            {heroDesc}
           </p>
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }} className="fade-in-up delay-300">
-            <a href="#services" className="btn-primary">
-              LEARN MORE <ArrowRight size={16} />
+            <a href={heroCtaLink} className="btn-primary">
+              {heroCtaText} <ArrowRight size={16} />
             </a>
           </div>
         </div>

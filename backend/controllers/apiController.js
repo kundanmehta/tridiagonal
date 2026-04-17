@@ -89,11 +89,25 @@ exports.updateHomePage = async (req, res) => {
     const updateData = req.body;
     // Find the singleton document and update it, creating it if it doesn't exist
     const options = { new: true, upsert: true, setDefaultsOnInsert: true };
-    const updated = await HomePage.findOneAndUpdate({ singleton: true }, updateData, options);
+    const updated = await HomePage.findOneAndUpdate({ singleton: true }, { $set: updateData }, options);
     
     res.json({ message: 'HomePage updated successfully', data: updated });
   } catch (error) {
     console.error('Error updating HomePage:', error);
     res.status(500).json({ error: 'Failed to update HomePage config' });
+  }
+};
+// POST /api/upload — Upload a file (Protected)
+exports.uploadFile = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    // Return the relative URL to the file
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ message: 'File uploaded successfully', url: fileUrl });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).json({ error: 'Failed to upload file' });
   }
 };
