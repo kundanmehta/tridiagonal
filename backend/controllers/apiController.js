@@ -181,3 +181,30 @@ exports.uploadFile = async (req, res) => {
     res.status(500).json({ error: 'Failed to upload file' });
   }
 };
+
+const PrivacyPolicy = require('../models/PrivacyPolicy');
+
+// GET /api/privacy-policy
+exports.getPrivacyPolicy = async (req, res) => {
+  try {
+    const data = await PrivacyPolicy.findOne();
+    res.json({ data: data || {} });
+  } catch (error) {
+    console.error('Error fetching PrivacyPolicy:', error);
+    res.status(500).json({ error: 'Failed to fetch PrivacyPolicy config' });
+  }
+};
+
+// PUT /api/privacy-policy (Protected)
+exports.updatePrivacyPolicy = async (req, res) => {
+  try {
+    const updateData = req.body;
+    const options = { new: true, upsert: true, setDefaultsOnInsert: true };
+    const updated = await PrivacyPolicy.findOneAndUpdate({ singleton: true }, { $set: updateData }, options);
+    
+    res.json({ message: 'Privacy Policy updated successfully', data: updated });
+  } catch (error) {
+    console.error('Error updating PrivacyPolicy:', error);
+    res.status(500).json({ error: 'Failed to update PrivacyPolicy config' });
+  }
+};

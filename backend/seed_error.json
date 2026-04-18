@@ -1,0 +1,4 @@
+{
+  "message": "next is not a function",
+  "stack": "TypeError: next is not a function\n    at model.<anonymous> (D:\\tridiagonal\\backend\\models\\PrivacyPolicy.js:27:3)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Kareem.execPre (D:\\tridiagonal\\backend\\node_modules\\kareem\\index.js:70:24)\n    at async model.$__save (D:\\tridiagonal\\backend\\node_modules\\mongoose\\lib\\model.js:397:5)\n    at async model.save (D:\\tridiagonal\\backend\\node_modules\\mongoose\\lib\\model.js:667:5)\n    at async model.create (D:\\tridiagonal\\backend\\node_modules\\mongoose\\lib\\model.js:2754:5)\n    at async seedDB (D:\\tridiagonal\\backend\\seed_privacy.js:283:30)"
+}

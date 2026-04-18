@@ -17,16 +17,13 @@ const sidebarNav = [
     icon: FileText,
     children: [
       { label: 'Home Page', href: '/admin/pages/home', icon: Home },
-      // More pages will be added here one by one
+      { label: 'Privacy Policy', href: '/admin/pages/privacy-policy', icon: FileText },
     ],
   },
   { label: 'Services', href: '/admin/services', icon: Settings },
   { label: 'Industries', href: '/admin/industries', icon: Factory },
   { label: 'Resources', href: '/admin/resources', icon: BookOpen },
   { label: 'Events', href: '/admin/events', icon: Calendar },
-  { label: 'Careers', href: '/admin/careers', icon: Briefcase },
-  { label: 'Team', href: '/admin/team', icon: Users },
-  { label: 'Partner Solutions', href: '/admin/partners', icon: Handshake },
   { label: 'Media Library', href: '/admin/media', icon: ImageIcon },
   { label: 'Header & Footer', href: '/admin/header-footer', icon: Globe },
   { label: 'Contact Submissions', href: '/admin/contacts', icon: Mail },

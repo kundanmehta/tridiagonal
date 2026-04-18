@@ -26,4 +26,8 @@ router.get('/homepage', apiController.getHomePage);
 router.put('/homepage', verifyToken, apiController.updateHomePage); 
 router.post('/upload', verifyToken, upload.single('file'), apiController.uploadFile);
 
+// Privacy Policy page
+router.get('/privacy-policy', apiController.getPrivacyPolicy);
+router.put('/privacy-policy', verifyToken, apiController.updatePrivacyPolicy);
+
 module.exports = router;
