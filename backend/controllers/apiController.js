@@ -208,3 +208,136 @@ exports.updatePrivacyPolicy = async (req, res) => {
     res.status(500).json({ error: 'Failed to update PrivacyPolicy config' });
   }
 };
+
+// ═══════════════════════════════════════════════════════════
+// DYNAMIC FORM BUILDER
+// ═══════════════════════════════════════════════════════════
+const DynamicForm = require('../models/DynamicForm');
+const FormSubmission = require('../models/FormSubmission');
+const { sendFormNotification } = require('../config/mailer');
+
+// GET /api/forms — List all forms
+exports.getDynamicForms = async (req, res) => {
+  try {
+    const forms = await DynamicForm.find().sort({ createdAt: -1 });
+    res.json({ data: forms });
+  } catch (error) {
+    console.error('Error fetching forms:', error);
+    res.status(500).json({ error: 'Failed to fetch forms' });
+  }
+};
+
+// GET /api/forms/:id — Get single form config
+exports.getDynamicFormById = async (req, res) => {
+  try {
+    const form = await DynamicForm.findById(req.params.id);
+    if (!form) return res.status(404).json({ error: 'Form not found' });
+    res.json({ data: form });
+  } catch (error) {
+    console.error('Error fetching form:', error);
+    res.status(500).json({ error: 'Failed to fetch form' });
+  }
+};
+
+// POST /api/forms — Create new form (Protected)
+exports.createDynamicForm = async (req, res) => {
+  try {
+    const form = new DynamicForm(req.body);
+    await form.save();
+    res.json({ message: 'Form created successfully', data: form });
+  } catch (error) {
+    console.error('Error creating form:', error);
+    res.status(500).json({ error: 'Failed to create form' });
+  }
+};
+
+// PUT /api/forms/:id — Update form (Protected)
+exports.updateDynamicForm = async (req, res) => {
+  try {
+    const updated = await DynamicForm.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    if (!updated) return res.status(404).json({ error: 'Form not found' });
+    res.json({ message: 'Form updated successfully', data: updated });
+  } catch (error) {
+    console.error('Error updating form:', error);
+    res.status(500).json({ error: 'Failed to update form' });
+  }
+};
+
+// DELETE /api/forms/:id — Delete form (Protected)
+exports.deleteDynamicForm = async (req, res) => {
+  try {
+    await DynamicForm.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Form deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting form:', error);
+    res.status(500).json({ error: 'Failed to delete form' });
+  }
+};
+
+// POST /api/forms/:id/submit — Public: submit a form
+exports.submitDynamicForm = async (req, res) => {
+  try {
+    const form = await DynamicForm.findById(req.params.id);
+    if (!form) return res.status(404).json({ error: 'Form not found' });
+
+    const submission = new FormSubmission({
+      formId: form._id,
+      formName: form.name,
+      data: req.body
+    });
+    await submission.save();
+    console.log(`✅ Form submission saved: ${form.name} (${submission._id})`);
+
+    // Send email notification (async, don't block response)
+    if (form.adminEmail) {
+      sendFormNotification(form.adminEmail, form.name, req.body).catch(err => {
+        console.error('Email notification failed:', err.message);
+      });
+    }
+
+    res.json({ message: 'Form submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    res.status(500).json({ error: 'Failed to submit form' });
+  }
+};
+
+// GET /api/forms/:id/submissions — Admin: list submissions for a form (Protected)
+exports.getFormSubmissions = async (req, res) => {
+  try {
+    const submissions = await FormSubmission.find({ formId: req.params.id }).sort({ createdAt: -1 });
+    res.json({ data: submissions });
+  } catch (error) {
+    console.error('Error fetching submissions:', error);
+    res.status(500).json({ error: 'Failed to fetch submissions' });
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// CONTACT PAGE CMS
+// ═══════════════════════════════════════════════════════════
+const ContactPage = require('../models/ContactPage');
+
+// GET /api/contactpage
+exports.getContactPage = async (req, res) => {
+  try {
+    const data = await ContactPage.findOne().populate('selectedFormId');
+    res.json({ data: data || {} });
+  } catch (error) {
+    console.error('Error fetching ContactPage:', error);
+    res.status(500).json({ error: 'Failed to fetch ContactPage config' });
+  }
+};
+
+// PUT /api/contactpage (Protected)
+exports.updateContactPage = async (req, res) => {
+  try {
+    const updateData = req.body;
+    const options = { new: true, upsert: true, setDefaultsOnInsert: true };
+    const updated = await ContactPage.findOneAndUpdate({ singleton: true }, { $set: updateData }, options);
+    res.json({ message: 'ContactPage updated successfully', data: updated });
+  } catch (error) {
+    console.error('Error updating ContactPage:', error);
+    res.status(500).json({ error: 'Failed to update ContactPage config' });
+  }
+};

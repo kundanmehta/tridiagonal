@@ -30,4 +30,17 @@ router.post('/upload', verifyToken, upload.single('file'), apiController.uploadF
 router.get('/privacy-policy', apiController.getPrivacyPolicy);
 router.put('/privacy-policy', verifyToken, apiController.updatePrivacyPolicy);
 
+// Dynamic Form Builder
+router.get('/forms', apiController.getDynamicForms);
+router.post('/forms', verifyToken, apiController.createDynamicForm);
+router.get('/forms/:id', apiController.getDynamicFormById);
+router.put('/forms/:id', verifyToken, apiController.updateDynamicForm);
+router.delete('/forms/:id', verifyToken, apiController.deleteDynamicForm);
+router.post('/forms/:id/submit', apiController.submitDynamicForm);
+router.get('/forms/:id/submissions', verifyToken, apiController.getFormSubmissions);
+
+// Contact Page CMS
+router.get('/contactpage', apiController.getContactPage);
+router.put('/contactpage', verifyToken, apiController.updateContactPage);
+
 module.exports = router;

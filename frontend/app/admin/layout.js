@@ -6,6 +6,7 @@ import {
   LayoutDashboard, FileText, Settings, Factory, BookOpen,
   Calendar, Briefcase, Users, Handshake, Image as ImageIcon,
   Mail, Globe, LogOut, ChevronDown, Home, ChevronRight,
+  ClipboardList, Phone,
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
@@ -17,9 +18,11 @@ const sidebarNav = [
     icon: FileText,
     children: [
       { label: 'Home Page', href: '/admin/pages/home', icon: Home },
+      { label: 'Contact Us', href: '/admin/pages/contact-us', icon: Phone },
       { label: 'Privacy Policy', href: '/admin/pages/privacy-policy', icon: FileText },
     ],
   },
+  { label: 'Form Builder', href: '/admin/forms', icon: ClipboardList },
   { label: 'Services', href: '/admin/services', icon: Settings },
   { label: 'Industries', href: '/admin/industries', icon: Factory },
   { label: 'Resources', href: '/admin/resources', icon: BookOpen },
