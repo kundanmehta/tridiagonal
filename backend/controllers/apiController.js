@@ -71,11 +71,81 @@ exports.getContacts = async (req, res) => {
 };
 
 const HomePage = require('../models/HomePage');
+const Blog = require('../models/Blog');
 
 // GET /api/homepage — Fetch HomePage Data
 exports.getHomePage = async (req, res) => {
   try {
-    const data = await HomePage.findOne();
+    const data = await HomePage.findOne().lean(); // Use lean for easier manipulation
+    
+    if (data && data.useCasesSection) {
+      if (data.useCasesSection.displayMode === 'latest') {
+        const latestBlogs = await Blog.find({ category: 'Case Study' })
+          .sort({ createdAt: -1 })
+          .limit(data.useCasesSection.latestCount || 4)
+          .lean();
+        
+        data.useCasesSection.cards = latestBlogs.map(b => ({
+          title: b.title,
+          image: b.coverImage,
+          href: `/blogs/${b.slug}`,
+          isCaseStudy: true
+        }));
+      } else if (data.useCasesSection.displayMode === 'manual' && data.useCasesSection.manualSelectedCards?.length > 0) {
+        const selectedBlogs = await Blog.find({ _id: { $in: data.useCasesSection.manualSelectedCards } }).lean();
+        data.useCasesSection.cards = selectedBlogs.map(b => ({
+          title: b.title,
+          image: b.coverImage,
+          href: `/blogs/${b.slug}`,
+          isCaseStudy: true
+        }));
+      }
+    }
+
+    if (data && data.resourcesSection) {
+      if (data.resourcesSection.displayMode === 'latest') {
+        // Fetch latest 1 from each key category
+        const categoriesMap = [
+          { category: 'Webinar', typeStr: 'WEBINARS' },
+          { category: 'Tech Blog', typeStr: 'BLOGS' },
+          { category: 'Brochure', typeStr: 'BROCHURE' },
+          { category: 'Publication', typeStr: 'PUBLICATIONS' }
+        ];
+
+        const fetchedSlides = await Promise.all(categoriesMap.map(async (mapping) => {
+          const latest = await Blog.findOne({ category: mapping.category }).sort({ createdAt: -1 }).lean();
+          if (latest) {
+            return {
+              typeStr: mapping.typeStr,
+              title: latest.title,
+              desc: latest.content ? latest.content.substring(0, 150).replace(/<[^>]*>/g, '') + '...' : '',
+              image: latest.coverImage,
+              href: `/blogs/${latest.slug}`
+            };
+          }
+          return null;
+        }));
+
+        data.resourcesSection.slides = fetchedSlides.filter(s => s !== null);
+      } else if (data.resourcesSection.displayMode === 'manual' && data.resourcesSection.manualSlides?.length > 0) {
+        const resolvedManual = await Promise.all(data.resourcesSection.manualSlides.map(async (m) => {
+          if (!m.blogId) return null;
+          const b = await Blog.findById(m.blogId).lean();
+          if (b) {
+            return {
+              typeStr: m.typeStr || 'RESOURCE',
+              title: b.title,
+              desc: b.content ? b.content.substring(0, 150).replace(/<[^>]*>/g, '') + '...' : '',
+              image: b.coverImage,
+              href: `/blogs/${b.slug}`
+            };
+          }
+          return null;
+        }));
+        data.resourcesSection.slides = resolvedManual.filter(s => s !== null);
+      }
+    }
+
     res.json({ data: data || {} });
   } catch (error) {
     console.error('Error fetching HomePage:', error);

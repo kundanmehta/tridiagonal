@@ -81,6 +81,9 @@ const HomePageSchema = new mongoose.Schema({
     description: { type: String, default: "Despite of ever-evolving industries and complex value chains, digital engineering and experimental methods remain key to solving design, operational, and scale-up challenges. The following use cases highlight the application of Advanced Modeling & Simulation and Experimental Lab Scale-up in solving critical problems across diverse domains." },
     ctaText: { type: String, default: "VIEW ALL USE CASES" },
     ctaLink: { type: String, default: "/use-cases" },
+    displayMode: { type: String, enum: ['manual', 'latest'], default: 'manual' },
+    latestCount: { type: Number, default: 4 },
+    manualSelectedCards: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],
     cards: [{
       title: String,
       image: String,
@@ -90,13 +93,67 @@ const HomePageSchema = new mongoose.Schema({
     }],
   },
 
-  resourceSlides: [{
-    typeStr: String, // e.g. "BLOGS", "WEBINARS", "CASE STUDIES" - aliased to avoid 'type' keyword conflicts
+  resourcesSection: {
+    title: { type: String, default: "Resources" },
+    description: { type: String, default: "Explore the best practices and success stories of application of technology in process industry" },
+    ctaText: { type: String, default: "ALL RESOURCES" },
+    ctaLink: { type: String, default: "/resources" },
+    categories: [{
+      label: String,
+      link: String
+    }],
+    displayMode: { type: String, enum: ['manual', 'latest'], default: 'latest' },
+    manualSlides: [{
+      typeStr: String, // e.g. "BLOGS", "WEBINARS"
+      blogId: { type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }
+    }],
+    slides: [{ // Populated by controller for frontend
+      typeStr: String,
+      title: String,
+      desc: String,
+      image: String,
+      href: String
+    }]
+  },
+
+  cultureSection: {
+    title: String,
+    description: String,
+    cardHeading: String,
+    button1Text: String,
+    button1Link: String,
+    button2Text: String,
+    button2Link: String,
+    image1: String,
+    image2: String,
+    image3: String,
+    image4: String
+  },
+
+  trustedPartnerSection: {
+    title: String,
+    description: String,
+    ctaText: String,
+    ctaLink: String
+  },
+
+  resourceSlides: [{ // For backward compatibility if needed, but we'll use resourcesSection.slides
+    typeStr: String,
     title: String,
     desc: String,
     image: String,
     href: String,
   }],
+
+  partnersSection: {
+    title: { type: String, default: "Technology Partners" },
+    ctaText: { type: String, default: "EXPLORE OUR PARTNER ECOSYSTEM" },
+    ctaLink: { type: String, default: "/partner-solutions" },
+    logos: [{
+      name: String,
+      image: String,
+    }],
+  },
 
   clientLogos: [{
     name: String,

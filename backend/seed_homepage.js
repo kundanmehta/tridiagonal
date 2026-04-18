@@ -114,6 +114,9 @@ async function seed() {
         description: "Despite of ever-evolving industries and complex value chains, digital engineering and experimental methods remain key to solving design, operational, and scale-up challenges.",
         ctaText: "VIEW ALL USE CASES",
         ctaLink: "/use-cases",
+        displayMode: 'manual',
+        latestCount: 4,
+        manualSelectedCards: [],
         cards: [
           { title: 'Simulating Data Centers using CoolSim', image: '/hubfs/Office Space Ventilation_ (1).png', customGradient: 'linear-gradient(135deg, #00d2ff 0%, #a4e03d 100%)', href: '#' },
           { title: 'Frequency Response Analysis of Sparger', image: '/hubfs/Sparger.png', customGradient: 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)', href: '#', isCaseStudy: true },
@@ -121,11 +124,55 @@ async function seed() {
           { title: 'CFD Modeling of Mixing Systems', image: '/hubfs/CFD Analysis of a Neutralization Tank _.png', customGradient: 'linear-gradient(135deg, #f12711 0%, #f5af19 100%)', href: '#' },
         ],
       },
+      resourcesSection: {
+        title: "Resources",
+        description: "Explore the best practices and success stories of application of technology in process industry",
+        ctaText: "ALL RESOURCES",
+        ctaLink: "/resources",
+        displayMode: 'latest',
+        categories: [
+          { label: 'USE CASES', link: '/use-cases' },
+          { label: 'WEBINARS', link: '/resources?type=Webinar' },
+          { label: 'BLOGS', link: '/resources?type=Tech Blog' },
+          { label: 'BROCHURE', link: '/resources?type=Brochure' },
+          { label: 'PUBLICATIONS', link: '/resources?type=Publication' },
+        ],
+        manualSlides: []
+      },
+      cultureSection: {
+        title: "Explore Our Culture and People",
+        description: "Are you seeking an exciting role that will challenge and inspire you? Work with diverse and driven people on global projects that are truly shaping the process industry. Seize the opportunity to learn, grow, and realize your ambitions.",
+        cardHeading: "Looking to Work with us?",
+        button1Text: "VIEW OPENING",
+        button1Link: "/careers",
+        button2Text: "ABOUT US",
+        button2Link: "/about-us",
+        image1: "/hubfs/grid-1.jpg",
+        image2: "/hubfs/grid-2.webp",
+        image3: "/hubfs/grid-3.webp",
+        image4: "/hubfs/grid-4.webp",
+      },
+      trustedPartnerSection: {
+        title: "Looking for Trusted Partner for\nexecuting your programs?",
+        description: "We bring together unparalleled expertise with combination of skillsets and technology to\naddress your digital, computational and testing needs",
+        ctaText: "CONTACT US NOW",
+        ctaLink: "/contact-us"
+      },
       resourceSlides: [
         { typeStr: 'BLOGS', title: 'Fluid Structure Interaction Analysis (FSI):\nMaximizing Efficiency and Safety in Critical Industries', desc: 'In the fast-paced industrial landscape, the challenges faced by sectors such as oil and gas, crude refining, power...', image: '/hubfs/CFD FEA Coupled-1.png', href: '#' },
         { typeStr: 'WEBINARS', title: 'Advanced CFD Modeling For Reactor Safety', desc: 'Discover how computational modeling is preventing catastrophic failures and streamlining the maintenance of critical systems...', image: '/hubfs/Blog CFD DEM.png', href: '#' },
         { typeStr: 'CASE STUDIES', title: 'Enhancing Asphaltene Testing Methodologies', desc: 'A deep dive into scalable strategies to enhance extraction rates while managing long-term flow assurance concerns...', image: '/hubfs/Asphaltene Blog.png', href: '#' },
       ],
+      partnersSection: {
+        title: "Technology Partners",
+        ctaText: "EXPLORE OUR PARTNER ECOSYSTEM",
+        ctaLink: "/partner-solutions",
+        logos: [
+          { name: "Coreform", image: "/hubfs/coreform-logo.png" },
+          { name: "Siemens", image: "/hubfs/siemens-logo.png" },
+          { name: "FactSage", image: "/hubfs/factsage-logo.png" },
+        ],
+      },
       clientLogos: [
         { name: 'Shell', image: '' },
         { name: 'BASF', image: '' },
@@ -144,7 +191,20 @@ async function seed() {
     await HomePage.deleteMany({});
     // Use insertOne to bypass pre-save hook
     await mongoose.connection.collection('homepages').insertOne(initialData);
-    console.log('✅ Home Page successfully seeded into MongoDB!');
+    // Add some dummy blogs for Resources section testing
+    const Blog = require('./models/Blog');
+    const dummyBlogs = [
+      { title: 'Advanced CFD for Reactor Safety', slug: 'cfd-reactor-safety', category: 'Webinar', content: 'This webinar covers the latest in CFD modeling for chemical reactor safety...', coverImage: '/hubfs/Blog CFD DEM.png' },
+      { title: 'Fluid Structure Interaction Basics', slug: 'fsi-basics', category: 'Tech Blog', content: 'Understanding the interplay between fluid dynamics and structural mechanics...', coverImage: '/hubfs/CFD FEA Coupled-1.png' },
+      { title: '2024 Product Brochure', slug: 'product-brochure-2024', category: 'Brochure', content: 'Download our latest product overview for 2024 detailing all new services...', coverImage: '/hubfs/image%20(10).png' },
+      { title: 'Sustainable Process Engineering Publication', slug: 'sustainable-publication', category: 'Publication', content: 'Our recent research on sustainable engineering practices published in the JPE...', coverImage: '/hubfs/image%20(11).png' }
+    ];
+    
+    for (const b of dummyBlogs) {
+      await Blog.findOneAndUpdate({ slug: b.slug }, b, { upsert: true, new: true });
+    }
+
+    console.log('✅ Home Page and Dummy Blogs successfully seeded into MongoDB!');
 
   } catch (err) {
     console.error('❌ Seeding failed:', err);

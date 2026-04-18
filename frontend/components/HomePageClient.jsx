@@ -154,11 +154,23 @@ export default function HomePageClient({ initialData }) {
   const heroCtaText = heroData.ctaText || "LEARN MORE";
   const heroCtaLink = heroData.ctaLink || "#services";
 
-  const heroResSlides = initialData?.resourceSlides?.length > 0 ? initialData.resourceSlides.map(s => ({ type: s.typeStr, title: s.title, desc: s.desc, image: s.image })) : [
-    { type: 'BLOGS', title: 'Fluid Structure Interaction Analysis (FSI):\nMaximizing Efficiency and Safety in Critical Industries', desc: 'In the fast-paced industrial landscape, the challenges faced by sectors such as oil and gas, crude refining, power...', image: '/hubfs/CFD FEA Coupled-1.png' },
-    { type: 'WEBINARS', title: 'Advanced CFD Modeling For Reactor Safety', desc: 'Discover how computational modeling is preventing catastrophic failures and streamlining the maintenance of critical systems...', image: '/hubfs/Blog CFD DEM.png' },
-    { type: 'CASE STUDIES', title: 'Enhancing Asphaltene Testing Methodologies', desc: 'A deep dive into scalable strategies to enhance extraction rates while managing long-term flow assurance concerns...', image: '/hubfs/Asphaltene Blog.png' },
-  ];
+  const resSectionData = initialData?.resourcesSection || {};
+  const resSectionTitle = resSectionData.title || "Resources";
+  const resSectionDesc = resSectionData.description || "Explore the best practices and success stories of application of technology in process industry";
+  const resSectionCtaText = resSectionData.ctaText || "ALL RESOURCES";
+  const resSectionCtaLink = resSectionData.ctaLink || "/resources";
+  const resSectionCategories = resSectionData.categories?.length > 0 ? resSectionData.categories : ['USE CASES', 'WEBINARS', 'BLOGS', 'BROCHURE', 'PUBLICATIONS'].map(l => ({ label: l, link: '#' }));
+
+  const heroResSlides = (resSectionData.slides?.length > 0) 
+    ? resSectionData.slides.map(s => ({ type: s.typeStr, title: s.title, desc: s.desc, image: s.image, href: s.href })) 
+    : (initialData?.resourceSlides?.length > 0 ? initialData.resourceSlides.map(s => ({ type: s.typeStr, title: s.title, desc: s.desc, image: s.image, href: s.href })) : [
+    { type: 'BLOGS', title: 'Fluid Structure Interaction Analysis (FSI):\nMaximizing Efficiency and Safety in Critical Industries', desc: 'In the fast-paced industrial landscape, the challenges faced by sectors such as oil and gas, crude refining, power...', image: '/hubfs/CFD FEA Coupled-1.png', href: '#' },
+    { type: 'WEBINARS', title: 'Advanced CFD Modeling For Reactor Safety', desc: 'Discover how computational modeling is preventing catastrophic failures and streamlining the maintenance of critical systems...', image: '/hubfs/Blog CFD DEM.png', href: '#' },
+    { type: 'CASE STUDIES', title: 'Enhancing Asphaltene Testing Methodologies', desc: 'A deep dive into scalable strategies to enhance extraction rates while managing long-term flow assurance concerns...', image: '/hubfs/Asphaltene Blog.png', href: '#' },
+  ]);
+
+  const cultureData = initialData?.cultureSection || {};
+
 
   const [useCasesSlide, setUseCasesSlide] = useState(0);
   const [useCasesInTransition, setUseCasesInTransition] = useState(true);
@@ -175,7 +187,7 @@ export default function HomePageClient({ initialData }) {
     { title: 'Flow assurance Testing (Wax, Erosion, Corrosion)', desc: 'Wax Mitigation, Asphaltene Management, Sand Management, Liquid Metal, Hydrate & CO2 Transport, Pipeline Flow Analysis, Flow Regime Identification, Inhibitor Screening, Slurry Rheology, and Erosion testing(Screen, Valve, elbows, joints, pipes, etc), Sand Blast, Sand Retention, and ICD Testing.', icon: '/hubfs/Optimized-Images-Solution/home/Flow assurance Testing (Wax, Erosion, Corrosion) home.svg', bg: '#363c26' },
   ];
 
-  const useCasesCards = [
+  const useCasesCards = initialData?.useCasesSection?.cards?.length > 0 ? initialData.useCasesSection.cards : [
     { title: 'Simulating Data Centers using CoolSim', image: '/hubfs/Office Space Ventilation_ (1).png', customGradient: 'linear-gradient(135deg, #00d2ff 0%, #a4e03d 100%)' },
     { title: 'Frequency Response Analysis of Sparger', image: '/hubfs/Sparger.png', isCaseStudy: true, customGradient: 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)' },
     { title: 'Improving the Performance of Induced Gas Flotation Unit', image: '/hubfs/Digital Twin.jpg', customGradient: 'linear-gradient(135deg, #0d324d 0%, #00d2ff 100%)' },
@@ -817,20 +829,20 @@ export default function HomePageClient({ initialData }) {
             <div style={{ flex: '0 0 350px', display: 'flex', flexDirection: 'column' }}>
               <div className="dvr-line" style={{ marginBottom: '16px' }} />
               <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px' }}>
-                Use Cases
+                {initialData?.useCasesSection?.title || "Use Cases"}
               </h2>
               <p className="section-desc" style={{ color: '#fff', opacity: 0.9, fontSize: '18px', lineHeight: 1.6, marginBottom: '40px' }}>
-                Despite of ever-evolving industries and complex value chains, digital engineering and experimental methods remain key to solving design, operational, and scale-up challenges. The following use cases highlight the application of Advanced Modeling & Simulation and Experimental Lab Scale-up in solving critical problems across diverse domains.
+                {initialData?.useCasesSection?.description || "Despite of ever-evolving industries and complex value chains..."}
               </p>
               <div style={{ marginTop: '0px' }}>
-                <Link href="/use-cases" style={{
+                <Link href={initialData?.useCasesSection?.ctaLink || "/use-cases"} style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   background: 'var(--gradient-brand)', color: '#000',
                   fontWeight: '700', textTransform: 'uppercase',
                   padding: '12px 24px', borderRadius: '40px',
                   fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none'
                 }}>
-                  VIEW MORE <ArrowRight size={14} color="#000" />
+                  {initialData?.useCasesSection?.ctaText || "VIEW MORE"} <ArrowRight size={14} color="#000" />
                 </Link>
               </div>
             </div>
@@ -973,12 +985,12 @@ export default function HomePageClient({ initialData }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '30px' }}>
                 <div style={{ width: '3px', height: '32px', background: 'var(--gradient-brand)', borderRadius: '2px' }} />
                 <h3 style={{ color: '#fff', fontSize: '24px', fontWeight: '500', margin: 0, letterSpacing: '0.02em' }}>
-                  Technology Partners
+                  {initialData?.partnersSection?.title || "Technology Partners"}
                 </h3>
               </div>
 
               {/* Button */}
-              <Link href="/partner-solutions" className="home2-tp-btn" style={{
+              <Link href={initialData?.partnersSection?.ctaLink || "/partner-solutions"} className="home2-tp-btn" style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '10px',
@@ -987,7 +999,7 @@ export default function HomePageClient({ initialData }) {
                 padding: '14px 32px', borderRadius: '40px',
                 fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none'
               }}>
-                EXPLORE OUR PARTNER ECOSYSTEM <ArrowRight size={14} color="#000" />
+                {initialData?.partnersSection?.ctaText || "EXPLORE OUR PARTNER ECOSYSTEM"} <ArrowRight size={14} color="#000" />
               </Link>
             </div>
 
@@ -998,11 +1010,15 @@ export default function HomePageClient({ initialData }) {
                   {/* Render 4 identical groups to ensure enough width for ultra-wide screens and perfect 50% translation looping */}
                   {[...Array(4)].map((_, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '80px', paddingRight: '80px' }}>
-                      <img src="/hubfs/coreform-logo.png" alt="Coreform" style={{ height: '35px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
-                      <img src="/hubfs/siemens-logo.png" alt="Siemens" style={{ height: '50px', width: 'auto', objectFit: 'contain', filter: 'brightness(10)', flexShrink: 0 }} />
-                      <img src="/hubfs/factsage-logo.png" alt="FactSage" style={{ height: '45px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
-                      <img src="/hubfs/coreform-logo.png" alt="Coreform" style={{ height: '35px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
-                      <img src="/hubfs/siemens-logo.png" alt="Siemens" style={{ height: '50px', width: 'auto', objectFit: 'contain', filter: 'brightness(10)', flexShrink: 0 }} />
+                      {(initialData?.partnersSection?.logos?.length > 0 ? initialData.partnersSection.logos : [
+                        { name: "Coreform", image: "/hubfs/coreform-logo.png" },
+                        { name: "Siemens", image: "/hubfs/siemens-logo.png" },
+                        { name: "FactSage", image: "/hubfs/factsage-logo.png" },
+                        { name: "Coreform", image: "/hubfs/coreform-logo.png" },
+                        { name: "Siemens", image: "/hubfs/siemens-logo.png" },
+                      ]).map((logo, lIdx) => (
+                        <img key={lIdx} src={logo.image} alt={logo.name} style={{ height: (logo.name === 'Siemens') ? '50px' : '40px', width: 'auto', objectFit: 'contain', filter: (logo.name === 'Siemens') ? 'brightness(10)' : 'none', flexShrink: 0 }} />
+                      ))}
                     </div>
                   ))}
                 </div>
@@ -1024,34 +1040,34 @@ export default function HomePageClient({ initialData }) {
             <div className="resources-left">
               <div className={`dvr-line ${resInView ? 'fade-in-up' : ''}`} style={{ marginBottom: '16px', opacity: resInView ? 1 : 0 }} />
               <h2 className={`section-title ${resInView ? 'fade-in-up delay-100' : ''}`} style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px', opacity: resInView ? 1 : 0 }}>
-                Resources
+                {resSectionTitle}
               </h2>
               <p className={`section-desc ${resInView ? 'fade-in-up delay-200' : ''}`} style={{ color: '#fff', opacity: resInView ? 0.9 : 0, transition: 'opacity 0.6s', fontSize: '18px', lineHeight: 1.6, marginBottom: '40px', maxWidth: '400px' }}>
-                Explore the best practices and success stories of application of technology in process industry
+                {resSectionDesc}
               </p>
 
               <div className={resInView ? 'fade-in-up delay-300' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px', opacity: resInView ? 1 : 0 }}>
-                {['USE CASES', 'WEBINARS', 'BLOGS', 'BROCHURE', 'PUBLICATIONS'].map((item) => (
-                  <Link href="#" key={item} className="resource-link-card" style={{
+                {resSectionCategories.map((cat, idx) => (
+                  <Link href={cat.link || '#'} key={idx} className="resource-link-card" style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '16px 20px', background: '#2d2d2d', borderRadius: '4px',
                     borderLeft: '2px solid var(--color-teal)', color: 'var(--color-teal)',
                     textDecoration: 'none', fontWeight: '800', letterSpacing: '0.02em', fontSize: '18px'
                   }}>
-                    {item} <ArrowRight size={16} color="var(--color-teal)" />
+                    {cat.label} <ArrowRight size={16} color="var(--color-teal)" />
                   </Link>
                 ))}
               </div>
 
               <span className={resInView ? 'fade-in-up delay-400' : ''} style={{ opacity: resInView ? 1 : 0 }}>
-                <Link href="/resources" style={{
+                <Link href={resSectionCtaLink} style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   background: 'var(--gradient-brand)', color: '#000',
                   fontWeight: '700', textTransform: 'uppercase',
                   padding: '12px 24px', borderRadius: '40px',
                   fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none'
                 }}>
-                  ALL RESOURCES <ArrowRight size={14} color="#000" />
+                  {resSectionCtaText} <ArrowRight size={14} color="#000" />
                 </Link>
               </span>
             </div>
@@ -1104,9 +1120,9 @@ export default function HomePageClient({ initialData }) {
                             {slide.desc}
                           </p>
                           <div style={{ marginTop: 'auto' }}>
-                            <Link href="#" style={{
+                            <Link href={slide.href || '#'} style={{
                               display: 'inline-flex', alignItems: 'center', gap: '8px',
-                              background: 'var(--gradient-brand)', color: '#000', // Making text black like the original design requested earlier
+                              background: 'var(--gradient-brand)', color: '#000',
                               fontWeight: '700', textTransform: 'uppercase',
                               padding: '10px 24px', borderRadius: '40px',
                               fontSize: '12px', letterSpacing: '0.04em', textDecoration: 'none'
@@ -1147,22 +1163,22 @@ export default function HomePageClient({ initialData }) {
       </section>
 
       {/* ============================================================
-          9.5. CULTURE & PEOPLE ΓÇö Masonry Grid
+          9.5. CULTURE & PEOPLE — Masonry Grid
           ============================================================ */}
-      <section aria-label="Explore Our Culture and People" style={{ background: '#1a1a1a', padding: '40px 0 80px 0' }}>
+      <section aria-label={cultureData?.title || "Explore Our Culture and People"} style={{ background: '#1a1a1a', padding: '40px 0 80px 0' }}>
         <div className="content-wrapper-lg">
           {/* Header */}
           <div style={{ marginBottom: '48px' }}>
             <div className="dvr-line" style={{ marginBottom: '16px' }} />
             <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.2, marginBottom: '16px' }}>
-              Explore Our Culture and People
+              {cultureData?.title || "Explore Our Culture and People"}
             </h2>
             <p className="section-desc" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', lineHeight: 1.7, maxWidth: '620px' }}>
-              Are you seeking an exciting role that will challenge and inspire you? Work with diverse and driven people on global projects that are truly shaping the process industry. Seize the opportunity to learn, grow, and realize your ambitions.
+              {cultureData?.description || "Are you seeking an exciting role that will challenge and inspire you? Work with diverse and driven people on global projects that are truly shaping the process industry. Seize the opportunity to learn, grow, and realize your ambitions."}
             </p>
           </div>
 
-          {/* Masonry Grid ΓÇö exactly matching the reference layout */}
+          {/* Masonry Grid — exactly matching the reference layout */}
           <div className="culture-masonry-grid">
             {/* LEFT COLUMN */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -1177,19 +1193,19 @@ export default function HomePageClient({ initialData }) {
                 minHeight: '200px',
               }}>
                 <h3 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', marginBottom: '28px' }}>
-                  Looking to Work with us?
+                  {cultureData?.cardHeading || "Looking to Work with us?"}
                 </h3>
                 <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-                  <Link href="/careers" style={{
+                  <Link href={cultureData?.button1Link || "/careers"} style={{
                     display: 'inline-flex', alignItems: 'center', gap: '8px',
                     background: 'var(--gradient-brand)', color: '#000',
                     fontWeight: '700', textTransform: 'uppercase',
                     padding: '12px 24px', borderRadius: '40px',
                     fontSize: '14px', letterSpacing: '0.04em', textDecoration: 'none',
                   }}>
-                    VIEW OPENING <ArrowRight size={14} color="#000" />
+                    {cultureData?.button1Text || "VIEW OPENING"} <ArrowRight size={14} color="#000" />
                   </Link>
-                  <Link href="/about-us" style={{
+                  <Link href={cultureData?.button2Link || "/about-us"} style={{
                     display: 'inline-flex', alignItems: 'center', gap: '8px',
                     background: 'transparent', color: '#fff',
                     fontWeight: '600', textTransform: 'uppercase',
@@ -1197,24 +1213,24 @@ export default function HomePageClient({ initialData }) {
                     fontSize: '14px', letterSpacing: '0.04em', textDecoration: 'none',
                     border: '1.5px solid rgba(255,255,255,0.4)',
                   }}>
-                    ABOUT US <ArrowRight size={14} color="#fff" />
+                    {cultureData?.button2Text || "ABOUT US"} <ArrowRight size={14} color="#fff" />
                   </Link>
                 </div>
               </div>
 
-              {/* Image 1 ΓÇö team group photo (left) */}
+              {/* Image 1 — team group photo (left) */}
               <div style={{ borderRadius: '16px', overflow: 'hidden', flex: 1 }}>
                 <img
-                  src="/hubfs/grid-1.jpg"
+                  src={cultureData?.image1 || "/hubfs/grid-1.jpg"}
                   alt="Tridiagonal team"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', minHeight: '280px' }}
                 />
               </div>
 
-              {/* Image 4 ΓÇö office/workspace */}
+              {/* Image 4 — office/workspace */}
               <div style={{ borderRadius: '16px', overflow: 'hidden' }}>
                 <img
-                  src="/hubfs/grid-4.webp"
+                  src={cultureData?.image4 || "/hubfs/grid-4.webp"}
                   alt="Tridiagonal office"
                   style={{ width: '100%', height: '260px', objectFit: 'cover', display: 'block' }}
                 />
@@ -1223,19 +1239,19 @@ export default function HomePageClient({ initialData }) {
 
             {/* RIGHT COLUMN */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Image 2 ΓÇö tall team photo (right top, taller) */}
+              {/* Image 2 — tall team photo (right top, taller) */}
               <div style={{ borderRadius: '16px', overflow: 'hidden' }}>
                 <img
-                  src="/hubfs/grid-2.webp"
+                  src={cultureData?.image2 || "/hubfs/grid-2.webp"}
                   alt="Tridiagonal leadership team"
                   style={{ width: '100%', height: '380px', objectFit: 'cover', display: 'block' }}
                 />
               </div>
 
-              {/* Image 3 ΓÇö group learning/workshop */}
+              {/* Image 3 — group learning/workshop */}
               <div style={{ borderRadius: '16px', overflow: 'hidden', flex: 1 }}>
                 <img
-                  src="/hubfs/grid-3.webp"
+                  src={cultureData?.image3 || "/hubfs/grid-3.webp"}
                   alt="Tridiagonal team activity"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', minHeight: '280px' }}
                 />
@@ -1249,7 +1265,7 @@ export default function HomePageClient({ initialData }) {
           10. TRUSTED PARTNER BANNER
           ============================================================ */}
       <section
-        aria-label="Trusted Partner"
+        aria-label={initialData?.trustedPartnerSection?.title || "Trusted Partner"}
         style={{
           padding: '40px 30px',
           background: '#0f0f0f',
@@ -1272,14 +1288,14 @@ export default function HomePageClient({ initialData }) {
         >
           <div style={{ position: 'absolute', inset: 0, background: 'rgb(15 15 15 / 0%)' }} aria-hidden="true" />
           <div style={{ position: 'relative', zIndex: 1, maxWidth: '740px', margin: '0 auto' }}>
-            <h2 className="section-title" style={{ color: '#fff', fontSize: '45px', fontWeight: '700', lineHeight: 1.25, marginBottom: '24px' }}>
-              Looking for Trusted Partner for<br />executing your programs?
+            <h2 className="section-title" style={{ color: '#fff', fontSize: '45px', fontWeight: '700', lineHeight: 1.25, marginBottom: '24px', whiteSpace: 'pre-wrap' }}>
+              {initialData?.trustedPartnerSection?.title || "Looking for Trusted Partner for\nexecuting your programs?"}
             </h2>
-            <p className="section-desc" style={{ color: 'rgba(255,255,255,0.9)', fontSize: '18px', lineHeight: 1.7, marginBottom: '40px' }}>
-              We bring together unparalleled expertise with combination of skillsets and technology to<br />address your digital, computational and testing needs
+            <p className="section-desc" style={{ color: 'rgba(255,255,255,0.9)', fontSize: '18px', lineHeight: 1.7, marginBottom: '40px', whiteSpace: 'pre-wrap' }}>
+              {initialData?.trustedPartnerSection?.description || "We bring together unparalleled expertise with combination of skillsets and technology to\naddress your digital, computational and testing needs"}
             </p>
             <Link
-              href="/contact-us"
+              href={initialData?.trustedPartnerSection?.ctaLink || "/contact-us"}
               className="btn-primary"
               style={{
                 background: 'var(--gradient-brand)',
@@ -1294,9 +1310,10 @@ export default function HomePageClient({ initialData }) {
                 gap: '10px',
                 fontSize: '16px',
                 letterSpacing: '0.04em',
+                textDecoration: 'none'
               }}
             >
-              CONTACT US NOW <ArrowRight size={16} color="#000" />
+              {initialData?.trustedPartnerSection?.ctaText || "CONTACT US NOW"} <ArrowRight size={16} color="#000" />
             </Link>
           </div>
         </div>

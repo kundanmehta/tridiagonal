@@ -8,6 +8,8 @@ export default function AdminHomePageEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [allCaseStudies, setAllCaseStudies] = useState([]);
+  const [allBlogs, setAllBlogs] = useState([]);
   const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
   useEffect(() => {
@@ -49,6 +51,50 @@ export default function AdminHomePageEditor() {
         resourceSlides: fetchedData.resourceSlides || [],
         keyHighlights: fetchedData.keyHighlights || { counters: [] },
         brandIdentity: fetchedData.brandIdentity || {},
+        useCasesSection: fetchedData.useCasesSection || {
+          title: "Use Cases",
+          description: "Despite of ever-evolving industries...",
+          ctaText: "VIEW ALL USE CASES",
+          ctaLink: "/use-cases",
+          displayMode: 'manual',
+          latestCount: 4,
+          manualSelectedCards: []
+        },
+        partnersSection: fetchedData.partnersSection || {
+          title: "Technology Partners",
+          ctaText: "EXPLORE OUR PARTNER ECOSYSTEM",
+          ctaLink: "/partner-solutions",
+          logos: []
+        },
+        resourcesSection: fetchedData.resourcesSection || {
+          title: "Resources",
+          description: "Explore the best practices and success stories of application of technology in process industry",
+          ctaText: "ALL RESOURCES",
+          ctaLink: "/resources",
+          categories: fetchedData.resourcesSection?.categories || [],
+          displayMode: fetchedData.resourcesSection?.displayMode || 'latest',
+          manualSlides: fetchedData.resourcesSection?.manualSlides || [],
+          slides: fetchedData.resourcesSection?.slides || []
+        },
+        cultureSection: fetchedData.cultureSection || {
+          title: "Explore Our Culture and People",
+          description: "Are you seeking an exciting role that will challenge and inspire you?...",
+          cardHeading: "Looking to Work with us?",
+          button1Text: "VIEW OPENING",
+          button1Link: "/careers",
+          button2Text: "ABOUT US",
+          button2Link: "/about-us",
+          image1: "",
+          image2: "",
+          image3: "",
+          image4: ""
+        },
+        trustedPartnerSection: fetchedData.trustedPartnerSection || {
+          title: "Looking for Trusted Partner for executing your programs?",
+          description: "We bring together unparalleled expertise...",
+          ctaText: "CONTACT US NOW",
+          ctaLink: "/contact-us"
+        },
       };
       
       setData(mergedData);
@@ -58,6 +104,19 @@ export default function AdminHomePageEditor() {
       console.error(err);
       setLoading(false);
     });
+
+    // Fetch all logs to filter for Case Studies
+    fetch(`${API_URL}/api/blogs`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
+    })
+    .then(res => res.json())
+    .then(json => {
+      const blogs = json.data || [];
+      setAllBlogs(blogs);
+      const cases = blogs.filter(b => b.category === 'Case Study');
+      setAllCaseStudies(cases);
+    })
+    .catch(err => console.error('Error fetching blogs for picker:', err));
   }, []);
 
   const handleSave = async (e) => {
@@ -1005,48 +1064,402 @@ export default function AdminHomePageEditor() {
           </div>
         </div>
 
-        {/* RESOURCE SLIDERS */}
+        {/* USE CASES SECTION */}
         <div className="admin-section">
           <div className="admin-section-header">
             <span className="admin-badge">6</span>
-            <h2>Resource Carousels</h2>
+            <h2>Use Cases Carousel</h2>
           </div>
           <div className="admin-form-body">
-            <div className="admin-array-list">
-              {(data?.resourceSlides || []).map((card, idx) => (
-                <div key={idx} className="admin-array-card">
-                  <div className="admin-array-card-header">
-                    <h3 className="admin-array-card-title">Slide #{idx + 1}</h3>
-                    <button type="button" onClick={() => removeArrayItem('resourceSlides', idx)} className="admin-btn-remove">Remove Slide</button>
+            <div className="admin-grid" style={{ marginBottom: '2rem' }}>
+              <div>
+                <label className="admin-label">Section Title</label>
+                <input type="text" value={data?.useCasesSection?.title || ''} onChange={e => setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), title: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">CTA Button Text</label>
+                <input type="text" value={data?.useCasesSection?.ctaText || ''} onChange={e => setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), ctaText: e.target.value}}))} className="admin-input" placeholder="VIEW ALL USE CASES" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">CTA Button Link</label>
+                <input type="text" value={data?.useCasesSection?.ctaLink || ''} onChange={e => setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), ctaLink: e.target.value}}))} className="admin-input" placeholder="/use-cases" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Section Description</label>
+                <textarea value={data?.useCasesSection?.description || ''} onChange={e => setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), description: e.target.value}}))} rows={3} className="admin-textarea" />
+              </div>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ fontSize: '1.1rem', marginBottom: '15px', color: '#1e293b' }}>Carousel Content Mode</h3>
+              
+              <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="radio" checked={data?.useCasesSection?.displayMode === 'latest'} onChange={() => setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), displayMode: 'latest'}}))} />
+                  <span>Auto Latest Case Studies</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="radio" checked={data?.useCasesSection?.displayMode === 'manual'} onChange={() => setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), displayMode: 'manual'}}))} />
+                  <span>Manual Selection</span>
+                </label>
+              </div>
+
+              {data?.useCasesSection?.displayMode === 'latest' ? (
+                <div>
+                  <label className="admin-label">Number of Latest Cases to Show</label>
+                  <input type="number" value={data?.useCasesSection?.latestCount || 4} onChange={e => setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), latestCount: parseInt(e.target.value) || 4}}))} className="admin-input" style={{ maxWidth: '120px' }} />
+                </div>
+              ) : (
+                <div className="admin-col-full">
+                  <label className="admin-label">Select Case Studies (Manual)</label>
+                  <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '10px' }}>Select the specific case studies you want to appear in the carousel.</p>
+                  
+                  <div style={{ maxHeight: '300px', overflowY: 'auto', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px' }}>
+                    {allCaseStudies.length === 0 ? (
+                      <p style={{ padding: '10px', textAlign: 'center', color: '#94a3b8' }}>No case studies found in database.</p>
+                    ) : (
+                      allCaseStudies.map(blog => (
+                        <label key={blog._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={(data?.useCasesSection?.manualSelectedCards || []).includes(blog._id)} 
+                            onChange={(e) => {
+                              const currentSelected = data?.useCasesSection?.manualSelectedCards || [];
+                              const newSelected = e.target.checked 
+                                ? [...currentSelected, blog._id]
+                                : currentSelected.filter(id => id !== blog._id);
+                              setData(prev => ({...prev, useCasesSection: {...(prev?.useCasesSection || {}), manualSelectedCards: newSelected}}));
+                            }}
+                          />
+                          <img src={blog.coverImage} alt="" style={{ width: '40px', height: '30px', objectFit: 'cover', borderRadius: '4px' }} />
+                          <span style={{ fontSize: '0.9rem' }}>{blog.title}</span>
+                        </label>
+                      ))
+                    )}
                   </div>
-                  <div className="admin-grid">
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* TECHNOLOGY PARTNERS SECTION */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">7</span>
+            <h2>Technology Partners</h2>
+          </div>
+          <div className="admin-form-body">
+            <div className="admin-grid" style={{ marginBottom: '2rem' }}>
+              <div>
+                <label className="admin-label">Section Title</label>
+                <input type="text" value={data?.partnersSection?.title || ''} onChange={e => setData(prev => ({...prev, partnersSection: {...(prev?.partnersSection || {}), title: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">CTA Button Text</label>
+                <input type="text" value={data?.partnersSection?.ctaText || ''} onChange={e => setData(prev => ({...prev, partnersSection: {...(prev?.partnersSection || {}), ctaText: e.target.value}}))} className="admin-input" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">CTA Button Link</label>
+                <input type="text" value={data?.partnersSection?.ctaLink || ''} onChange={e => setData(prev => ({...prev, partnersSection: {...(prev?.partnersSection || {}), ctaLink: e.target.value}}))} className="admin-input" />
+              </div>
+            </div>
+
+            <h3 style={{ fontSize: '1rem', color: '#475569', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.4rem' }}>Manage Marquee Logos</h3>
+            <div className="admin-array-list">
+              {(data?.partnersSection?.logos || []).map((logo, idx) => (
+                <div key={idx} className="admin-array-card" style={{ background: '#fff' }}>
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Logo #{idx + 1}</h3>
+                    <button type="button" onClick={() => {
+                      const newLogos = [...(data.partnersSection.logos || [])];
+                      newLogos.splice(idx, 1);
+                      setData(p => ({...p, partnersSection: {...p.partnersSection, logos: newLogos}}));
+                    }} className="admin-btn-remove">Remove Logo</button>
+                  </div>
+                  <div className="admin-grid" style={{ gridTemplateColumns: '1fr 2fr' }}>
                     <div>
-                      <label className="admin-label">Slide Badge Type</label>
-                      <input type="text" value={card.typeStr || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'typeStr', e.target.value)} className="admin-input" placeholder="e.g. WEBINARS" />
+                      <label className="admin-label">Partner Name</label>
+                      <input type="text" value={logo.name || ''} onChange={e => {
+                        const newLogos = [...(data.partnersSection.logos || [])];
+                        newLogos[idx] = { ...newLogos[idx], name: e.target.value };
+                        setData(p => ({...p, partnersSection: {...p.partnersSection, logos: newLogos}}));
+                      }} className="admin-input" />
                     </div>
                     <div>
-                      <label className="admin-label">Redirection Link</label>
-                      <input type="text" value={card.href || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'href', e.target.value)} className="admin-input" />
-                    </div>
-                    <div className="admin-col-full">
-                      <label className="admin-label">Article / Slide Title</label>
-                      <input type="text" value={card.title || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'title', e.target.value)} className="admin-input" />
-                    </div>
-                    <div className="admin-col-full">
-                      <label className="admin-label">Article Summary Description</label>
-                      <textarea value={card.desc || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'desc', e.target.value)} rows={2} className="admin-textarea" />
-                    </div>
-                    <div className="admin-col-full">
-                      <label className="admin-label">Featured Image URL</label>
-                      <input type="text" value={card.image || ''} onChange={e => updateArrayItem('resourceSlides', idx, 'image', e.target.value)} className="admin-input" placeholder="/hubfs/your-image.png" />
+                      <label className="admin-label">Partner Logo</label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        {logo.image && <img src={logo.image} alt="" style={{ height: '40px', objectFit: 'contain', background: '#f1f5f9', padding: '4px', borderRadius: '4px' }} />}
+                        <input type="file" accept="image/*" onChangeCapture={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          try {
+                            const res = await fetch(`${API_URL}/api/upload`, {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
+                              body: formData
+                            });
+                            const json = await res.json();
+                            if (json.url) {
+                              const newLogos = [...(data.partnersSection.logos || [])];
+                              newLogos[idx] = { ...newLogos[idx], image: json.url };
+                              setData(p => ({...p, partnersSection: {...p.partnersSection, logos: newLogos}}));
+                            }
+                          } catch (err) { console.error('Logo upload error', err); }
+                        }} className="admin-input-file" />
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
-              <button type="button" className="admin-btn-add" onClick={() => addArrayItem('resourceSlides', { typeStr: 'NEW', title: 'New Slide', desc: '', image: '', href: '#' })}>
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                Add Resource Slide
-              </button>
+              <button type="button" className="admin-btn-add" onClick={() => {
+                const newLogos = [...(data?.partnersSection?.logos || []), { name: 'New Partner', image: '' }];
+                setData(p => ({...p, partnersSection: {...p.partnersSection, logos: newLogos}}));
+              }}>+ Add Partner Logo</button>
+            </div>
+          </div>
+        </div>
+
+        {/* RESOURCES SECTION */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">8</span>
+            <h2>Resources Section</h2>
+          </div>
+          <div className="admin-form-body">
+            <div className="admin-grid" style={{ marginBottom: '2rem' }}>
+              <div>
+                <label className="admin-label">Section Title</label>
+                <input type="text" value={data?.resourcesSection?.title || ''} onChange={e => setData(prev => ({...prev, resourcesSection: {...(prev?.resourcesSection || {}), title: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Display Mode</label>
+                <select 
+                  value={data?.resourcesSection?.displayMode || 'latest'} 
+                  onChange={e => setData(prev => ({...prev, resourcesSection: {...(prev?.resourcesSection || {}), displayMode: e.target.value}}))} 
+                  className="admin-input"
+                >
+                  <option value="latest">Auto: Latest post from each category</option>
+                  <option value="manual">Manual: Pick specific posts</option>
+                </select>
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Section Description</label>
+                <textarea value={data?.resourcesSection?.description || ''} onChange={e => setData(prev => ({...prev, resourcesSection: {...(prev?.resourcesSection || {}), description: e.target.value}}))} className="admin-textarea" rows={2} />
+              </div>
+              <div>
+                <label className="admin-label">Main CTA Button Text</label>
+                <input type="text" value={data?.resourcesSection?.ctaText || ''} onChange={e => setData(prev => ({...prev, resourcesSection: {...(prev?.resourcesSection || {}), ctaText: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Main CTA Button Link</label>
+                <input type="text" value={data?.resourcesSection?.ctaLink || ''} onChange={e => setData(prev => ({...prev, resourcesSection: {...(prev?.resourcesSection || {}), ctaLink: e.target.value}}))} className="admin-input" />
+              </div>
+            </div>
+
+            {/* Vertical Category Links */}
+            <h3 style={{ fontSize: '1rem', color: '#475569', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.4rem' }}>Vertical Category Links</h3>
+            <div className="admin-array-list" style={{ marginBottom: '2.5rem' }}>
+              {(data?.resourcesSection?.categories || []).map((cat, idx) => (
+                <div key={idx} className="admin-array-card" style={{ background: '#f8fafc' }}>
+                  <div className="admin-grid" style={{ gridTemplateColumns: '1fr 1fr auto', alignItems: 'end', gap: '10px' }}>
+                    <div>
+                      <label className="admin-label">Label (e.g. USE CASES)</label>
+                      <input type="text" value={cat.label || ''} onChange={e => {
+                        const newCats = [...(data.resourcesSection.categories || [])];
+                        newCats[idx] = { ...newCats[idx], label: e.target.value };
+                        setData(p => ({...p, resourcesSection: {...p.resourcesSection, categories: newCats}}));
+                      }} className="admin-input" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Link</label>
+                      <input type="text" value={cat.link || ''} onChange={e => {
+                        const newCats = [...(data.resourcesSection.categories || [])];
+                        newCats[idx] = { ...newCats[idx], link: e.target.value };
+                        setData(p => ({...p, resourcesSection: {...p.resourcesSection, categories: newCats}}));
+                      }} className="admin-input" />
+                    </div>
+                    <button type="button" onClick={() => {
+                      const newCats = [...(data.resourcesSection.categories || [])];
+                      newCats.splice(idx, 1);
+                      setData(p => ({...p, resourcesSection: {...p.resourcesSection, categories: newCats}}));
+                    }} className="admin-btn-remove" style={{ marginBottom: '4px' }}>Remove</button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="admin-btn-add" onClick={() => {
+                const newCats = [...(data?.resourcesSection?.categories || []), { label: 'NEW CATEGORY', link: '#' }];
+                setData(p => ({...p, resourcesSection: {...p.resourcesSection, categories: newCats}}));
+              }}>+ Add Category</button>
+            </div>
+
+            {/* Featured Slides Selection (Only if Manual) */}
+            {data?.resourcesSection?.displayMode === 'manual' ? (
+              <>
+                <h3 style={{ fontSize: '1rem', color: '#475569', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.4rem' }}>Right-Side Featured Slides (Manual Selection)</h3>
+                <div className="admin-array-list">
+                  {(data?.resourcesSection?.manualSlides || []).map((ms, idx) => (
+                    <div key={idx} className="admin-array-card" style={{ background: '#fff' }}>
+                      <div className="admin-array-card-header">
+                        <h3 className="admin-array-card-title">Slide #{idx + 1}</h3>
+                        <button type="button" onClick={() => {
+                          const newM = [...(data.resourcesSection.manualSlides || [])];
+                          newM.splice(idx, 1);
+                          setData(p => ({...p, resourcesSection: {...p.resourcesSection, manualSlides: newM}}));
+                        }} className="admin-btn-remove">Remove</button>
+                      </div>
+                      <div className="admin-grid">
+                        <div>
+                          <label className="admin-label">Type Label (e.g. WEBINARS)</label>
+                          <input type="text" value={ms.typeStr || ''} onChange={e => {
+                            const newM = [...(data.resourcesSection.manualSlides || [])];
+                            newM[idx] = { ...newM[idx], typeStr: e.target.value };
+                            setData(p => ({...p, resourcesSection: {...p.resourcesSection, manualSlides: newM}}));
+                          }} className="admin-input" />
+                        </div>
+                        <div>
+                          <label className="admin-label">Select Post</label>
+                          <select 
+                            value={ms.blogId || ''} 
+                            onChange={e => {
+                              const newM = [...(data.resourcesSection.manualSlides || [])];
+                              newM[idx] = { ...newM[idx], blogId: e.target.value };
+                              setData(p => ({...p, resourcesSection: {...p.resourcesSection, manualSlides: newM}}));
+                            }} 
+                            className="admin-input"
+                          >
+                            <option value="">-- Choose a post --</option>
+                            {allBlogs.map(b => (
+                              <option key={b._id} value={b._id}>[{b.category}] {b.title}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" className="admin-btn-add" onClick={() => {
+                    const newM = [...(data?.resourcesSection?.manualSlides || []), { typeStr: 'NEW', blogId: '' }];
+                    setData(p => ({...p, resourcesSection: {...p.resourcesSection, manualSlides: newM}}));
+                  }}>+ Add Manual Slide Selection</button>
+                </div>
+              </>
+            ) : (
+              <div style={{ background: '#f0f9ff', padding: '1rem', borderRadius: '8px', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.9rem' }}>
+                <strong>Auto Mode Active:</strong> The carousel will automatically display the latest post from each of the following categories: 
+                <ul style={{ marginTop: '0.5rem', marginLeft: '1.2rem' }}>
+                  <li><strong>Webinars</strong> (Type: WEBINARS)</li>
+                  <li><strong>Tech Blog</strong> (Type: BLOGS)</li>
+                  <li><strong>Brochure</strong> (Type: BROCHURE)</li>
+                  <li><strong>Publication</strong> (Type: PUBLICATIONS)</li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* CULTURE & PEOPLE SECTION */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">9</span>
+            <h2>Culture & People</h2>
+          </div>
+          <div className="admin-form-body">
+            <div className="admin-grid" style={{ marginBottom: '2rem' }}>
+              <div className="admin-col-full">
+                <label className="admin-label">Section Title</label>
+                <input type="text" value={data?.cultureSection?.title || ''} onChange={e => setData(prev => ({...prev, cultureSection: {...prev.cultureSection, title: e.target.value}}))} className="admin-input" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Section Description</label>
+                <textarea value={data?.cultureSection?.description || ''} onChange={e => setData(prev => ({...prev, cultureSection: {...prev.cultureSection, description: e.target.value}}))} className="admin-textarea" rows={3} />
+              </div>
+            </div>
+
+            <h3 style={{ fontSize: '1rem', color: '#475569', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.4rem' }}>Career Card</h3>
+            <div className="admin-grid" style={{ marginBottom: '2rem' }}>
+              <div className="admin-col-full">
+                <label className="admin-label">Card Heading</label>
+                <input type="text" value={data?.cultureSection?.cardHeading || ''} onChange={e => setData(prev => ({...prev, cultureSection: {...prev.cultureSection, cardHeading: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Button 1 Text</label>
+                <input type="text" value={data?.cultureSection?.button1Text || ''} onChange={e => setData(prev => ({...prev, cultureSection: {...prev.cultureSection, button1Text: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Button 1 Link</label>
+                <input type="text" value={data?.cultureSection?.button1Link || ''} onChange={e => setData(prev => ({...prev, cultureSection: {...prev.cultureSection, button1Link: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Button 2 Text</label>
+                <input type="text" value={data?.cultureSection?.button2Text || ''} onChange={e => setData(prev => ({...prev, cultureSection: {...prev.cultureSection, button2Text: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">Button 2 Link</label>
+                <input type="text" value={data?.cultureSection?.button2Link || ''} onChange={e => setData(prev => ({...prev, cultureSection: {...prev.cultureSection, button2Link: e.target.value}}))} className="admin-input" />
+              </div>
+            </div>
+
+            <h3 style={{ fontSize: '1rem', color: '#475569', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.4rem' }}>Masonry Image Grid</h3>
+            <div className="admin-grid" style={{ gap: '20px' }}>
+              {[1, 2, 3, 4].map(num => (
+                <div key={num} style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <label className="admin-label">Image {num}</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {data?.cultureSection?.[`image${num}`] ? (
+                      <img src={data.cultureSection[`image${num}`]} alt="" style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '4px' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.8rem', borderRadius: '4px' }}>No Image</div>
+                    )}
+                    <input type="file" onChangeCapture={async (e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      const formData = new FormData();
+                      formData.append('file', file);
+                      try {
+                        const res = await fetch(`${API_URL}/api/upload`, {
+                          method: 'POST',
+                          headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
+                          body: formData
+                        });
+                        const json = await res.json();
+                        if (json.url) {
+                          setData(p => ({...p, cultureSection: {...p.cultureSection, [`image${num}`]: json.url}}));
+                        }
+                      } catch (err) { console.error('Upload error', err); }
+                    }} className="admin-input-file" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* TRUSTED PARTNER BANNER SECTION */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">10</span>
+            <h2>Trusted Partner Banner</h2>
+          </div>
+          <div className="admin-form-body">
+            <div className="admin-grid">
+              <div className="admin-col-full">
+                <label className="admin-label">Banner Title (supports \n for line breaks)</label>
+                <textarea value={data?.trustedPartnerSection?.title || ''} onChange={e => setData(prev => ({...prev, trustedPartnerSection: {...prev.trustedPartnerSection, title: e.target.value}}))} className="admin-textarea" rows={2} />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Banner Description</label>
+                <textarea value={data?.trustedPartnerSection?.description || ''} onChange={e => setData(prev => ({...prev, trustedPartnerSection: {...prev.trustedPartnerSection, description: e.target.value}}))} className="admin-textarea" rows={3} />
+              </div>
+              <div>
+                <label className="admin-label">CTA Button Text</label>
+                <input type="text" value={data?.trustedPartnerSection?.ctaText || ''} onChange={e => setData(prev => ({...prev, trustedPartnerSection: {...prev.trustedPartnerSection, ctaText: e.target.value}}))} className="admin-input" />
+              </div>
+              <div>
+                <label className="admin-label">CTA Button Link</label>
+                <input type="text" value={data?.trustedPartnerSection?.ctaLink || ''} onChange={e => setData(prev => ({...prev, trustedPartnerSection: {...prev.trustedPartnerSection, ctaLink: e.target.value}}))} className="admin-input" />
+              </div>
             </div>
           </div>
         </div>
