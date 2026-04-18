@@ -66,12 +66,47 @@ export default function PrivacyPolicy() {
                 </h2>
               )}
               
-              <div dangerouslySetInnerHTML={{ __html: section.content }} />
+              <div className="rich-content" dangerouslySetInnerHTML={{ __html: section.content }} />
             </div>
           ))}
 
         </div>
       </section>
+
+      {/* Scoped styles for rich-text content from Quill editor */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .rich-content ul {
+          list-style-type: disc;
+          padding-left: 1.5em;
+          margin: 1em 0;
+        }
+        .rich-content ol {
+          list-style-type: decimal;
+          padding-left: 1.5em;
+          margin: 1em 0;
+        }
+        .rich-content li {
+          margin-bottom: 0.5em;
+          padding-left: 0.25em;
+        }
+        .rich-content ul ul {
+          list-style-type: circle;
+        }
+        .rich-content ul ul ul {
+          list-style-type: square;
+        }
+        .rich-content p {
+          margin-bottom: 0.75em;
+        }
+        .rich-content strong, .rich-content b {
+          color: #fff;
+          font-weight: 700;
+        }
+        .rich-content a {
+          color: var(--color-teal, #47BC87);
+          text-decoration: underline;
+        }
+      `}} />
     </main>
   );
 }
