@@ -43,4 +43,8 @@ router.get('/forms/:id/submissions', verifyToken, apiController.getFormSubmissio
 router.get('/contactpage', apiController.getContactPage);
 router.put('/contactpage', verifyToken, apiController.updateContactPage);
 
+// About Us Page CMS
+router.get('/aboutpage', apiController.getAboutPage);
+router.put('/aboutpage', verifyToken, apiController.updateAboutPage);
+
 module.exports = router;

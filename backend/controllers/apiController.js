@@ -341,3 +341,32 @@ exports.updateContactPage = async (req, res) => {
     res.status(500).json({ error: 'Failed to update ContactPage config' });
   }
 };
+
+// ═══════════════════════════════════════════════════════════
+// ABOUT PAGE CMS
+// ═══════════════════════════════════════════════════════════
+const AboutPage = require('../models/AboutPage');
+
+// GET /api/aboutpage
+exports.getAboutPage = async (req, res) => {
+  try {
+    const data = await AboutPage.findOne();
+    res.json({ data: data || {} });
+  } catch (error) {
+    console.error('Error fetching AboutPage:', error);
+    res.status(500).json({ error: 'Failed to fetch AboutPage config' });
+  }
+};
+
+// PUT /api/aboutpage (Protected)
+exports.updateAboutPage = async (req, res) => {
+  try {
+    const updateData = req.body;
+    const options = { new: true, upsert: true, setDefaultsOnInsert: true };
+    const updated = await AboutPage.findOneAndUpdate({ singleton: true }, { $set: updateData }, options);
+    res.json({ message: 'AboutPage updated successfully', data: updated });
+  } catch (error) {
+    console.error('Error updating AboutPage:', error);
+    res.status(500).json({ error: 'Failed to update AboutPage config' });
+  }
+};

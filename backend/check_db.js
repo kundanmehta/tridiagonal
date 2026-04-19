@@ -1,21 +1,10 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
-const HomePage = require('./models/HomePage');
-
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tridiagonal';
+const AboutPage = require('./models/AboutPage');
 
 async function check() {
-  try {
-    await mongoose.connect(MONGODB_URI);
-    const data = await HomePage.findOne();
-    console.log('DATA_START');
-    console.log(JSON.stringify(data, null, 2));
-    console.log('DATA_END');
-  } catch (err) {
-    console.error(err);
-  } finally {
-    mongoose.connection.close();
-  }
+  await mongoose.connect('mongodb://127.0.0.1:27017/tridiagonal');
+  const d = await AboutPage.findOne();
+  console.log(JSON.stringify(d, null, 2));
+  process.exit(0);
 }
-
 check();
