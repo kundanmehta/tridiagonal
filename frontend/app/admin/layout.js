@@ -28,7 +28,15 @@ const sidebarNav = [
   { label: 'Services', href: '/admin/services', icon: Settings },
   { label: 'Industries', href: '/admin/industries', icon: Factory },
   { label: 'Resources', href: '/admin/resources', icon: BookOpen },
-  { label: 'Events', href: '/admin/events', icon: Calendar },
+  {
+    label: 'Events',
+    icon: Calendar,
+    children: [
+      { label: 'Upcoming Webinars', href: '/admin/events/upcoming', icon: Calendar },
+      { label: 'On-Demand Webinars', href: '/admin/events/on-demand', icon: Calendar },
+      { label: 'News & Press Release', href: '/admin/events/news', icon: FileText },
+    ],
+  },
   { label: 'Media Library', href: '/admin/media', icon: ImageIcon },
   { label: 'Header & Footer', href: '/admin/header-footer', icon: Globe },
   { label: 'Contact Submissions', href: '/admin/contacts', icon: Mail },
@@ -39,7 +47,7 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [expandedSections, setExpandedSections] = useState({ Pages: true });
+  const [expandedSections, setExpandedSections] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -248,7 +256,7 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main style={{ flex: 1, marginLeft: '260px', padding: '32px 40px', minHeight: '100vh' }}>
+      <main style={{ flex: 1, marginLeft: '260px', padding: '32px 40px', minHeight: '100vh', color: '#1e293b' }}>
         {children}
       </main>
     </div>

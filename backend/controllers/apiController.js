@@ -484,3 +484,162 @@ exports.deleteCareersJob = async (req, res) => {
   }
 };
 
+// ═══════════════════════════════════════════════════════════
+// EVENTS (WEBINARS & NEWS)
+// ═══════════════════════════════════════════════════════════
+const Webinar = require('../models/Webinar');
+const News = require('../models/News');
+
+// --- Webinars ---
+
+// GET /api/webinars — public listing
+exports.getWebinars = async (req, res) => {
+  try {
+    const list = await Webinar.find({ isActive: true }).sort({ eventDate: -1 });
+    res.json({ data: list });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch webinars' });
+  }
+};
+
+// GET /api/webinars/all — admin listing
+exports.getAllWebinars = async (req, res) => {
+  try {
+    const list = await Webinar.find().sort({ eventDate: -1 });
+    res.json({ data: list });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch all webinars' });
+  }
+};
+
+// GET /api/webinars/:slug — single webinar
+exports.getWebinarBySlug = async (req, res) => {
+  try {
+    const item = await Webinar.findOne({ slug: req.params.slug });
+    if (!item) return res.status(404).json({ error: 'Webinar not found' });
+    res.json({ data: item });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch webinar' });
+  }
+};
+
+// POST /api/webinars — create (Protected)
+exports.createWebinar = async (req, res) => {
+  try {
+    const item = await Webinar.create(req.body);
+    res.status(201).json({ data: item });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// PUT /api/webinars/:slug — update (Protected)
+exports.updateWebinar = async (req, res) => {
+  try {
+    const item = await Webinar.findOneAndUpdate({ slug: req.params.slug }, { $set: req.body }, { new: true });
+    if (!item) return res.status(404).json({ error: 'Webinar not found' });
+    res.json({ data: item });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update webinar' });
+  }
+};
+
+// DELETE /api/webinars/:slug — delete (Protected)
+exports.deleteWebinar = async (req, res) => {
+  try {
+    await Webinar.findOneAndDelete({ slug: req.params.slug });
+    res.json({ message: 'Webinar deleted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete webinar' });
+  }
+};
+
+// --- News & Press Release ---
+
+// GET /api/news — public listing
+exports.getNews = async (req, res) => {
+  try {
+    const list = await News.find({ isActive: true }).sort({ date: -1 });
+    res.json({ data: list });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch news' });
+  }
+};
+
+// GET /api/news/all — admin listing
+exports.getAllNews = async (req, res) => {
+  try {
+    const list = await News.find().sort({ date: -1 });
+    res.json({ data: list });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch all news' });
+  }
+};
+
+// GET /api/news/:slug — single news item
+exports.getNewsBySlug = async (req, res) => {
+  try {
+    const item = await News.findOne({ slug: req.params.slug });
+    if (!item) return res.status(404).json({ error: 'News item not found' });
+    res.json({ data: item });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch news item' });
+  }
+};
+
+// POST /api/news — create (Protected)
+exports.createNews = async (req, res) => {
+  try {
+    const item = await News.create(req.body);
+    res.status(201).json({ data: item });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// PUT /api/news/:slug — update (Protected)
+exports.updateNews = async (req, res) => {
+  try {
+    const item = await News.findOneAndUpdate({ slug: req.params.slug }, { $set: req.body }, { new: true });
+    if (!item) return res.status(404).json({ error: 'News item not found' });
+    res.json({ data: item });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update news item' });
+  }
+};
+
+// DELETE /api/news/:slug — delete (Protected)
+exports.deleteNews = async (req, res) => {
+  try {
+    await News.findOneAndDelete({ slug: req.params.slug });
+    res.json({ message: 'News item deleted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete news item' });
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// FILE UPLOADS
+// ═══════════════════════════════════════════════════════════
+
+// POST /api/upload — standard upload (Protected)
+exports.uploadFile = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl, message: 'File uploaded successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Upload failed' });
+  }
+};
+
+// POST /api/upload-public — public upload (Used by form builders or anonymous uploads)
+exports.uploadPublicFile = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl, message: 'File uploaded successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Upload failed' });
+  }
+};

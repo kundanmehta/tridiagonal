@@ -1,11 +1,23 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getNews } from '../data';
+
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
 export default function NewsAndPressRelease() {
-  const newsItems = getNews();
+  const [newsItems, setNewsItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/news`)
+      .then(res => res.json())
+      .then(json => {
+        setNewsItems(json.data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   // Filter based on title or description matching query
   const filteredNews = newsItems.filter(item => 
@@ -114,7 +126,7 @@ export default function NewsAndPressRelease() {
                           </span>
                           <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            {item.date}
+                            {new Date(item.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                           </span>
                         </div>
 

@@ -48,14 +48,19 @@ router.put('/contactpage', verifyToken, apiController.updateContactPage);
 router.get('/aboutpage', apiController.getAboutPage);
 router.put('/aboutpage', verifyToken, apiController.updateAboutPage);
 
-// Careers Page CMS
-router.get('/careers/page', apiController.getCareersPage);
-router.put('/careers/page', verifyToken, apiController.updateCareersPage);
-router.get('/careers/jobs/all', verifyToken, apiController.getAllCareersJobs); // admin: all jobs
-router.get('/careers/jobs', apiController.getCareersJobs);                     // public: active only
-router.post('/careers/jobs', verifyToken, apiController.createCareersJob);
-router.get('/careers/jobs/:id', apiController.getCareersJobById);
-router.put('/careers/jobs/:id', verifyToken, apiController.updateCareersJob);
-router.delete('/careers/jobs/:id', verifyToken, apiController.deleteCareersJob);
+// Events (Webinars & News)
+router.get('/webinars/all', verifyToken, apiController.getAllWebinars);
+router.get('/webinars', apiController.getWebinars);
+router.post('/webinars', verifyToken, apiController.createWebinar);
+router.get('/webinars/:slug', apiController.getWebinarBySlug);
+router.put('/webinars/:slug', verifyToken, apiController.updateWebinar);
+router.delete('/webinars/:slug', verifyToken, apiController.deleteWebinar);
+
+router.get('/news/all', verifyToken, apiController.getAllNews);
+router.get('/news', apiController.getNews);
+router.post('/news', verifyToken, apiController.createNews);
+router.get('/news/:slug', apiController.getNewsBySlug);
+router.put('/news/:slug', verifyToken, apiController.updateNews);
+router.delete('/news/:slug', verifyToken, apiController.deleteNews);
 
 module.exports = router;
