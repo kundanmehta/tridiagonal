@@ -25,6 +25,7 @@ router.get('/contacts', verifyToken, apiController.getContacts);
 router.get('/homepage', apiController.getHomePage); 
 router.put('/homepage', verifyToken, apiController.updateHomePage); 
 router.post('/upload', verifyToken, upload.single('file'), apiController.uploadFile);
+router.post('/upload-public', upload.single('file'), apiController.uploadPublicFile);
 
 // Privacy Policy page
 router.get('/privacy-policy', apiController.getPrivacyPolicy);
@@ -46,5 +47,15 @@ router.put('/contactpage', verifyToken, apiController.updateContactPage);
 // About Us Page CMS
 router.get('/aboutpage', apiController.getAboutPage);
 router.put('/aboutpage', verifyToken, apiController.updateAboutPage);
+
+// Careers Page CMS
+router.get('/careers/page', apiController.getCareersPage);
+router.put('/careers/page', verifyToken, apiController.updateCareersPage);
+router.get('/careers/jobs/all', verifyToken, apiController.getAllCareersJobs); // admin: all jobs
+router.get('/careers/jobs', apiController.getCareersJobs);                     // public: active only
+router.post('/careers/jobs', verifyToken, apiController.createCareersJob);
+router.get('/careers/jobs/:id', apiController.getCareersJobById);
+router.put('/careers/jobs/:id', verifyToken, apiController.updateCareersJob);
+router.delete('/careers/jobs/:id', verifyToken, apiController.deleteCareersJob);
 
 module.exports = router;

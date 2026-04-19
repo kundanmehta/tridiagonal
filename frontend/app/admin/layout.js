@@ -19,6 +19,7 @@ const sidebarNav = [
     children: [
       { label: 'Home Page', href: '/admin/pages/home', icon: Home },
       { label: 'About Us', href: '/admin/pages/about-us', icon: Users },
+      { label: 'Careers', href: '/admin/pages/careers', icon: Briefcase },
       { label: 'Contact Us', href: '/admin/pages/contact-us', icon: Phone },
       { label: 'Privacy Policy', href: '/admin/pages/privacy-policy', icon: FileText },
     ],

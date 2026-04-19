@@ -20,14 +20,16 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp|svg|mp4|webm|pdf/;
+  const allowedTypes = /jpeg|jpg|png|gif|webp|svg|mp4|webm|pdf|doc|docx/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const mimetype = allowedTypes.test(file.mimetype) || 
+                   file.mimetype === 'application/msword' || 
+                   file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
   if (extname || mimetype) {
     cb(null, true);
   } else {
-    cb(new Error('Only images, videos, and PDFs are allowed'), false);
+    cb(new Error('Only images, videos, PDFs, and Word docs are allowed'), false);
   }
 };
 

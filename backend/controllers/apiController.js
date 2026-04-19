@@ -182,6 +182,20 @@ exports.uploadFile = async (req, res) => {
   }
 };
 
+// POST /api/upload-public — Upload a file (Public)
+exports.uploadPublicFile = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ message: 'File uploaded successfully', url: fileUrl });
+  } catch (error) {
+    console.error('Error uploading public file:', error);
+    res.status(500).json({ error: 'Failed to upload file' });
+  }
+};
+
 const PrivacyPolicy = require('../models/PrivacyPolicy');
 
 // GET /api/privacy-policy
@@ -370,3 +384,103 @@ exports.updateAboutPage = async (req, res) => {
     res.status(500).json({ error: 'Failed to update AboutPage config' });
   }
 };
+
+// ═══════════════════════════════════════════════════════════
+// CAREERS PAGE CMS
+// ═══════════════════════════════════════════════════════════
+const CareersPage = require('../models/CareersPage');
+const CareersJob = require('../models/CareersJob');
+
+// GET /api/careers/page
+exports.getCareersPage = async (req, res) => {
+  try {
+    const data = await CareersPage.findOne().populate('selectedFormId');
+    res.json({ data: data || {} });
+  } catch (error) {
+    console.error('Error fetching CareersPage:', error);
+    res.status(500).json({ error: 'Failed to fetch CareersPage config' });
+  }
+};
+
+// PUT /api/careers/page (Protected)
+exports.updateCareersPage = async (req, res) => {
+  try {
+    const updateData = req.body;
+    const options = { new: true, upsert: true, setDefaultsOnInsert: true };
+    const updated = await CareersPage.findOneAndUpdate({ singleton: true }, { $set: updateData }, options);
+    res.json({ message: 'CareersPage updated successfully', data: updated });
+  } catch (error) {
+    console.error('Error updating CareersPage:', error);
+    res.status(500).json({ error: 'Failed to update CareersPage config' });
+  }
+};
+
+// GET /api/careers/jobs — list all active jobs (public)
+exports.getCareersJobs = async (req, res) => {
+  try {
+    const jobs = await CareersJob.find({ isActive: true }).sort({ createdAt: -1 });
+    res.json({ data: jobs });
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+};
+
+// GET /api/careers/jobs/all — list all jobs including inactive (admin)
+exports.getAllCareersJobs = async (req, res) => {
+  try {
+    const jobs = await CareersJob.find().sort({ createdAt: -1 });
+    res.json({ data: jobs });
+  } catch (error) {
+    console.error('Error fetching all jobs:', error);
+    res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+};
+
+// GET /api/careers/jobs/:id — single job by slug
+exports.getCareersJobById = async (req, res) => {
+  try {
+    const job = await CareersJob.findOne({ id: req.params.id });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    res.json({ data: job });
+  } catch (error) {
+    console.error('Error fetching job:', error);
+    res.status(500).json({ error: 'Failed to fetch job' });
+  }
+};
+
+// POST /api/careers/jobs — create job (Protected)
+exports.createCareersJob = async (req, res) => {
+  try {
+    const job = await CareersJob.create(req.body);
+    res.status(201).json({ message: 'Job created', data: job });
+  } catch (error) {
+    console.error('Error creating job:', error);
+    res.status(500).json({ error: error.message || 'Failed to create job' });
+  }
+};
+
+// PUT /api/careers/jobs/:id — update job by slug (Protected)
+exports.updateCareersJob = async (req, res) => {
+  try {
+    const job = await CareersJob.findOneAndUpdate({ id: req.params.id }, { $set: req.body }, { new: true });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    res.json({ message: 'Job updated', data: job });
+  } catch (error) {
+    console.error('Error updating job:', error);
+    res.status(500).json({ error: 'Failed to update job' });
+  }
+};
+
+// DELETE /api/careers/jobs/:id — delete job by slug (Protected)
+exports.deleteCareersJob = async (req, res) => {
+  try {
+    const job = await CareersJob.findOneAndDelete({ id: req.params.id });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    res.json({ message: 'Job deleted' });
+  } catch (error) {
+    console.error('Error deleting job:', error);
+    res.status(500).json({ error: 'Failed to delete job' });
+  }
+};
+

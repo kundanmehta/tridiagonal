@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const FieldSchema = new mongoose.Schema({
   label: { type: String, required: true },
   name: { type: String, required: true },
-  type: { type: String, enum: ['text', 'email', 'tel', 'select', 'textarea', 'checkbox', 'number'], default: 'text' },
+  type: { type: String, enum: ['text', 'email', 'tel', 'select', 'textarea', 'checkbox', 'number', 'file'], default: 'text' },
   required: { type: Boolean, default: false },
   placeholder: { type: String, default: '' },
   options: [{ type: String }], // For select dropdowns

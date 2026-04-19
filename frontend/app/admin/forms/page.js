@@ -9,6 +9,7 @@ const FIELD_TYPES = [
   { value: 'select', label: 'Dropdown' },
   { value: 'textarea', label: 'Text Area' },
   { value: 'checkbox', label: 'Checkbox' },
+  { value: 'file', label: 'File Upload' },
 ];
 
 export default function AdminFormBuilder() {
