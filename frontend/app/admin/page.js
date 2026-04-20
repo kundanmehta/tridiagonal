@@ -6,7 +6,7 @@ import {
   Briefcase, Users, Mail, ArrowUpRight, Home,
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
 
 const quickActions = [
   { label: 'Edit Home Page', href: '/admin/pages/home', icon: Home, color: '#00AEEF' },
@@ -22,18 +22,19 @@ const quickActions = [
 export default function AdminDashboardPage() {
   const [user, setUser] = useState(null);
   const [contacts, setContacts] = useState([]);
-  const [stats, setStats] = useState({ contacts: 0, services: 0, pages: 1, events: 0 });
+  const [stats, setStats] = useState({ contacts: 0, services: 0, pages: 1, events: 0, resources: 0 });
 
   useEffect(() => {
     // Load user from localStorage
     try {
       const stored = localStorage.getItem('admin_user');
       if (stored) setUser(JSON.parse(stored));
-    } catch {}
+    } catch { }
 
-    // Fetch recent contacts
+    // Fetch stats
     const token = localStorage.getItem('admin_token');
     if (token) {
+      // Recent contacts
       fetch(`${API_URL}/api/contacts`, {
         headers: { 'Authorization': `Bearer ${token}` },
       })
@@ -43,7 +44,18 @@ export default function AdminDashboardPage() {
           setContacts(list.slice(0, 5));
           setStats(prev => ({ ...prev, contacts: list.length }));
         })
-        .catch(() => {});
+        .catch(() => { });
+
+      // Total resources
+      fetch(`${API_URL}/api/resources/all`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      })
+        .then(res => res.ok ? res.json() : { data: [] })
+        .then(data => {
+          const list = data.data || [];
+          setStats(prev => ({ ...prev, resources: list.length }));
+        })
+        .catch(() => { });
     }
   }, []);
 
@@ -70,9 +82,9 @@ export default function AdminDashboardPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
         {[
           { label: 'Total Pages', value: stats.pages, color: '#00AEEF', bg: '#f0f9ff' },
-          { label: 'Contact Submissions', value: stats.contacts, color: '#10b981', bg: '#f0fdf4' },
-          { label: 'Active Services', value: stats.services || 3, color: '#8b5cf6', bg: '#f5f3ff' },
-          { label: 'Events', value: stats.events, color: '#f59e0b', bg: '#fffbeb' },
+          { label: 'Total Resources', value: stats.resources, color: '#10b981', bg: '#f0fdf4' },
+          { label: 'Contact Submissions', value: stats.contacts, color: '#f59e0b', bg: '#fffbeb' },
+          { label: 'Events', value: stats.events, color: '#ec4899', bg: '#fdf2f8' },
         ].map((stat) => (
           <div key={stat.label} style={{
             background: '#fff',

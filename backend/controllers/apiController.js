@@ -1,40 +1,123 @@
 const mongoose = require('mongoose');
+const Resource = require('../models/Resource');
+const Category = require('../models/Category');
+const Service = require('../models/Service');
+const Industry = require('../models/Industry');
+
 exports.getPages = async (req, res) => {
   res.json({ message: 'Success', data: [] });
 };
 
 exports.getServices = async (req, res) => {
-  const mockServices = [
-    { title: "Process Engineering", slug: "process-engineering", description: "Design, optimize and troubleshoot chemical processes." },
-    { title: "Flow Modeling", slug: "flow-modeling", description: "CFD analysis for reactor design and fluid flow problems." },
-    { title: "Particle Technology", slug: "particle-technology", description: "Characterization and handling of granular materials." },
-    { title: "Asset Performance", slug: "asset-performance", description: "Monitoring and reliability enhancement of industrial assets." },
-    { title: "Sustainability Solutions", slug: "sustainability", description: "Energy efficiency and emission reduction strategies." }
-  ];
-  res.json({ message: 'Success', data: mockServices });
+  try {
+    const services = await Service.find().sort({ title: 1 });
+    res.json({ message: 'Success', data: services });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch services' });
+  }
 };
 
 exports.getServiceBySlug = async (req, res) => {
-  res.json({ message: 'Success', data: { title: req.params.slug.replace('-', ' '), description: 'Detail for ' + req.params.slug } });
+  try {
+    const service = await Service.findOne({ slug: req.params.slug });
+    if (!service) return res.status(404).json({ error: 'Service not found' });
+    res.json({ message: 'Success', data: service });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch service' });
+  }
 };
 
 exports.getIndustries = async (req, res) => {
-  const mockIndustries = [
-    { title: "Oil & Gas", slug: "oil-gas" },
-    { title: "Chemicals", slug: "chemicals" },
-    { title: "Pharmaceuticals", slug: "pharmaceuticals" },
-    { title: "Food & Beverage", slug: "food-beverage" },
-    { title: "Energy", slug: "energy" }
-  ];
-  res.json({ message: 'Success', data: mockIndustries });
+  try {
+    const industries = await Industry.find().sort({ title: 1 });
+    res.json({ message: 'Success', data: industries });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch industries' });
+  }
 };
 
 exports.getIndustryBySlug = async (req, res) => {
-  res.json({ message: 'Success', data: { title: req.params.slug.replace('-', ' ') } });
+  try {
+    const industry = await Industry.findOne({ slug: req.params.slug });
+    if (!industry) return res.status(404).json({ error: 'Industry not found' });
+    res.json({ message: 'Success', data: industry });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch industry' });
+  }
+};
+
+
+exports.getResources = async (req, res) => {
+  try {
+    const { type, industry, service } = req.query;
+    const filter = { isActive: true };
+    if (type) filter.resourceType = type;
+    if (industry && industry !== 'All') filter.industry = industry;
+    if (service && service !== 'All') filter.service = service;
+
+    const resources = await Resource.find(filter).populate('selectedFormId').sort({ date: -1 });
+    res.json({ message: 'Success', data: resources });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch resources' });
+  }
+};
+
+exports.getAllResources = async (req, res) => {
+  try {
+    const resources = await Resource.find().populate('selectedFormId').sort({ createdAt: -1 });
+    res.json({ message: 'Success', data: resources });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch all resources' });
+  }
+};
+
+exports.getResourceBySlug = async (req, res) => {
+  try {
+    const resource = await Resource.findOne({ slug: req.params.slug }).populate('selectedFormId');
+    if (!resource) return res.status(404).json({ error: 'Resource not found' });
+    res.json({ message: 'Success', data: resource });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch resource' });
+  }
+};
+
+exports.createResource = async (req, res) => {
+  try {
+    const resource = new Resource(req.body);
+    await resource.save();
+    res.status(201).json({ message: 'Resource created successfully', data: resource });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to create resource' });
+  }
+};
+
+exports.updateResource = async (req, res) => {
+  try {
+    const resource = await Resource.findOneAndUpdate(
+      { slug: req.params.slug },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!resource) return res.status(404).json({ error: 'Resource not found' });
+    res.json({ message: 'Resource updated successfully', data: resource });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to update resource' });
+  }
+};
+
+exports.deleteResource = async (req, res) => {
+  try {
+    const resource = await Resource.findOneAndDelete({ slug: req.params.slug });
+    if (!resource) return res.status(404).json({ error: 'Resource not found' });
+    res.json({ message: 'Resource deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete resource' });
+  }
 };
 
 exports.getBlogs = async (req, res) => {
-  res.json({ message: 'Success', data: [] });
+  req.query.type = 'Blog';
+  return exports.getResources(req, res);
 };
 
 exports.getEvents = async (req, res) => {
@@ -45,7 +128,7 @@ exports.getCareers = async (req, res) => {
   res.json({ message: 'Success', data: [] });
 };
 
-const Contact = require('../models/Contact'); 
+const Contact = require('../models/Contact');
 const WebinarRegistration = require('../models/WebinarRegistration');
 const News = require('../models/News');
 const Webinar = require('../models/Webinar');
@@ -75,32 +158,31 @@ exports.getContacts = async (req, res) => {
 };
 
 const HomePage = require('../models/HomePage');
-const Blog = require('../models/Blog');
 
 // GET /api/homepage — Fetch HomePage Data
 exports.getHomePage = async (req, res) => {
   try {
     const data = await HomePage.findOne().lean(); // Use lean for easier manipulation
-    
+
     if (data && data.useCasesSection) {
       if (data.useCasesSection.displayMode === 'latest') {
-        const latestBlogs = await Blog.find({ category: 'Case Study' })
+        const latestResources = await Resource.find({ resourceType: 'Case Study' })
           .sort({ createdAt: -1 })
           .limit(data.useCasesSection.latestCount || 4)
           .lean();
-        
-        data.useCasesSection.cards = latestBlogs.map(b => ({
-          title: b.title,
-          image: b.coverImage,
-          href: `/blogs/${b.slug}`,
+
+        data.useCasesSection.cards = latestResources.map(r => ({
+          title: r.title,
+          image: r.coverImage,
+          href: `/resources/case-studies/${r.slug}`,
           isCaseStudy: true
         }));
       } else if (data.useCasesSection.displayMode === 'manual' && data.useCasesSection.manualSelectedCards?.length > 0) {
-        const selectedBlogs = await Blog.find({ _id: { $in: data.useCasesSection.manualSelectedCards } }).lean();
-        data.useCasesSection.cards = selectedBlogs.map(b => ({
-          title: b.title,
-          image: b.coverImage,
-          href: `/blogs/${b.slug}`,
+        const selectedResources = await Resource.find({ _id: { $in: data.useCasesSection.manualSelectedCards } }).lean();
+        data.useCasesSection.cards = selectedResources.map(r => ({
+          title: r.title,
+          image: r.coverImage,
+          href: `/resources/case-studies/${r.slug}`,
           isCaseStudy: true
         }));
       }
@@ -117,7 +199,7 @@ exports.getHomePage = async (req, res) => {
         ];
 
         const fetchedSlides = await Promise.all(categoriesMap.map(async (mapping) => {
-          const latest = await Blog.findOne({ category: mapping.category }).sort({ createdAt: -1 }).lean();
+          const latest = await Resource.findOne({ category: mapping.category }).sort({ createdAt: -1 }).lean();
           if (latest) {
             return {
               typeStr: mapping.typeStr,
@@ -134,7 +216,7 @@ exports.getHomePage = async (req, res) => {
       } else if (data.resourcesSection.displayMode === 'manual' && data.resourcesSection.manualSlides?.length > 0) {
         const resolvedManual = await Promise.all(data.resourcesSection.manualSlides.map(async (m) => {
           if (!m.blogId) return null;
-          const b = await Blog.findById(m.blogId).lean();
+          const b = await Resource.findById(m.blogId).lean();
           if (b) {
             return {
               typeStr: m.typeStr || 'RESOURCE',
@@ -164,7 +246,7 @@ exports.updateHomePage = async (req, res) => {
     // Find the singleton document and update it, creating it if it doesn't exist
     const options = { new: true, upsert: true, setDefaultsOnInsert: true };
     const updated = await HomePage.findOneAndUpdate({ singleton: true }, { $set: updateData }, options);
-    
+
     res.json({ message: 'HomePage updated successfully', data: updated });
   } catch (error) {
     console.error('Error updating HomePage:', error);
@@ -219,7 +301,7 @@ exports.updatePrivacyPolicy = async (req, res) => {
     const updateData = req.body;
     const options = { new: true, upsert: true, setDefaultsOnInsert: true };
     const updated = await PrivacyPolicy.findOneAndUpdate({ singleton: true }, { $set: updateData }, options);
-    
+
     res.json({ message: 'Privacy Policy updated successfully', data: updated });
   } catch (error) {
     console.error('Error updating PrivacyPolicy:', error);
@@ -250,12 +332,12 @@ exports.getDynamicFormById = async (req, res) => {
   try {
     const { id } = req.params;
     let form;
-    
+
     // Check if it's a valid MongoDB ID
     if (mongoose.Types.ObjectId.isValid(id)) {
       form = await DynamicForm.findById(id);
-    } 
-    
+    }
+
     // If not found by ID (or it wasn't a valid ID), try searching by slug
     if (!form) {
       form = await DynamicForm.findOne({ slug: id });
@@ -651,5 +733,52 @@ exports.getWebinarRegistrations = async (req, res) => {
     res.json({ data: list });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch registrations' });
+  }
+};
+
+// --- Category Management ---
+exports.getCategories = async (req, res) => {
+  try {
+    const { type } = req.query;
+    const filter = {};
+    if (type) filter.resourceType = type;
+    const categories = await Category.find(filter).sort({ name: 1 });
+    res.json({ message: 'Success', data: categories });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+};
+
+exports.createCategory = async (req, res) => {
+  try {
+    const category = new Category(req.body);
+    await category.save();
+    res.status(201).json({ message: 'Category created successfully', data: category });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to create category' });
+  }
+};
+
+exports.updateCategory = async (req, res) => {
+  try {
+    const category = await Category.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!category) return res.status(404).json({ error: 'Category not found' });
+    res.json({ message: 'Category updated successfully', data: category });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to update category' });
+  }
+};
+
+exports.deleteCategory = async (req, res) => {
+  try {
+    const category = await Category.findByIdAndDelete(req.params.id);
+    if (!category) return res.status(404).json({ error: 'Category not found' });
+    res.json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete category' });
   }
 };

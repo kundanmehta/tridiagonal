@@ -172,13 +172,13 @@ export default function HomePageClient({ initialData }) {
   const resSectionCtaLink = resSectionData.ctaLink || "/resources";
   const resSectionCategories = resSectionData.categories?.length > 0 ? resSectionData.categories : ['USE CASES', 'WEBINARS', 'BLOGS', 'BROCHURE', 'PUBLICATIONS'].map(l => ({ label: l, link: '#' }));
 
-  const heroResSlides = (resSectionData.slides?.length > 0) 
-    ? resSectionData.slides.map(s => ({ type: s.typeStr, title: s.title, desc: s.desc, image: s.image, href: s.href })) 
+  const heroResSlides = (resSectionData.slides?.length > 0)
+    ? resSectionData.slides.map(s => ({ type: s.typeStr, title: s.title, desc: s.desc, image: s.image, href: s.href }))
     : (initialData?.resourceSlides?.length > 0 ? initialData.resourceSlides.map(s => ({ type: s.typeStr, title: s.title, desc: s.desc, image: s.image, href: s.href })) : [
-    { type: 'BLOGS', title: 'Fluid Structure Interaction Analysis (FSI):\nMaximizing Efficiency and Safety in Critical Industries', desc: 'In the fast-paced industrial landscape, the challenges faced by sectors such as oil and gas, crude refining, power...', image: '/hubfs/CFD FEA Coupled-1.png', href: '#' },
-    { type: 'WEBINARS', title: 'Advanced CFD Modeling For Reactor Safety', desc: 'Discover how computational modeling is preventing catastrophic failures and streamlining the maintenance of critical systems...', image: '/hubfs/Blog CFD DEM.png', href: '#' },
-    { type: 'CASE STUDIES', title: 'Enhancing Asphaltene Testing Methodologies', desc: 'A deep dive into scalable strategies to enhance extraction rates while managing long-term flow assurance concerns...', image: '/hubfs/Asphaltene Blog.png', href: '#' },
-  ]);
+      { type: 'BLOGS', title: 'Fluid Structure Interaction Analysis (FSI):\nMaximizing Efficiency and Safety in Critical Industries', desc: 'In the fast-paced industrial landscape, the challenges faced by sectors such as oil and gas, crude refining, power...', image: '/hubfs/CFD FEA Coupled-1.png', href: '#' },
+      { type: 'WEBINARS', title: 'Advanced CFD Modeling For Reactor Safety', desc: 'Discover how computational modeling is preventing catastrophic failures and streamlining the maintenance of critical systems...', image: '/hubfs/Blog CFD DEM.png', href: '#' },
+      { type: 'CASE STUDIES', title: 'Enhancing Asphaltene Testing Methodologies', desc: 'A deep dive into scalable strategies to enhance extraction rates while managing long-term flow assurance concerns...', image: '/hubfs/Asphaltene Blog.png', href: '#' },
+    ]);
 
   const cultureData = initialData?.cultureSection || {};
 
@@ -873,11 +873,15 @@ export default function HomePageClient({ initialData }) {
                           <>
                             <p style={{ color: '#000', fontWeight: 'bold', fontSize: '12px', letterSpacing: '2px', position: 'absolute', top: '20px', textTransform: 'uppercase' }}>CASE STUDY</p>
                             <div style={{ position: 'relative', width: '100%', maxWidth: '250px', aspectRatio: '1/1', marginTop: '30px' }}>
-                              <Image src={card.image} alt={card.title} fill style={{ objectFit: 'contain' }} unoptimized />
+                              {card.image && (typeof card.image === 'string' ? card.image.trim() !== '' : true) ? (
+                                <Image src={card.image} alt={card.title || 'Case Study'} fill style={{ objectFit: 'contain' }} unoptimized />
+                              ) : null}
                             </div>
                           </>
                         ) : (
-                          <Image src={card.image} alt={card.title} fill style={{ objectFit: 'cover' }} unoptimized />
+                          card.image && (typeof card.image === 'string' ? card.image.trim() !== '' : true) ? (
+                            <Image src={card.image} alt={card.title || 'Use Case'} fill style={{ objectFit: 'cover' }} unoptimized />
+                          ) : null
                         )}
                       </div>
                     </div>
@@ -1093,13 +1097,15 @@ export default function HomePageClient({ initialData }) {
                       <div key={idx} style={{ width: `${100 / (heroResSlides.length + 1)}%`, display: 'flex', flexDirection: 'column', height: '100%' }}>
                         {/* Top Image Box */}
                         <div className="resource-card-image" style={{ position: 'relative', background: '#ccc' }}>
-                          <Image
-                            src={slide.image}
-                            alt={slide.title}
-                            fill
-                            style={{ objectFit: 'cover' }}
-                            unoptimized={true}
-                          />
+                          {slide.image && (typeof slide.image === 'string' ? slide.image.trim() !== '' : true) ? (
+                            <Image
+                              src={slide.image}
+                              alt={slide.title || 'Resource'}
+                              fill
+                              style={{ objectFit: 'cover' }}
+                              unoptimized={true}
+                            />
+                          ) : null}
                           <div style={{
                             position: 'absolute', top: '20px', left: '20px',
                             background: 'var(--color-teal)', color: '#fff', fontSize: '11px',

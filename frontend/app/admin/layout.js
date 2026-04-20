@@ -27,7 +27,18 @@ const sidebarNav = [
   { label: 'Form Builder', href: '/admin/forms', icon: ClipboardList },
   { label: 'Services', href: '/admin/services', icon: Settings },
   { label: 'Industries', href: '/admin/industries', icon: Factory },
-  { label: 'Resources', href: '/admin/resources', icon: BookOpen },
+  {
+    label: 'Resources',
+    icon: BookOpen,
+    children: [
+      { label: 'Blogs', href: '/admin/resources/blogs', icon: FileText },
+      { label: 'Blog Categories', href: '/admin/resources/blogs/categories', icon: Settings },
+      { label: 'Case Studies', href: '/admin/resources/case-studies', icon: ClipboardList },
+      { label: 'Publications & Patents', href: '/admin/resources/publications', icon: BookOpen },
+      { label: 'Brochures', href: '/admin/resources/brochures', icon: ImageIcon },
+    ],
+  },
+
   {
     label: 'Events',
     icon: Calendar,

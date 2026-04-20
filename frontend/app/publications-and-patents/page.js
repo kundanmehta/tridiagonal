@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const mockData = [
@@ -54,219 +54,175 @@ const mockData = [
 ];
 
 export default function PublicationsPatentsPage() {
+  const [items, setItems] = useState(mockData);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeType, setActiveType] = useState('All Types');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const types = ['All Types', 'Publication', 'Patent'];
 
-  // Filter based on search query and type
-  const filteredData = mockData.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          item.authors.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = activeType === 'All Types' || item.type === activeType;
-    return matchesSearch && matchesType;
+  // Advanced Filters
+  const [activeType, setActiveType] = useState('All Types');
+  const [activeIndustry, setActiveIndustry] = useState('All Industries');
+
+  const [types, setTypes] = useState(['All Types']);
+  const [industries, setIndustries] = useState(['All Industries']);
+
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
+
+  useEffect(() => {
+    // Fetch Publications
+    fetch(`${API_URL}/api/resources?type=Publication`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.data && json.data.length > 0) setItems(json.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+
+    // Fetch Categories (Types) for Publications
+    fetch(`${API_URL}/api/categories?type=Publication`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.data && json.data.length > 0) {
+          const names = json.data.map(c => (c.name || '').trim()).filter(Boolean);
+          const unique = Array.from(new Set(names)).filter(n => n !== 'All Types');
+          setTypes(['All Types', ...unique]);
+        } else {
+          setTypes(['All Types', 'Publication', 'Patent']);
+        }
+      })
+      .catch(() => setTypes(['All Types', 'Publication', 'Patent']));
+
+    // Fetch Industries
+    fetch(`${API_URL}/api/industries`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.data) {
+          const titles = json.data.map(i => (i.title || '').trim()).filter(Boolean);
+          const unique = Array.from(new Set(titles)).filter(t => t !== 'All Industries');
+          setIndustries(['All Industries', ...unique]);
+        }
+      })
+      .catch(err => console.error('Industries fetch error:', err));
+  }, [API_URL]);
+
+  const filteredData = items.filter(item => {
+    const matchesSearch = (item.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.author || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = activeType === 'All Types' || item.category === activeType;
+    const matchesIndustry = activeIndustry === 'All Industries' || item.industry === activeIndustry;
+    return matchesSearch && matchesType && matchesIndustry;
   });
 
   return (
-    <main style={{ paddingTop: 'var(--nav-height)' }}>
-      {/* Hero Section */}
-      <section className="hero-section" style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(180deg, #1a1a1a 0%, #242424 100%)', padding: '80px 0 60px', minHeight: 'auto' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top left, rgba(71, 188, 135, 0.1) 0%, transparent 60%)' }}></div>
+    <main style={{ paddingTop: 'var(--nav-height)', background: '#111' }}>
+      {/* Dynamic Hero Section */}
+      <section style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(180deg, #111 0%, #1a1a1a 100%)', padding: '100px 0 60px' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top left, rgba(0, 174, 239, 0.08) 0%, transparent 60%)' }} />
         <div className="content-wrapper-lg" style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <h1 className="hero-title fade-in-up" style={{ color: '#fff', fontWeight: '700', fontSize: 'clamp(2.5rem, 5vw, 4rem)', marginBottom: '20px' }}>
-            Publications & <span className="gradient-text">Patents</span>
+          <h1 style={{ color: '#fff', fontWeight: '800', fontSize: 'clamp(32px, 6vw, 64px)', marginBottom: '20px', letterSpacing: '-0.03em' }}>
+            Publications & <span style={{ color: '#00AEEF' }}>Patents</span>
           </h1>
-          <p className="hero-desc fade-in-up delay-200" style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '18px', maxWidth: '750px', margin: '0 auto', lineHeight: '1.6' }}>
-            Explore our extensive repository of published scientific research and proprietary technological patents.
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '18px', maxWidth: '700px', margin: '0 auto', lineHeight: '1.6' }}>
+            Explore our extensive scientific research and proprietary technologies advancing the process industry.
           </p>
         </div>
       </section>
 
-      <section style={{ background: '#1a1a1a', minHeight: '600px', padding: '60px 0 100px' }}>
+      <section style={{ background: '#111', paddingBottom: '100px', minHeight: '60vh' }}>
         <div className="content-wrapper-lg">
-          
-          {/* Top Control Bar (Search & Filter) */}
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '30px', alignItems: 'center' }}>
-            
-            {/* Search Input */}
-            <div style={{ flex: '1', minWidth: '300px', position: 'relative' }}>
-              <input 
-                suppressHydrationWarning
-                type="text" 
-                placeholder="Search by title or author..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 20px 14px 45px',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  background: '#242424',
-                  color: '#fff',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.3s'
-                }}
-                onFocus={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.3)'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
-              />
-              <svg style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </div>
 
-            {/* Custom Dropdown Filter */}
-            <div 
-              style={{ position: 'relative', display: 'flex', alignItems: 'center', background: '#242424', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', padding: '0 16px', height: '48px', minWidth: '320px', flex: '0.4', cursor: 'pointer' }}
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            >
-              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginRight: '8px' }}>Type</span>
-              <div style={{ flex: '1', color: '#fff', fontSize: '14px', fontWeight: '600', userSelect: 'none' }}>
-                {activeType}
+          {/* Advanced Filter Bar */}
+          <div style={{ background: '#1a1a1a', borderRadius: '24px', padding: '30px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '50px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', position: 'relative', marginTop: '-30px', zIndex: 10 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
+
+              {/* Search */}
+              <div style={{ flex: '1 1 300px', position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                <input
+                  type="text"
+                  placeholder="Search title, author, or keywords..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{ width: '100%', background: '#111', border: '1px solid rgba(255,255,255,0.1)', padding: '14px 20px 14px 45px', borderRadius: '12px', color: '#fff', outline: 'none', transition: 'border-color 0.3s' }}
+                  suppressHydrationWarning
+                />
               </div>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" style={{ pointerEvents: 'none', transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
 
-              {/* Options Menu */}
-              {isDropdownOpen && (
-                <div style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 8px)',
-                  left: '0',
-                  right: '0',
-                  background: '#242424',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: '6px',
-                  boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-                  zIndex: 20,
-                  overflow: 'hidden'
-                }}>
-                  {types.map(type => (
-                    <div
-                      key={type}
-                      onClick={() => setActiveType(type)}
-                      style={{
-                        padding: '12px 16px',
-                        color: activeType === type ? 'var(--color-teal)' : '#fff',
-                        fontSize: '14px',
-                        fontWeight: activeType === type ? '600' : '400',
-                        background: activeType === type ? 'rgba(255,255,255,0.03)' : 'transparent',
-                        transition: 'background 0.2s',
-                        cursor: 'pointer'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (activeType !== type) e.target.style.background = 'rgba(255,255,255,0.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        if (activeType !== type) e.target.style.background = 'transparent';
-                      }}
-                    >
-                      {type}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* Industry Filter */}
+              <div style={{ flex: '1 1 200px' }}>
+                <select
+                  value={activeIndustry}
+                  onChange={(e) => setActiveIndustry(e.target.value)}
+                  style={{ width: '100%', background: '#111', border: '1px solid rgba(255,255,255,0.1)', padding: '14px 16px', borderRadius: '12px', color: '#fff', outline: 'none', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 15px top 50%', backgroundSize: '12px', cursor: 'pointer' }}
+                  suppressHydrationWarning
+                >
+                  {industries.map(ind => <option key={ind} value={ind}>{ind}</option>)}
+                </select>
+              </div>
+
+              {/* Type Filter */}
+              <div style={{ flex: '1 1 200px' }}>
+                <select
+                  value={activeType}
+                  onChange={(e) => setActiveType(e.target.value)}
+                  style={{ width: '100%', background: '#111', border: '1px solid rgba(255,255,255,0.1)', padding: '14px 16px', borderRadius: '12px', color: '#fff', outline: 'none', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 15px top 50%', backgroundSize: '12px', cursor: 'pointer' }}
+                  suppressHydrationWarning
+                >
+                  {types.map(t => <option key={t} value={t}>{t === 'All Types' ? 'All Publications' : t}</option>)}
+                </select>
+              </div>
             </div>
-            
           </div>
 
-          {/* List Container */}
-          <div style={{ background: '#222222', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-            {filteredData.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {filteredData.map((item, index) => (
-                  <div 
-                    key={item.id} 
-                    style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center', 
-                      padding: '20px 15px',
-                      borderBottom: index !== filteredData.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
-                      transition: 'background 0.3s ease',
-                      flexWrap: 'wrap',
-                      gap: '20px'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                  >
-                    
-                    {/* Left side content */}
-                    <div style={{ flex: '1', minWidth: '250px', maxWidth: '100%', overflow: 'hidden' }}>
-                      <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '700', marginBottom: '12px', lineHeight: '1.4', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
-                        {item.title}
-                      </h3>
-                      
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
-                        
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>
-                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                           {item.authors}
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>
-                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                           {item.date}
-                        </div>
-
-                        <div style={{ 
-                          background: item.type === 'Patent' ? 'rgba(70, 187, 134, 0.15)' : 'rgba(0, 210, 255, 0.15)', 
-                          color: item.type === 'Patent' ? 'var(--color-teal)' : '#00d2ff',
-                          padding: '4px 10px', 
-                          borderRadius: '20px', 
-                          fontSize: '11px', 
-                          fontWeight: '700', 
-                          letterSpacing: '0.5px' 
-                        }}>
-                          {item.type}
-                        </div>
-
+          {/* Results List */}
+          {loading ? (
+            <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '100px 0' }}>Accessing our scientific archives...</div>
+          ) : filteredData.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {filteredData.map((item, i) => (
+                <div key={i} className="pub-card" style={{ background: '#1a1a1a', borderRadius: '20px', padding: '30px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexWrap: 'wrap', gap: '30px', alignItems: 'center', transition: 'all 0.3s ease' }}>
+                  <div style={{ flex: '1', minWidth: '300px' }}>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '15px' }}>
+                      <span style={{ background: 'rgba(0, 174, 239, 0.1)', color: '#00AEEF', padding: '4px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        {item.category || 'Publication'}
+                      </span>
+                      <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '12px' }}>•</span>
+                      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '600' }}>{item.industry}</span>
+                    </div>
+                    <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: '700', lineHeight: '1.4', marginBottom: '15px' }}>{item.title}</h3>
+                    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        {item.author || item.authors}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        {new Date(item.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                       </div>
                     </div>
-
-                    {/* Right side CTA */}
-                    <div>
-                      <Link 
-                        href={item.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-block',
-                          background: 'linear-gradient(90deg, #0dd0e1, #8fe03c)',
-                          color: '#000',
-                          padding: '10px 24px',
-                          borderRadius: '30px',
-                          fontSize: '13px',
-                          fontWeight: '800',
-                          textDecoration: 'none',
-                          letterSpacing: '0.5px',
-                          transition: 'opacity 0.3s, transform 0.2s',
-                          boxShadow: '0 4px 15px rgba(32, 227, 178, 0.3)',
-                          whiteSpace: 'nowrap'
-                        }}
-                        onMouseEnter={(e) => e.target.style.opacity = '0.85'}
-                        onMouseLeave={(e) => e.target.style.opacity = '1'}
-                        onMouseDown={(e) => e.target.style.transform = 'scale(0.96)'}
-                        onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
-                      >
-                        VIEW MORE
-                      </Link>
-                    </div>
-
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div style={{ padding: '60px 20px', textAlign: 'center' }}>
-                 <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px' }}>No records found matching your filters.</p>
-              </div>
-            )}
-          </div>
+                  <div>
+                    <a href={item.externalUrl || '#'} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', background: 'var(--color-teal)', color: '#000', padding: '12px 30px', borderRadius: '12px', fontWeight: '800', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '10px', transition: 'all 0.3s' }} onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 10px 20px rgba(71, 188, 135, 0.2)'; }} onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}>
+                      VIEW RECORD
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '100px 0', background: 'rgba(255,255,255,0.01)', borderRadius: '32px', border: '2px dashed rgba(255,255,255,0.05)' }}>
+              <h3 style={{ color: '#fff', fontSize: '24px', marginBottom: '10px', fontWeight: '700' }}>No records match your filters</h3>
+              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '16px' }}>Try resetting your filters or adjusting your search term.</p>
+              <button onClick={() => { setActiveType('All Types'); setActiveIndustry('All Industries'); setSearchQuery(''); }} style={{ marginTop: '30px', background: 'transparent', border: '1px solid var(--color-teal)', color: 'var(--color-teal)', padding: '12px 30px', borderRadius: '30px', fontWeight: '700', cursor: 'pointer', fontSize: '14px', transition: 'all 0.3s' }}>Reset All Filters</button>
+            </div>
+          )}
 
         </div>
       </section>
+
+      <style jsx>{`
+        .pub-card:hover { border-color: rgba(71, 188, 135, 0.3) !important; background: #1f1f1f !important; transform: translateX(10px); }
+      `}</style>
     </main>
   );
 }

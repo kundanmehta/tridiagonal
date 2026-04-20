@@ -22,8 +22,8 @@ const upload = require('../config/multer');
 
 // --- Admin & CMS Protected Routes ---
 router.get('/contacts', verifyToken, apiController.getContacts);
-router.get('/homepage', apiController.getHomePage); 
-router.put('/homepage', verifyToken, apiController.updateHomePage); 
+router.get('/homepage', apiController.getHomePage);
+router.put('/homepage', verifyToken, apiController.updateHomePage);
 router.post('/upload', verifyToken, upload.single('file'), apiController.uploadFile);
 router.post('/upload-public', upload.single('file'), apiController.uploadPublicFile);
 
@@ -65,4 +65,19 @@ router.get('/news/:slug', apiController.getNewsBySlug);
 router.put('/news/:slug', verifyToken, apiController.updateNews);
 router.delete('/news/:slug', verifyToken, apiController.deleteNews);
 
+// Resources (Blogs, Case Studies, Publications, Brochures)
+router.get('/resources/all', verifyToken, apiController.getAllResources);
+router.get('/resources', apiController.getResources);
+router.post('/resources', verifyToken, apiController.createResource);
+router.get('/resources/:slug', apiController.getResourceBySlug);
+router.put('/resources/:slug', verifyToken, apiController.updateResource);
+router.delete('/resources/:slug', verifyToken, apiController.deleteResource);
+
+// Categories
+router.get('/categories', apiController.getCategories);
+router.post('/categories', verifyToken, apiController.createCategory);
+router.put('/categories/:id', verifyToken, apiController.updateCategory);
+router.delete('/categories/:id', verifyToken, apiController.deleteCategory);
+
 module.exports = router;
+

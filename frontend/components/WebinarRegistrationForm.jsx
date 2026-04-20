@@ -19,7 +19,7 @@ const DEFAULT_FORM = {
   consentText: "I agree to receive communications regarding Tridiagonal products. Read our <a href='/privacy-policy' style='color: #43bd94; text-decoration: underline'>privacy policy</a>"
 };
 
-export default function WebinarRegistrationForm({ webinarId, webinarTitle, formSlug, preloadedFormConfig }) {
+export default function WebinarRegistrationForm({ webinarId, webinarTitle, formSlug, preloadedFormConfig, customTitle, noStyles }) {
   const [formValues, setFormValues] = useState({});
   const [formConfig, setFormConfig] = useState(preloadedFormConfig || null);
   const [submitting, setSubmitting] = useState(false);
@@ -145,10 +145,13 @@ export default function WebinarRegistrationForm({ webinarId, webinarTitle, formS
     );
   }
 
+  const cardStyle = noStyles ? { background: 'transparent', padding: 0, border: 'none', boxShadow: 'none' } : { background: '#242424', borderRadius: '12px', padding: '35px 30px', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' };
+  const titleStyle = noStyles ? { color: '#fff', fontSize: '1.4rem', marginBottom: '25px', fontWeight: '600', paddingBottom: '15px' } : { color: '#fff', fontSize: '1.4rem', marginBottom: '25px', fontWeight: '600', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' };
+
   return (
-    <div className="webinar-form-card" style={{ background: '#242424', borderRadius: '12px', padding: '35px 30px', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
-      <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '25px', fontWeight: '600', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' }}>
-        Access the Webinar Now
+    <div className="webinar-form-card" style={cardStyle}>
+      <h3 style={titleStyle}>
+        {customTitle || 'Access the Webinar Now'}
       </h3>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
