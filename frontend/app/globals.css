@@ -113,8 +113,9 @@ ol {
 
 .content-wrapper-xl,
 .content-wrapper-lg {
+  width: 100%;
   max-width: 100%;
-  margin: 0px auto;
+  margin: 0px;
   padding: 0px 30px;
 }
 

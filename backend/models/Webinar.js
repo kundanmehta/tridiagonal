@@ -5,21 +5,34 @@ const WebinarSchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true },
   eventDate: { type: Date, required: true },
   duration: { type: String, default: '45 mins' },
-  description: { type: String, required: true },
-  content: [{ type: String }], // Paragraphs of full description
+  sessionType: { type: String, default: 'Online Technical Session' },
+  description: { type: String, required: true }, // SEO / Summary
+  fullDescription: { type: String }, // Detailed HTML content
+  formSlug: { type: String, default: '' }, // Link to dynamic registration form
+  sections: [{
+    type: { type: String, enum: ['heading', 'text', 'image', 'quote', 'points', 'who_attend'], required: true },
+    value: { type: String }, 
+    level: { type: Number, default: 2 },
+    image: { type: String },
+    caption: { type: String },
+    items: [{ type: String }], // For points and who_attend
+  }],
   learnPoints: [{ type: String }],
   attendees: [{ type: String }],
-  presenter: {
+  presenters: [{
     name: { type: String },
     title: { type: String },
     company: { type: String },
-    image: { type: String }, // URL to uploaded image
-  },
+    image: { type: String },
+    bio: { type: String },
+  }],
   thumbnail: { type: String },
-  videoUrl: { type: String }, // For On-Demand
-  registrationUrl: { type: String }, // Optional override
+  videoUrl: { type: String }, 
+  accessType: { type: String, default: 'On-Demand' },
+  format: { type: String, default: 'Technical Presentation' },
+  host: { type: String, default: 'Tridiagonal Solutions' },
   isActive: { type: Boolean, default: true },
-  type: { type: String, enum: ['Live', 'On-Demand'], default: 'Live' } // Optional manual override
+  type: { type: String, enum: ['Live', 'On-Demand'], default: 'Live' }
 }, { timestamps: true });
 
 // Auto-generate slug from title if not provided

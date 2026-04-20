@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 exports.getPages = async (req, res) => {
   res.json({ message: 'Success', data: [] });
 };
@@ -44,7 +45,10 @@ exports.getCareers = async (req, res) => {
   res.json({ message: 'Success', data: [] });
 };
 
-const Contact = require('../models/Contact'); // Import Contact model
+const Contact = require('../models/Contact'); 
+const WebinarRegistration = require('../models/WebinarRegistration');
+const News = require('../models/News');
+const Webinar = require('../models/Webinar');
 
 exports.submitContact = async (req, res) => {
   try {
@@ -244,7 +248,19 @@ exports.getDynamicForms = async (req, res) => {
 // GET /api/forms/:id — Get single form config
 exports.getDynamicFormById = async (req, res) => {
   try {
-    const form = await DynamicForm.findById(req.params.id);
+    const { id } = req.params;
+    let form;
+    
+    // Check if it's a valid MongoDB ID
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      form = await DynamicForm.findById(id);
+    } 
+    
+    // If not found by ID (or it wasn't a valid ID), try searching by slug
+    if (!form) {
+      form = await DynamicForm.findOne({ slug: id });
+    }
+
     if (!form) return res.status(404).json({ error: 'Form not found' });
     res.json({ data: form });
   } catch (error) {
@@ -268,7 +284,7 @@ exports.createDynamicForm = async (req, res) => {
 // PUT /api/forms/:id — Update form (Protected)
 exports.updateDynamicForm = async (req, res) => {
   try {
-    const updated = await DynamicForm.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    const updated = await DynamicForm.findByIdAndUpdate(req.params.id, { $set: req.body }, { returnDocument: 'after' });
     if (!updated) return res.status(404).json({ error: 'Form not found' });
     res.json({ message: 'Form updated successfully', data: updated });
   } catch (error) {
@@ -437,7 +453,7 @@ exports.getAllCareersJobs = async (req, res) => {
   }
 };
 
-// GET /api/careers/jobs/:id — single job by slug
+// GET /api/careers/jobs/:id — single job by id
 exports.getCareersJobById = async (req, res) => {
   try {
     const job = await CareersJob.findOne({ id: req.params.id });
@@ -460,10 +476,10 @@ exports.createCareersJob = async (req, res) => {
   }
 };
 
-// PUT /api/careers/jobs/:id — update job by slug (Protected)
+// PUT /api/careers/jobs/:id — update job by id (Protected)
 exports.updateCareersJob = async (req, res) => {
   try {
-    const job = await CareersJob.findOneAndUpdate({ id: req.params.id }, { $set: req.body }, { new: true });
+    const job = await CareersJob.findOneAndUpdate({ id: req.params.id }, { $set: req.body }, { returnDocument: 'after' });
     if (!job) return res.status(404).json({ error: 'Job not found' });
     res.json({ message: 'Job updated', data: job });
   } catch (error) {
@@ -472,7 +488,7 @@ exports.updateCareersJob = async (req, res) => {
   }
 };
 
-// DELETE /api/careers/jobs/:id — delete job by slug (Protected)
+// DELETE /api/careers/jobs/:id — delete job by id (Protected)
 exports.deleteCareersJob = async (req, res) => {
   try {
     const job = await CareersJob.findOneAndDelete({ id: req.params.id });
@@ -487,8 +503,6 @@ exports.deleteCareersJob = async (req, res) => {
 // ═══════════════════════════════════════════════════════════
 // EVENTS (WEBINARS & NEWS)
 // ═══════════════════════════════════════════════════════════
-const Webinar = require('../models/Webinar');
-const News = require('../models/News');
 
 // --- Webinars ---
 
@@ -536,7 +550,7 @@ exports.createWebinar = async (req, res) => {
 // PUT /api/webinars/:slug — update (Protected)
 exports.updateWebinar = async (req, res) => {
   try {
-    const item = await Webinar.findOneAndUpdate({ slug: req.params.slug }, { $set: req.body }, { new: true });
+    const item = await Webinar.findOneAndUpdate({ slug: req.params.slug }, { $set: req.body }, { returnDocument: 'after' });
     if (!item) return res.status(404).json({ error: 'Webinar not found' });
     res.json({ data: item });
   } catch (error) {
@@ -600,7 +614,7 @@ exports.createNews = async (req, res) => {
 // PUT /api/news/:slug — update (Protected)
 exports.updateNews = async (req, res) => {
   try {
-    const item = await News.findOneAndUpdate({ slug: req.params.slug }, { $set: req.body }, { new: true });
+    const item = await News.findOneAndUpdate({ slug: req.params.slug }, { $set: req.body }, { returnDocument: 'after' });
     if (!item) return res.status(404).json({ error: 'News item not found' });
     res.json({ data: item });
   } catch (error) {
@@ -618,28 +632,24 @@ exports.deleteNews = async (req, res) => {
   }
 };
 
-// ═══════════════════════════════════════════════════════════
-// FILE UPLOADS
-// ═══════════════════════════════════════════════════════════
+// --- Webinar Registration ---
 
-// POST /api/upload — standard upload (Protected)
-exports.uploadFile = async (req, res) => {
+// POST /api/webinars/register — public submission
+exports.submitWebinarRegistration = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const fileUrl = `/uploads/${req.file.filename}`;
-    res.json({ url: fileUrl, message: 'File uploaded successfully' });
+    const registration = await WebinarRegistration.create(req.body);
+    res.status(201).json({ message: 'Registered successfully', data: registration });
   } catch (error) {
-    res.status(500).json({ error: 'Upload failed' });
+    res.status(500).json({ error: 'Failed to submit registration' });
   }
 };
 
-// POST /api/upload-public — public upload (Used by form builders or anonymous uploads)
-exports.uploadPublicFile = async (req, res) => {
+// GET /api/webinars/:id/registrations — admin view (Protected)
+exports.getWebinarRegistrations = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const fileUrl = `/uploads/${req.file.filename}`;
-    res.json({ url: fileUrl, message: 'File uploaded successfully' });
+    const list = await WebinarRegistration.find({ webinarId: req.params.id }).sort({ registeredAt: -1 });
+    res.json({ data: list });
   } catch (error) {
-    res.status(500).json({ error: 'Upload failed' });
+    res.status(500).json({ error: 'Failed to fetch registrations' });
   }
 };

@@ -10,7 +10,7 @@ export default function UpcomingWebinars() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch(`${API_URL}/api/webinars`)
+    fetch(`${API_URL}/api/webinars`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then(res => res.json())
       .then(json => {
         setWebinars(json.data || []);

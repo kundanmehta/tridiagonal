@@ -1,12 +1,25 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import WebinarRegistrationForm from '../../../../components/WebinarRegistrationForm';
+import { eventsData } from '../../data';
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
 async function getWebinar(slug) {
   try {
-    const res = await fetch(`${API_URL}/api/webinars/${slug}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${API_URL}/api/webinars/${slug}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data;
+  } catch {
+    return null;
+  }
+}
+
+async function getFormConfig(slug) {
+  if (!slug) return null;
+  try {
+    const res = await fetch(`${API_URL}/api/forms/${slug}`, { cache: 'no-store' });
     if (!res.ok) return null;
     const json = await res.json();
     return json.data;
@@ -17,26 +30,43 @@ async function getWebinar(slug) {
 
 export const generateMetadata = async ({ params }) => {
   const { slug } = await params;
-  const webinar = await getWebinar(slug);
+  const localWebinar = eventsData.find(e => e.slug === slug);
+  const dbWebinar = await getWebinar(slug);
+  const webinar = dbWebinar || localWebinar;
+
   if (!webinar) return { title: 'Webinar Not Found' };
   return { title: `${webinar.title} | Upcoming Webinars | Tridiagonal Solutions` };
 };
 
 export default async function WebinarDetail({ params }) {
   const { slug } = await params;
-  const webinar = await getWebinar(slug);
-  
-  if (!webinar) {
+  const dbWebinar = await getWebinar(slug);
+  const localWebinar = eventsData.find(e => e.slug === slug);
+
+  if (!dbWebinar && !localWebinar) {
     notFound();
   }
 
-  const descriptionParagraphs = webinar.content && webinar.content.length > 0
-    ? webinar.content 
-    : [webinar.description];
+  // Merge: DB data takes priority, but we fall back to local data field by field
+  const webinar = {
+    ...localWebinar,
+    ...dbWebinar,
+    presenters: dbWebinar?.presenters?.length > 0 ? dbWebinar.presenters : (localWebinar?.presenter ? [localWebinar.presenter] : []),
+    learnPoints: dbWebinar?.sections?.find(s => s.type === 'points')?.items ||
+      dbWebinar?.learnPoints ||
+      localWebinar?.learnPoints || [],
+    attendees: dbWebinar?.sections?.find(s => s.type === 'who_attend')?.items ||
+      dbWebinar?.attendees ||
+      localWebinar?.attendees || [],
+    fullDescription: dbWebinar?.fullDescription ||
+      (dbWebinar?.sections?.find(s => s.type === 'text')?.value) ||
+      (localWebinar?.fullDescription ? (Array.isArray(localWebinar.fullDescription) ? localWebinar.fullDescription.join('<br><br>') : localWebinar.fullDescription) : localWebinar?.description)
+  };
+
+  const formConfig = await getFormConfig(webinar.formSlug);
 
   return (
     <main style={{ paddingTop: 'var(--nav-height)' }}>
-      {/* ─────────────── WEBINAR HERO ─────────────── */}
       <section
         style={{
           position: 'relative',
@@ -45,32 +75,38 @@ export default async function WebinarDetail({ params }) {
           padding: '80px 0 60px',
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top right, rgba(71, 188, 135, 0.15) 0%, transparent 60%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top right, rgba(67, 189, 148, 0.1) 0%, transparent 60%)' }} />
         <div className="content-wrapper-lg" style={{ position: 'relative', zIndex: 1 }}>
           <Link
             href="/events/upcoming-webinars"
             style={{
-              color: 'var(--color-teal)',
+              color: '#43bd94',
               textDecoration: 'none',
               fontSize: '14px',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
               marginBottom: '25px',
-              transition: 'opacity 0.3s',
               fontWeight: '600'
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
             BACK TO WEBINARS
           </Link>
-          
+
           <div style={{ marginBottom: '16px' }}>
-            <span className="webinar-hero-pill" style={{ 
-              background: webinar.type.includes('OnDemand') ? 'rgba(255, 165, 0, 0.15)' : 'rgba(0, 255, 204, 0.15)', 
-              color: webinar.type.includes('OnDemand') ? '#FFA500' : 'var(--color-teal)'
+            <span className="webinar-hero-pill" style={{
+              background: 'rgba(67, 189, 148, 0.1)',
+              color: '#43bd94',
+              padding: '6px 16px',
+              borderRadius: '20px',
+              fontSize: '13px',
+              fontWeight: '700',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              display: 'inline-block'
             }}>
-              {webinar.type}
+              {webinar.accessType || webinar.type || 'Upcoming'}
             </span>
           </div>
 
@@ -80,205 +116,117 @@ export default async function WebinarDetail({ params }) {
               fontSize: 'clamp(28px, 4vw, 40px)',
               fontWeight: '700',
               marginBottom: '24px',
-              lineHeight: '1.2',
-              maxWidth: '100%'
+              lineHeight: '1.2'
             }}
           >
             {webinar.title}
           </h1>
 
-          <div className="webinar-hero-meta">
-            <span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-              {new Date(webinar.eventDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-            </span>
-            <span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-              45 mins Duration
-            </span>
-            <span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Online Technical Session
-            </span>
+          <div className="webinar-hero-meta" style={{ display: 'flex', flexWrap: 'wrap', gap: '25px', color: 'rgba(255,255,255,0.65)', fontSize: '16px' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>{new Date(webinar.eventDate || webinar.date || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>{webinar.duration || '45 mins'}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>{webinar.sessionType || 'Online Technical Session'}</span>
           </div>
         </div>
       </section>
 
-      {/* ─────────────── WEBINAR CONTENT ─────────────── */}
       <section style={{ background: '#1a1a1a', padding: '60px 0 80px' }}>
-        <div className="content-wrapper-lg">
-          <div className="webinar-detail-layout">
+        <div className="content-wrapper-lg" style={{ margin: '0px', maxWidth: '100%', width: '100%', padding: '0 30px' }}>
+          <div className="webinar-detail-layout" style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) 400px',
+            gap: '80px',
+            alignItems: 'flex-start'
+          }}>
 
-            {/* LEFT: Description & Details */}
-            <div className="webinar-detail-left">
+            <div className="webinar-detail-left" style={{ maxWidth: '950px' }}>
 
-              {/* Overview */}
-              <div className="webinar-section-block">
-                <div style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.8', fontSize: '1.1rem' }}>
-                  {descriptionParagraphs.map((para, i) => (
-                    <p key={i} style={{ marginBottom: '20px' }}>{para}</p>
-                  ))}
-                </div>
-              </div>
+              {/* Description Section */}
+              <div style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.8', fontSize: '1.1rem', marginBottom: '40px', overflowWrap: 'break-word', wordBreak: 'normal', hyphens: 'none' }} dangerouslySetInnerHTML={{ __html: webinar.fullDescription }} />
 
-              {/* Learning Points */}
-              {webinar.learnPoints && webinar.learnPoints.length > 0 && (
-                <div className="webinar-section-block">
+              {/* Learning Points Section */}
+              {webinar.learnPoints?.length > 0 && (
+                <div style={{ marginBottom: '40px' }}>
                   <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '20px', fontWeight: '600' }}>In this session, you&apos;ll learn:</h3>
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'rgba(255, 255, 255, 0.8)', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    {webinar.learnPoints.map((item, idx) => (
-                      <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}>
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        <span style={{ fontSize: '1.05rem', lineHeight: '1.6' }}>{item}</span>
+                    {webinar.learnPoints.map((pt, i) => (
+                      <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#43bd94" strokeWidth="2.5" style={{ flexShrink: 0, marginTop: '2px' }}><polyline points="20 6 9 17 4 12" /></svg>
+                        <span style={{ fontSize: '1.05rem', lineHeight: '1.6' }}>{pt}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {/* Who Should Attend */}
-              {webinar.attendees && webinar.attendees.length > 0 && (
-                <div className="webinar-section-block">
+              {/* Who Should Attend Section */}
+              {webinar.attendees?.length > 0 && (
+                <div style={{ marginBottom: '40px' }}>
                   <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '20px', fontWeight: '600' }}>Who Should Attend:</h3>
-                  <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '15px' }}>This webinar is designed for:</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
-                    {webinar.attendees.map((attendee, idx) => (
-                      <div key={idx} style={{ background: '#242424', padding: '15px 20px', borderRadius: '8px', borderLeft: '3px solid var(--color-teal)', color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.95rem', fontWeight: '500' }}>
-                        {attendee}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '15px' }}>
+                    {webinar.attendees.map((role, i) => (
+                      <div key={i} style={{ background: '#242424', padding: '15px 20px', borderRadius: '8px', borderLeft: '3px solid #43bd94', color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.95rem', fontWeight: '500' }}>
+                        {role}
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Presenter Profile */}
-              {webinar.presenter && (
-                <div className="webinar-section-block">
-                  <div style={{ background: '#242424', borderRadius: '12px', padding: '30px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '25px', textTransform: 'uppercase', letterSpacing: '1px' }}>Featured Presenter</h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '25px', flexWrap: 'wrap' }}>
-                      <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#363636', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px solid var(--color-teal)' }}>
-                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+              {/* Presenters Section */}
+              {webinar.presenters?.length > 0 && (
+                <div style={{ marginTop: '50px' }}>
+                  <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '25px', textTransform: 'uppercase', letterSpacing: '1px' }}>Featured Presenters</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                    {webinar.presenters.map((pres, idx) => (
+                      <div key={idx} style={{ background: '#242424', borderRadius: '12px', padding: '25px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#363636', flexShrink: 0, overflow: 'hidden', border: '2px solid #43bd94' }}>
+                          {pres.image ? (
+                            <img src={pres.image.startsWith('/uploads') ? `${API_URL}${pres.image}` : pres.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                          )}
+                        </div>
+                        <div>
+                          <h4 style={{ color: '#fff', fontSize: '1.15rem', marginBottom: '4px', fontWeight: '600' }}>{pres.name}</h4>
+                          <p style={{ color: '#43bd94', fontSize: '0.9rem', fontWeight: '500' }}>{pres.title}</p>
+                          <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.85rem' }}>{pres.company}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '8px', fontWeight: '600' }}>{webinar.presenter.name}</h4>
-                        <p style={{ color: 'var(--color-teal)', fontSize: '0.95rem', fontWeight: '500', marginBottom: '4px' }}>{webinar.presenter.title}</p>
-                        <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>{webinar.presenter.company}</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {/* General Information Cards */}
-              <div className="webinar-info-cards" style={{ marginTop: '40px' }}>
-                <div className="webinar-info-card">
-                  <span className="webinar-info-label">Access Type</span>
-                  <span className="webinar-info-value">{webinar.type}</span>
+              <div className="webinar-info-cards" style={{ marginTop: '50px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px' }}>
+                <div style={{ background: '#242424', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700' }}>Access Type</span>
+                  <span style={{ color: '#fff', fontSize: '15px', fontWeight: '500' }}>{webinar.accessType || 'Upcoming'}</span>
                 </div>
-                <div className="webinar-info-card">
-                  <span className="webinar-info-label">Format</span>
-                  <span className="webinar-info-value">Technical Presentation</span>
+                <div style={{ background: '#242424', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700' }}>Format</span>
+                  <span style={{ color: '#fff', fontSize: '15px', fontWeight: '500' }}>{webinar.format || 'Technical Presentation'}</span>
                 </div>
-                <div className="webinar-info-card">
-                  <span className="webinar-info-label">Host</span>
-                  <span className="webinar-info-value">Tridiagonal Solutions</span>
+                <div style={{ background: '#242424', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700' }}>Host</span>
+                  <span style={{ color: '#fff', fontSize: '15px', fontWeight: '500' }}>{webinar.host || 'Tridiagonal Solutions'}</span>
                 </div>
               </div>
-
             </div>
 
-            {/* RIGHT: Registration Form (Sticky Component) */}
-            <div className="webinar-detail-right">
-              <WebinarRegistrationForm />
+            <div className="webinar-detail-right" style={{ position: 'sticky', top: 'calc(var(--nav-height) + 40px)' }}>
+              <WebinarRegistrationForm webinarId={dbWebinar?._id || webinar.slug} webinarTitle={webinar.title} formSlug={webinar.formSlug} preloadedFormConfig={formConfig} />
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* ─────────────── SCOPED STYLES ─────────────── */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .webinar-hero-pill {
-          display: inline-block;
-          background: rgba(71,188,135,0.12);
-          color: var(--color-teal);
-          padding: 6px 16px;
-          border-radius: 20px;
-          font-size: 13px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-        .webinar-hero-meta {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 25px;
-          color: rgba(255,255,255,0.65);
-          font-size: 16px;
-        }
-        .webinar-hero-meta span {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        /* Layout */
-        .webinar-detail-layout {
-          display: flex;
-          gap: 50px;
-          align-items: flex-start;
-        }
-        .webinar-detail-left { flex: 1.25; min-width: 0; }
-        .webinar-detail-right { flex: 0.75; min-width: 0; position: sticky; top: calc(var(--nav-height) + 20px); }
-        @media (max-width: 900px) {
-          .webinar-detail-layout { flex-direction: column; }
-          .webinar-detail-right { width: 100%; position: static; }
-        }
-
-        /* Section blocks */
-        .webinar-section-block { margin-bottom: 50px; }
-        .webinar-section-heading {
-          color: #fff;
-          font-size: 24px;
-          font-weight: 700;
-          margin-bottom: 24px;
-          padding-bottom: 15px;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        /* Info cards grid */
-        .webinar-info-cards {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
-        }
-        @media (max-width: 500px) { .webinar-info-cards { grid-template-columns: 1fr; } }
-        .webinar-info-card {
-          background: #242424;
-          border: 1px solid rgba(255,255,255,0.06);
-          border-radius: 12px;
-          padding: 20px 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .webinar-info-label {
-          color: rgba(255,255,255,0.4);
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          font-weight: 600;
-        }
-        .webinar-info-value {
-          color: #fff;
-          font-size: 16px;
-          font-weight: 500;
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @media (max-width: 1100px) {
+          .webinar-detail-layout { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .webinar-detail-right { position: static !important; width: 100% !important; order: -1; }
         }
       `}} />
     </main>

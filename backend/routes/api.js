@@ -55,6 +55,8 @@ router.post('/webinars', verifyToken, apiController.createWebinar);
 router.get('/webinars/:slug', apiController.getWebinarBySlug);
 router.put('/webinars/:slug', verifyToken, apiController.updateWebinar);
 router.delete('/webinars/:slug', verifyToken, apiController.deleteWebinar);
+router.post('/webinars/register', apiController.submitWebinarRegistration);
+router.get('/webinars/:id/registrations', verifyToken, apiController.getWebinarRegistrations);
 
 router.get('/news/all', verifyToken, apiController.getAllNews);
 router.get('/news', apiController.getNews);

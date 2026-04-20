@@ -1,7 +1,23 @@
 'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
 export default function Events() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/webinars`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
+      .then(res => res.json())
+      .then(json => {
+        setItems(json.data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   return (
     <main>
       <section className="hero-section" style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(180deg, #1a1a1a 0%, #242424 100%)' }}>
@@ -18,32 +34,42 @@ export default function Events() {
 
       <section className="section-pad" style={{ background: '#1a1a1a' }}>
         <div className="content-wrapper-lg">
-          <h2 className="section-title" style={{ color: '#fff', marginBottom: '40px', textAlign: 'center' }}>Upcoming Events</h2>
+          <h2 className="section-title" style={{ color: '#fff', marginBottom: '40px', textAlign: 'center' }}>Featured Events</h2>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '900px', margin: '0 auto' }}>
-             {[
-               { type: 'Webinar', title: 'Plant GPT in Action: Real-World Use Cases of Domain-Powered Agentic AI', date: 'Upcoming', loc: 'Online' },
-               { type: 'Conference', title: 'Offshore Technology Conference (OTC) 2026', date: 'May 4-7, 2026', loc: 'Houston, TX' },
-               { type: 'Trade Show', title: 'NACE Corrosion Expo', date: 'March 2026', loc: 'New Orleans, LA' }
-             ].map((evt, i) => (
-                <div key={i} style={{ background: '#242424', padding: '30px', borderRadius: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                   <div>
-                     <div style={{ color: 'var(--color-teal)', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px' }}>{evt.type}</div>
-                     <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', marginBottom: '15px' }}>{evt.title}</h3>
-                     <div style={{ display: 'flex', gap: '20px', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
-                       <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                         {evt.date}
-                       </span>
-                       <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                         {evt.loc}
-                       </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1000px', margin: '0 auto' }}>
+             {loading ? (
+                <div style={{ textAlign: 'center', color: '#94a3b8' }}>Loading events...</div>
+             ) : items.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#94a3b8' }}>No specific events listed at the moment.</div>
+             ) : (
+                items.slice(0, 5).map((evt, i) => (
+                  <div key={i} style={{ background: '#242424', padding: '30px', borderRadius: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                     <div style={{ flex: 1 }}>
+                       <div style={{ color: 'var(--color-teal)', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px' }}>
+                          {new Date(evt.eventDate) > new Date() ? 'UPCOMING WEBINAR' : 'PAST WEBINAR'}
+                       </div>
+                       <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', marginBottom: '15px' }}>{evt.title}</h3>
+                       <div style={{ display: 'flex', gap: '20px', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
+                         <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                           {new Date(evt.eventDate).toLocaleDateString()}
+                         </span>
+                         <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                           {evt.duration || '60 mins'}
+                         </span>
+                       </div>
                      </div>
-                   </div>
-                   <button suppressHydrationWarning className="btn-primary" style={{ padding: '10px 24px', fontSize: '14px' }}>Register Now</button>
-                </div>
-             ))}
+                     <Link 
+                        href={`/events/${new Date(evt.eventDate) > new Date() ? 'upcoming-webinars' : 'on-demand-webinars'}/${evt.slug}`} 
+                        className="btn-primary" 
+                        style={{ padding: '12px 30px', fontSize: '14px' }}
+                     >
+                        View Details
+                     </Link>
+                  </div>
+                ))
+             )}
           </div>
         </div>
       </section>
@@ -59,7 +85,6 @@ export default function Events() {
            </Link>
         </div>
       </section>
-
     </main>
   );
 }
