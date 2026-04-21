@@ -704,46 +704,48 @@ export default function AdvancedModelingPage() {
       </section>
 
       {/* ── INDUSTRIES ── */}
-      <section
-        id="industries"
-        data-section="Industries"
-        ref={el => sectionRefs.current['Industries'] = el}
-        style={{ padding: '100px 0', background: '#1c1c1c' }}
-      >
-        <div className="content-wrapper-lg">
-          <div className="inds-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 400px) 1fr', gap: '80px' }}>
-            <div style={{ position: 'sticky', top: '120px', height: 'fit-content' }}>
-              <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700' }}>{config.industriesSection?.title || 'Industries'}</h2>
-              <p style={{ color: '#fff', opacity: 0.9, fontSize: '18px' }}>{config.industriesSection?.subtitle || 'Your Trusted Partner in Modeling & Simulation.'}</p>
-              <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
-                <Image 
-                  src={allIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"} 
-                  alt="industry" 
-                  fill 
-                  sizes="(max-width: 768px) 100vw, 400px"
-                  style={{ objectFit: 'cover' }} 
-                  unoptimized 
-                />
+      {config.industriesSection?.enabled !== false && (
+        <section
+          id="industries"
+          data-section="Industries"
+          ref={el => sectionRefs.current['Industries'] = el}
+          style={{ padding: '100px 0', background: '#1c1c1c' }}
+        >
+          <div className="content-wrapper-lg">
+            <div className="inds-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 400px) 1fr', gap: '80px' }}>
+              <div style={{ position: 'sticky', top: '120px', height: 'fit-content' }}>
+                <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700' }}>{config.industriesSection?.title || 'Industries'}</h2>
+                <p style={{ color: '#fff', opacity: 0.9, fontSize: '18px' }}>{config.industriesSection?.subtitle || 'Your Trusted Partner in Modeling & Simulation.'}</p>
+                <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
+                  <Image 
+                    src={allIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"} 
+                    alt="industry" 
+                    fill 
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    style={{ objectFit: 'cover' }} 
+                    unoptimized 
+                  />
+                </div>
+              </div>
+              <div onMouseLeave={() => setActiveIndustryIdx(null)}>
+                {allIndustries.length > 0 ? allIndustries.map((ind, i) => (
+                  <div key={ind.name} onMouseEnter={() => setActiveIndustryIdx(i)} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '30px 0', cursor: 'pointer' }}>
+                    <h3 style={{ color: activeIndustryIdx === i ? 'var(--color-teal)' : '#fff', transition: 'color 0.3s' }}>{ind.name}</h3>
+                    {activeIndustryIdx === i && (
+                      <div style={{ marginTop: '20px' }}>
+                        <p style={{ color: 'rgba(255,255,255,0.8)' }}>{ind.desc}</p>
+                        <Link href={ind.href} style={{ color: 'var(--color-teal)', fontWeight: '700', textDecoration: 'none', display: 'block', marginTop: '10px' }}>VIEW DETAILS →</Link>
+                      </div>
+                    )}
+                  </div>
+                )) : (
+                  <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading other industries...</p>
+                )}
               </div>
             </div>
-            <div onMouseLeave={() => setActiveIndustryIdx(null)}>
-              {allIndustries.length > 0 ? allIndustries.map((ind, i) => (
-                <div key={ind.name} onMouseEnter={() => setActiveIndustryIdx(i)} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '30px 0', cursor: 'pointer' }}>
-                  <h3 style={{ color: activeIndustryIdx === i ? 'var(--color-teal)' : '#fff', transition: 'color 0.3s' }}>{ind.name}</h3>
-                  {activeIndustryIdx === i && (
-                    <div style={{ marginTop: '20px' }}>
-                      <p style={{ color: 'rgba(255,255,255,0.8)' }}>{ind.desc}</p>
-                      <Link href={ind.href} style={{ color: 'var(--color-teal)', fontWeight: '700', textDecoration: 'none', display: 'block', marginTop: '10px' }}>VIEW DETAILS →</Link>
-                    </div>
-                  )}
-                </div>
-              )) : (
-                <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading other industries...</p>
-              )}
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── CAPABILITY MODAL OVERLAY ── */}
       {selectedCapability && MODAL_DATA_FINAL[selectedCapability] && (() => {

@@ -387,10 +387,21 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                             <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '12px' }}>Upload <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, `${area}.mainBody.cards.${i}.image`)} /></label>
                                         </div>
                                         {card.image && <img src={card.image} alt="preview" style={{ maxWidth: '100px', borderRadius: '6px', marginBottom: '8px', border: '1px solid #e2e8f0' }} />}
+                                        
+                                        <div className="grid-2" style={{ gap: '10px' }}>
+                                            <div>
+                                                <label className="admin-label">CTA Text</label>
+                                                <input className="admin-input-sm" value={card.ctaText || 'VIEW MORE'} onChange={e => updateField(`${area}.mainBody.cards.${i}.ctaText`, e.target.value)} />
+                                            </div>
+                                            <div>
+                                                <label className="admin-label">Target Link (Internal)</label>
+                                                <input className="admin-input-sm" placeholder="/services/..." value={card.link || ''} onChange={e => updateField(`${area}.mainBody.cards.${i}.link`, e.target.value)} />
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
-                            <button type="button" onClick={() => addItem(`${area}.mainBody.cards`, { title: '', desc: '', image: '', ctaText: 'VIEW MORE' })} className="btn-add">+ Add Capability Card</button>
+                            <button type="button" onClick={() => addItem(`${area}.mainBody.cards`, { title: '', desc: '', image: '', ctaText: 'VIEW MORE', link: '' })} className="btn-add">+ Add Capability Card</button>
                         </div>
 
                         {/* SHOWCASE (USE CASES) */}
@@ -429,7 +440,13 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
 
                         {/* INDUSTRIES SECTION */}
                         <div style={{ marginBottom: '3rem' }}>
-                            <h4 className="section-subtitle">Related Industries Section</h4>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                <h4 className="section-subtitle" style={{ margin: 0 }}>Related Industries Section</h4>
+                                <label style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <input type="checkbox" checked={data.industriesSection?.enabled !== false} onChange={e => updateField(`${area}.industriesSection.enabled`, e.target.checked)} />
+                                    Show this section
+                                </label>
+                            </div>
                             <div className="grid-2">
                                 <div>
                                     <label className="admin-label">Section Heading</label>
@@ -473,70 +490,72 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                             <button type="button" onClick={() => addItem(`${area}.whyChooseUs.items`, { title: '', desc: '', icon: 'Users' })} className="btn-add">+ Add Item</button>
                         </div>
 
-                        {/* MODALS / TECHNICAL DETAILS */}
-                        <div>
-                            <h4 className="section-subtitle">Technical Details (Modals)</h4>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                {data.modals?.map((modal, i) => (
-                                    <div key={i} className="sub-card" style={{ borderLeft: '4px solid #00AEEF' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-                                            <div style={{ flex: 1 }}>
-                                                <label className="admin-label">Links to Capability Card</label>
-                                                <select className="admin-input-sm" value={modal.capabilityName} onChange={e => updateField(`${area}.modals.${i}.capabilityName`, e.target.value)}>
-                                                    <option value="">Select Card</option>
-                                                    {data.mainBody?.cards?.map(c => <option key={c.title} value={c.title}>{c.title}</option>)}
-                                                </select>
-                                            </div>
-                                            <button type="button" onClick={() => removeItem(`${area}.modals`, i)} className="btn-danger" style={{ height: 'fit-content' }}>Delete Modal Info</button>
-                                        </div>
-                                        <div className="grid-2" style={{ marginTop: '1rem' }}>
-                                            <div className="full-width"><label className="admin-label">Main Modal Title</label><input className="admin-input-sm" value={modal.mainTitle || ''} onChange={e => updateField(`${area}.modals.${i}.mainTitle`, e.target.value)} /></div>
-                                            <div className="full-width"><label className="admin-label">Overview</label><textarea className="admin-input-sm" rows={3} value={modal.overview || ''} onChange={e => updateField(`${area}.modals.${i}.overview`, e.target.value)} /></div>
-                                            
-                                            <div className="full-width">
-                                                <label className="admin-label">Technical Feature Image</label>
-                                                <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
-                                                    <input className="admin-input-sm" style={{ marginBottom: 0 }} value={modal.image || ''} onChange={e => updateField(`${area}.modals.${i}.image`, e.target.value)} />
-                                                    <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>Upload <input type="file" hidden onChange={e => handleImageUpload(e, `${area}.modals.${i}.image`)} /></label>
+                        {/* Technical Details (Modals) Section - Only for Modeling */}
+                        {area === 'modelingSimulation' && (
+                            <div style={{ marginTop: '3rem' }}>
+                                <h4 className="section-subtitle">Technical Details (Modals)</h4>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {data.modals?.map((modal, i) => (
+                                        <div key={i} className="sub-card" style={{ borderLeft: '4px solid #00AEEF' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
+                                                <div style={{ flex: 1 }}>
+                                                    <label className="admin-label">Links to Capability Card</label>
+                                                    <select className="admin-input-sm" value={modal.capabilityName} onChange={e => updateField(`${area}.modals.${i}.capabilityName`, e.target.value)}>
+                                                        <option value="">Select Card</option>
+                                                        {data.mainBody?.cards?.map(c => <option key={c.title} value={c.title}>{c.title}</option>)}
+                                                    </select>
                                                 </div>
-                                                {modal.image && <img src={modal.image} alt="Modal Preview" style={{ maxWidth: '150px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />}
+                                                <button type="button" onClick={() => removeItem(`${area}.modals`, i)} className="btn-danger" style={{ height: 'fit-content' }}>Delete Modal Info</button>
                                             </div>
-
-                                            <div className="full-width"><label className="admin-label">Tools Applied (Comma separated)</label><input className="admin-input-sm" value={modal.tools?.join(', ') || ''} onChange={e => updateField(`${area}.modals.${i}.tools`, e.target.value.split(',').map(t => t.trim()))} /></div>
-                                        </div>
-                                        <div style={{ marginTop: '1rem' }}>
-                                            <label className="admin-label">Inner Technical Sections</label>
-                                            {modal.technicalSections?.map((sec, j) => (
-                                                <div key={j} style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', marginBottom: '12px', border: '1px solid #e2e8f0' }}>
-                                                    <div className="grid-2" style={{ marginBottom: '8px' }}>
-                                                        <div>
-                                                            <label className="admin-label" style={{ fontSize: '9px' }}>Section Title</label>
-                                                            <input className="admin-input-sm" placeholder="e.g. CFD Centric Post Processing" value={sec.title || ''} onChange={e => updateField(`${area}.modals.${i}.technicalSections.${j}.title`, e.target.value)} />
-                                                        </div>
-                                                        <div>
-                                                            <label className="admin-label" style={{ fontSize: '9px' }}>Subtitle</label>
-                                                            <input className="admin-input-sm" placeholder="e.g. Study of Separation process" value={sec.subtitle || ''} onChange={e => updateField(`${area}.modals.${i}.technicalSections.${j}.subtitle`, e.target.value)} />
-                                                        </div>
+                                            <div className="grid-2" style={{ marginTop: '1rem' }}>
+                                                <div className="full-width"><label className="admin-label">Main Modal Title</label><input className="admin-input-sm" value={modal.mainTitle || ''} onChange={e => updateField(`${area}.modals.${i}.mainTitle`, e.target.value)} /></div>
+                                                <div className="full-width"><label className="admin-label">Overview</label><textarea className="admin-input-sm" rows={3} value={modal.overview || ''} onChange={e => updateField(`${area}.modals.${i}.overview`, e.target.value)} /></div>
+                                                
+                                                <div className="full-width">
+                                                    <label className="admin-label">Technical Feature Image</label>
+                                                    <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+                                                        <input className="admin-input-sm" style={{ marginBottom: 0 }} value={modal.image || ''} onChange={e => updateField(`${area}.modals.${i}.image`, e.target.value)} />
+                                                        <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>Upload <input type="file" hidden onChange={e => handleImageUpload(e, `${area}.modals.${i}.image`)} /></label>
                                                     </div>
-                                                    <label className="admin-label" style={{ fontSize: '9px' }}>Section Content</label>
-                                                    <textarea className="admin-input-sm" rows={4} placeholder="Detailed technical content..." value={sec.content || ''} onChange={e => updateField(`${area}.modals.${i}.technicalSections.${j}.content`, e.target.value)} />
-                                                    <button type="button" onClick={() => {
-                                                        const list = [...modal.technicalSections];
-                                                        list.splice(j, 1);
-                                                        updateField(`${area}.modals.${i}.technicalSections`, list);
-                                                    }} className="btn-danger" style={{ padding: '4px 12px', marginTop: '4px' }}>Remove Sub-section</button>
+                                                    {modal.image && <img src={modal.image} alt="Modal Preview" style={{ maxWidth: '150px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />}
                                                 </div>
-                                            ))}
-                                            <button type="button" onClick={() => {
-                                                const list = modal.technicalSections || [];
-                                                updateField(`${area}.modals.${i}.technicalSections`, [...list, { title: '', subtitle: '', content: '' }]);
-                                            }} className="btn-secondary" style={{ fontSize: '11px', padding: '10px 15px', width: '100%', borderStyle: 'dashed' }}>+ Add Sub-section</button>
+
+                                                <div className="full-width"><label className="admin-label">Tools Applied (Comma separated)</label><input className="admin-input-sm" value={modal.tools?.join(', ') || ''} onChange={e => updateField(`${area}.modals.${i}.tools`, e.target.value.split(',').map(t => t.trim()))} /></div>
+                                            </div>
+                                            <div style={{ marginTop: '1rem' }}>
+                                                <label className="admin-label">Inner Technical Sections</label>
+                                                {modal.technicalSections?.map((sec, j) => (
+                                                    <div key={j} style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', marginBottom: '12px', border: '1px solid #e2e8f0' }}>
+                                                        <div className="grid-2" style={{ marginBottom: '8px' }}>
+                                                            <div>
+                                                                <label className="admin-label" style={{ fontSize: '9px' }}>Section Title</label>
+                                                                <input className="admin-input-sm" placeholder="e.g. CFD Centric Post Processing" value={sec.title || ''} onChange={e => updateField(`${area}.modals.${i}.technicalSections.${j}.title`, e.target.value)} />
+                                                            </div>
+                                                            <div>
+                                                                <label className="admin-label" style={{ fontSize: '9px' }}>Subtitle</label>
+                                                                <input className="admin-input-sm" placeholder="e.g. Study of Separation process" value={sec.subtitle || ''} onChange={e => updateField(`${area}.modals.${i}.technicalSections.${j}.subtitle`, e.target.value)} />
+                                                            </div>
+                                                        </div>
+                                                        <label className="admin-label" style={{ fontSize: '9px' }}>Section Content</label>
+                                                        <textarea className="admin-input-sm" rows={4} placeholder="Detailed technical content..." value={sec.content || ''} onChange={e => updateField(`${area}.modals.${i}.technicalSections.${j}.content`, e.target.value)} />
+                                                        <button type="button" onClick={() => {
+                                                            const list = [...modal.technicalSections];
+                                                            list.splice(j, 1);
+                                                            updateField(`${area}.modals.${i}.technicalSections`, list);
+                                                        }} className="btn-danger" style={{ padding: '4px 12px', marginTop: '4px' }}>Remove Sub-section</button>
+                                                    </div>
+                                                ))}
+                                                <button type="button" onClick={() => {
+                                                    const list = modal.technicalSections || [];
+                                                    updateField(`${area}.modals.${i}.technicalSections`, [...list, { title: '', subtitle: '', content: '' }]);
+                                                }} className="btn-secondary" style={{ fontSize: '11px', padding: '10px 15px', width: '100%', borderStyle: 'dashed' }}>+ Add Sub-section</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
+                                <button type="button" onClick={() => addItem(`${area}.modals`, { capabilityName: '', mainTitle: '', overview: '', technicalSections: [], tools: [], image: '' })} className="btn-add">+ Add Technical Modal Details</button>
                             </div>
-                            <button type="button" onClick={() => addItem(`${area}.modals`, { capabilityName: '', mainTitle: '', overview: '', technicalSections: [], tools: [], image: '' })} className="btn-add">+ Add Technical Modal Details</button>
-                        </div>
+                        )}
                     </>
                 )}
             </div>

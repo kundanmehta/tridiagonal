@@ -11,7 +11,7 @@ const industriesData = [
         overview: 'Serving Upstream, Midstream & Downstream segment.',
         modelingSimulation: {
             enabled: true,
-            industriesSection: { title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' },
+            industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' },
             hero: {
                 bgImage: '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png',
                 title: 'Advanced Modeling & Simulation',
@@ -136,7 +136,7 @@ const industriesData = [
                     technicalSections: [
                         { title: 'Fluid Structure Interaction', subtitle: 'Fluid Structure Interaction', content: 'Tridiagonal uses the coupling of Computational Fluid Dynamics (CFD) and Finite Element Analysis (FEA) to analyze the interplay between fluids & structures. Our experts can analyze flow-induced stresses, vibrations, and other dynamic effects. Our range of applications covers equipment like liquid seal drums, heat exchangers, and more.' },
                         { title: 'Thermal Structural Interaction', subtitle: 'Thermal Structural Interaction', content: 'Our CFD engineers can provide high-fidelity boundary conditions for FE analysis by simulating fluid flow and heat transfer. This helps in understanding mechanical deformations in fired pressure vessels and optimizing their structural resilience.' },
-                        { title: 'Predictive maintenance for Batch reactors', subtitle: 'DEM-FEA coupled problems', content: 'During oil extraction, inefficient transport and accumulation of drill cuttings in the wellbore can lead to stuck pipes. Our DEM engineers simulate the movement of drill cuttings in the drilling fluid, while FEA is used to analyze the structural integrity of the wellbore and drill string to improve slashing transport and prevent operational failures.' }
+                        { title: 'Predictive maintenance for Batch reactors', subtitle: 'DEM-FEA coupled problems', content: 'During oil extraction, inefficient transport and accumulation of drill cuttings in the wellbore can lead to stuck pipes. Our DEM engineers simulate the movement of drill cuttings in the drilling fluid, while FEA is used to analyze the structural integrity of the wellbore and drill string to improve cuttings transport and prevent operational failures.' }
                     ]
                 },
                 {
@@ -146,7 +146,7 @@ const industriesData = [
                     image: '/hubfs/Metals, Mining & Cement (1)-1.png',
                     tools: ['Simcenter STAR-CCM+', 'HEEDS', 'Simcenter Amesim', 'Python Data Stack'],
                     technicalSections: [
-                        { title: 'Basic Start building Analytics Culture', subtitle: 'Building ROM (Reduced Order Modeling)', content: 'In areas where full-scale simulation is computationally expensive, Tridiagonal builds ROMs by creating lower-dimensional models that capture essential system behavior. This speeds up simulations and provides a straightforward approach for rapid analysis.' },
+                        { title: 'Basic Start building Analytics Culture', subtitle: 'Building ROM (Reduced Order Modeling)', content: 'In areas where full-scale simulation is computationally expensive, Tridiagonal builds ROMs by creating lower-dimensional models that capture essential system behavior. This speeds up simulations and provides a slashforward approach for rapid analysis.' },
                         { title: 'Advanced Analytics', subtitle: 'Creating Response surface models (RSM)', content: "Tridiagonal uses Response Surface Modeling (RSM), a statistical technique to save on simulation costs. By analyzing relationships between input variables and output responses, our engineers predict performance without running individual full-scale simulations. This significantly reduces R&D costs in oil refining and recovery." }
                     ]
                 }
@@ -154,6 +154,7 @@ const industriesData = [
         },
         techValidation: {
             enabled: true,
+            industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Technology Validation.' },
             hero: {
                 bgImage: '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png',
                 title: 'Technology Validation & Scale-up Centre',
@@ -172,22 +173,97 @@ const industriesData = [
                 badge: 'Testing & Validation',
                 desc: 'Tridiagonal offers innovative solutions for Oil & Gas challenges like erosion and wax deposition. Our specialized facilities enable comprehensive testing and analysis to optimize sand screen durability, enhance multiphase flow dynamics, and improve asset integrity against erosion-corrosion. Tridiagonal\'s expertise unlocks potential for advancements that boost operational efficiency and reliability in Oil & Gas production.',
                 cards: [
-                    {
-                        title: 'Computational Fluid Dynamics (CFD)',
-                        desc: 'Multiphase flow, Phase change, combustion and reaction modeling are our routine areas of working. We help industry to analyze root cause of the failure.',
-                        image: '/hubfs/CFD Analysis of a Neutralization Tank _.png'
-                    }
+                    { title: 'Sand Screen Erosion Testing', desc: 'Evaluate sand screen durability in demanding conditions to enhance well performance and longevity, critical for oil extraction efficiency', image: '/hubfs/Sand Transport.png', link: '/contact-us', ctaText: 'INQUIRE NOW' },
+                    { title: 'Multiphase Flow and Sand Transport Facility', desc: 'Analyse sand transport within multiphase flows to optimize flow control, preventing blockages in Oil & Gas production systems.', image: '/hubfs/Cyclone Separator.png', link: '/contact-us', ctaText: 'EXPLORE MORE' },
+                    { title: 'Erosion Testing Facility', desc: 'Assess material resistance to erosion, mitigating equipment wear and tear to safeguard assets and prolong their lifespan.', image: '/hubfs/Metals, Mining & Cement (1)-1.png', link: '/contact-us', ctaText: 'BOOK A TEST' },
+                    { title: 'Erosion-Corrosion Multiphase Flow Loop', desc: 'Investigate the combined effects of erosion and corrosion within multiphase flows to develop strategies for enhancing asset integrity and durability, vital for ensuring reliable operation in Oil & Gas facilities.', image: '/hubfs/Three-Phase Separator Tank.png', link: '/contact-us', ctaText: 'LEARN MORE' },
+                    { title: 'Wax Deposition Testing Facility', desc: 'Analyze wax deposition phenomena to prevent flow disruptions and maintain operational efficiency, aiding in the design and implementation of effective mitigation measures in pipeline systems.', image: '/hubfs/grid-1.png', link: '/contact-us', ctaText: 'GET INSIGHTS' },
+                    { title: 'Asphaltene Deposition Facility', desc: 'Examine asphaltene deposition to identify potential risks to pipeline integrity and develop mitigation strategies, essential for preventing flow restrictions and maintaining the safety and reliability of transportation networks.', image: '/hubfs/Sparger.png', link: '/contact-us', ctaText: 'VIEW DETAILS' },
+                    { title: 'ICD Test Facility', desc: 'Assess the performance of Inflow Control Devices to optimize reservoir production, facilitating efficient fluid management and enhancing oil recovery rates in upstream operations.', image: '/hubfs/Office Space Ventilation_ (1).png', link: '/contact-us', ctaText: 'SEE PERFORMANCE' },
+                    { title: 'Jumper Loop Facility for Liquid Entrainment and Hydrate Study', desc: 'Investigate multiphase flow dynamics to optimize design and operational parameters for efficient offshore field development, enhancing productivity and safety in offshore oil and gas extraction projects.', image: '/hubfs/grid-2.png', link: '/contact-us', ctaText: 'FIELD STUDY' },
+                    { title: 'Sand Retention Test Facility', desc: 'Evaluate the effectiveness of sand screens in controlling sand production to maintain well integrity and prevent equipment damage, ensuring reliable and efficient oil extraction operations.', image: '/hubfs/Sand Transport.png', link: '/contact-us', ctaText: 'TEST INTEGRITY' },
+                    { title: 'Sand Blast Testing', desc: 'Evaluate the performance of coatings under extreme conditions to ensure asset protection and longevity, vital for preserving equipment integrity and minimizing maintenance costs in challenging environments.', image: '/hubfs/shell-tube-exchanger.png', link: '/contact-us', ctaText: 'VIEW IMPACT' },
+                    { title: 'Instrumental Facilities', desc: "Our state-of-the-art instrumentation facility capture motion's essence with our Ultrasonic Velocity Profiler, unravel fluid dynamics mysteries using Particle Imaging Velocimetry, High-Resolution Camera, Wire Mesh 2-D Tomography, Amscope Microscope, Laser Profilometer, and Particle Size Analyzer.", image: '/hubfs/Digital Twin.jpg', link: '/contact-us', ctaText: 'DISCOVER TECH' },
+                    { title: 'Contacts Us', desc: 'Uncover how our capabilities can propel your organization forward. Provide your focus areas, and we will deliver tailored solutions designed to meet your unique objectives.', image: '/hubfs/Banner.jpg', link: '/contact-us', ctaText: 'GET IN TOUCH' }
                 ]
             },
-            showcase: { enabled: false },
             whyChooseUs: {
                 title: 'Why Tridiagonal?',
                 items: [
                     { title: 'State of the Art Facility', desc: '250k+ sq. ft. facility, Advanced equipment\'s, Lab & field scale testing, 24/7 utility', icon: 'Home' },
-                    { title: 'Domain Experts', desc: '50+ domain experts with Masters, Ph.D.\'s, Consultants.', icon: 'Users' }
+                    { title: 'Domain Experts', desc: '50+ domain experts with Masters, Ph.D.\'s, Consultants.', icon: 'Users' },
+                    { title: 'Cost-Effective Solutions', desc: 'Leverage cheap labour and pre-built loops tailored to client needs.', icon: 'DollarSign' },
+                    { title: 'Quick Turnaround', desc: 'Quick testing, Single-window for analysis, verification, validation.', icon: 'Clock' },
+                    { title: 'Custom-Built Set-Up', desc: 'Our EPC team creates custom skids quickly. Local network accelerates projects.', icon: 'Settings' },
+                    { title: 'Value Creation', desc: 'Deploying sustainable practices to efficiently create and deliver value for customers.', icon: 'TrendingUp' }
                 ]
             },
-            modals: []
+            modals: [
+                {
+                    capabilityName: 'Computational Fluid Dynamics (CFD)',
+                    mainTitle: 'Computational Fluid Dynamics',
+                    overview: 'Computational Fluid Dynamics (CFD) empowers you to visualize and analyze complex fluid flow phenomena within your designs. Our team of CFD specialists leverage cutting-edge tools and proven methodologies to provide comprehensive solutions for a wide range of applications, including heat transfer analysis for equipment design, Multiphase flow modeling and Combustion analysis for emission control. We are trusted partners of renowned companies since last two decades. We work on a wide range of applications making considerable contributions to design & process optimization.',
+                    image: '/hubfs/CFD Analysis of a Neutralization Tank _.png',
+                    tools: ['Simcenter STAR-CCM+', 'Simcenter 3D', 'Simcenter Amesim', 'Simcenter FLOEFD', 'FLOMASTER'],
+                    technicalSections: [
+                        { title: 'Computational Fluid Dynamics (CFD)', subtitle: 'CFD centric Post Processing', content: 'Study of Separation process \nOur CFD engineers can analyze oil blending & suggest appropriate jet-mixture position for optimal performance. Homogenization time can also be predicted to take inferred decisions. Separation is an essential process in Oil & Gas industry, here we can evaluate and enhance performance of various separation equipment like two/three-phase separators, vertical/horizontal and spherical separators, Cyclone and pre-treaters with simulation.' },
+                        { title: 'Combustion Modeling', subtitle: 'Combustion Modeling', content: 'Tridiagonal has considerable experience on modeling burner arrangements, flame interactions, NOx and SOx predictions and Flame impingement on radiant tube section to avoid rupture. Our engineers also worked on processed heaters used in reformers. We help optimize flow of fluid and air to Burner using CFD as well as improve combustion efficiency by optimizing fuel and air flow' },
+                        { title: 'Ongoing Performance Monitoring and Enhancement', subtitle: 'Well drilling & Cementing', content: 'Tridiagonal engineers work on both onshore & offshore oil extraction applications. Our team can analyze pressure drop patterns & erosion modeling of downhole tools using CFD as well as equipment & tools involved in other processes like completion, cementing & plugging and abandonment to understand fluid displacement. Other applications include sand screens, submersible pumps, steel catenary riser(SCR) & exhaust gas dispersion from offshore platforms.' },
+                        { title: 'Dynamic Simulation (Operator training simulation)', subtitle: 'Simulation for refining applications & processes', content: "Tridiagonal's CFD capabilities cover a wide range of equipment & processes under oil refining. Our simulation assessment helps solve coking issues in fractionators by tracking particle & liquid distribution. Insights provided from our M&S team are useful in selection of Fixed bed reactors to get improved temperature distribution & flow uniformity." },
+                        { title: 'Dynamic analysis', subtitle: 'Seamless coupling with Finite Element analysis', content: 'Through incorporation of coupled FEA-CFD analysis we offer more realistic solutions on various oil & gas equipment. Synergizing both these domains our experts help you solve problems related to Fluid Structure Interaction(FSI) & Thermal Structural interaction.' }
+                    ]
+                },
+                {
+                    capabilityName: 'Finite Element Analysis (FEA)',
+                    mainTitle: 'Finite Element Analysis',
+                    overview: 'Finite Element Analysis (FEA) has become an indispensable technology within the oil and gas industry. This sophisticated computer-aided engineering technique allows engineers to perform simulations of various components and structures and predict their behavior under real-world operating conditions.\n\nThis capability to analyze stress, strain, and deformations across a wide range of scenarios strengthens safety protocols, optimizes designs, and ultimately reduces costs throughout production, and transportation phases.',
+                    image: '/hubfs/Sparger.png',
+                    tools: ['Simcenter 3D', 'NX Nastran', 'Simcenter Amesim', 'HEEDS', 'STAR-CCM+'],
+                    technicalSections: [
+                        { title: 'Structural analysis of RPB under rotation', subtitle: 'Ensuring Structural integrity of Pressure Vessels', content: 'Our FEA engineers can do static structural analysis to assess the structural integrity of different pressure vessels broadly classified as Vertical Pressure Vessels and Horizontal Pressure Vessels used in Oil refineries. We do these analyses using industry standards like ASME and API for stress classification and ASCE for Seismic analysis. We also frequently analyze separators & coke drums for deformations.' },
+                        { title: 'Oil in water prediction in skimmers', subtitle: 'Strength assessment of oil extraction equipment', content: 'From wellheads to offshore rigs our engineers can perform stress analysis to ensure safe & reliable operations. We can replicate the response of offshore platforms under combined forces of waves, wind, and sea currents. Under energy extraction operations, Tridiagonal works on a wide range of applications including Centrifugal compressors & gate valves.' },
+                        { title: 'Boiler energy optimization-1', subtitle: 'Ensuring structural integrity of energy storage solutions', content: 'Leveraging FEA, Tridiagonal can do a static analysis to capture stiffness of Distillation column to avoid collapse due to buckling loads. We have extensive experience in analyzing structural integrity of Storage tanks at component level such as Tank Roof Nozzle, Baffle Plate and bottom plate nozzle.' },
+                        { title: 'Fluid Structure Interaction', subtitle: 'Fatigue Life prediction for Piping structures', content: 'Tridiagonal engineers have considerable experience in predicting fatigue life of piping by calculating stress intensities at critical locations. We can simulate vortices and acoustic resonances and their effect on pipe wall structure to predict resonance frequency and high stress region in piping structures.' },
+                        { title: 'Quality Control and Regulatory Compliance', subtitle: 'Seamless coupling with Computational Fluid Dynamics', content: 'Through incorporation of coupled FEA-CFD analysis we offer more realistic solutions on various oil & gas equipment. Synergizing both these domains our experts help you solve problems related to Fluid Structure Interaction(FSI) & Thermal Structural interaction.' }
+                    ]
+                },
+                {
+                    capabilityName: 'Discrete Element Method (DEM)',
+                    mainTitle: 'Discrete Element Method',
+                    overview: 'Discrete Element Modeling (DEM) is a technique used in the oil and gas industry for simulating the behavior of granular materials, particularly in drilling processes and fluidized bed reactors.',
+                    image: '/hubfs/Digital Twin.jpg',
+                    tools: ['Simcenter STAR-CCM+', 'Simcenter 3D', 'HEEDS'],
+                    technicalSections: [
+                        { title: 'Dynamic analysis', subtitle: 'Drill-bit interaction analysis', content: 'Tridiagonal can simulate how the drill bit interacts with rock formations at various depths. Our engineers predict wear and tear of drill bits, optimize drilling parameters, and improve drilling efficiency.' },
+                        { title: 'Integrity', subtitle: 'Simulating Wellbore Stability', content: 'Wellbore instability can cause significant problems during drilling. Tridiagonal can model the movement of formation particles around the wellbore, helping to predict potential wellbore collapse and design strategies to prevent it.' },
+                        { title: 'Predictive maintenance for Batch reactors', subtitle: 'Simulating movement and particle interaction under Bed reactors', content: 'FCC reactors use a fluidized bed of catalyst particles to crack heavier hydrocarbon molecules into lighter products. Tridiagonal can simulate the movement and interactions of these particles within the reactor, aiding in optimizing FCC operations for better product yield and catalyst life.' },
+                        { title: 'Automated Interpretation of RCA Incident reports', subtitle: 'Seamless coupling with Computational Fluid Dynamics', content: 'The plugging is dependent on the flow field, the number of particles, their cohesivity, and contact behavior. Tridiagonal can provide insights into the process of plugging in turbulent multiphase flows with cohesive/adhesive particles using high-fidelity CFD-DEM coupling.' }
+                    ]
+                },
+                {
+                    capabilityName: 'Multiphysics Simulation',
+                    mainTitle: 'Multiphysics Simulation',
+                    overview: 'As the Oil and Gas industry includes many complex processes & equipment, it is critical to understand the dynamics of internal processes and their effect on equipment to enhance performance. Tridiagonal has developed advanced capabilities to couple different disciplines to solve complex real-life issues using high-fidelity computational methods.',
+                    image: '/hubfs/Office Space Ventilation_ (1).png',
+                    tools: ['Simcenter STAR-CCM+', 'Simcenter 3D', 'Abaqus', 'Ansys'],
+                    technicalSections: [
+                        { title: 'Fluid Structure Interaction', subtitle: 'Fluid Structure Interaction', content: 'Tridiagonal uses the coupling of Computational Fluid Dynamics (CFD) and Finite Element Analysis (FEA) to analyze the interplay between fluids & structures. Our experts can analyze flow-induced stresses, vibrations, and other dynamic effects. Our range of applications covers equipment like liquid seal drums, heat exchangers, and more.' },
+                        { title: 'Thermal Structural Interaction', subtitle: 'Thermal Structural Interaction', content: 'Our CFD engineers can provide high-fidelity boundary conditions for FE analysis by simulating fluid flow and heat transfer. This helps in understanding mechanical deformations in fired pressure vessels and optimizing their structural resilience.' },
+                        { title: 'Predictive maintenance for Batch reactors', subtitle: 'DEM-FEA coupled problems', content: 'During oil extraction, inefficient transport and accumulation of drill cuttings in the wellbore can lead to stuck pipes. Our DEM engineers simulate the movement of drill cuttings in the drilling fluid, while FEA is used to analyze the structural integrity of the wellbore and drill string to improve cuttings transport and prevent operational failures.' }
+                    ]
+                },
+                {
+                    capabilityName: 'Digital Twin',
+                    mainTitle: 'Digital Twin',
+                    overview: 'Tridiagonal tech experts build virtual replicas of assets and processes to reduce simulation iterations using data interpolation and real-time insights. Methods like CFD, FEA & DEM allow for predictions that may not be practically achievable through physical sensors alone.',
+                    image: '/hubfs/Metals, Mining & Cement (1)-1.png',
+                    tools: ['Simcenter STAR-CCM+', 'HEEDS', 'Simcenter Amesim', 'Python Data Stack'],
+                    technicalSections: [
+                        { title: 'Basic Start building Analytics Culture', subtitle: 'Building ROM (Reduced Order Modeling)', content: 'In areas where full-scale simulation is computationally expensive, Tridiagonal builds ROMs by creating lower-dimensional models that capture essential system behavior. This speeds up simulations and provides a slashforward approach for rapid analysis.' },
+                        { title: 'Advanced Analytics', subtitle: 'Creating Response surface models (RSM)', content: "Tridiagonal uses Response Surface Modeling (RSM), a statistical technique to save on simulation costs. By analyzing relationships between input variables and output responses, our engineers predict performance without running individual full-scale simulations. This significantly reduces R&D costs in oil refining and recovery." }
+                    ]
+                }
+            ]
         }
     },
     { 
@@ -195,42 +271,48 @@ const industriesData = [
         slug: 'pharma-medical', 
         overview: 'Accelerating product development and ensuring regulatory compliance.',
         heroImage: '/hubfs/image(34).png',
-        modelingSimulation: { enabled: true, industriesSection: { title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } }
+        modelingSimulation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } },
+        techValidation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Leading the way in Pharma innovation.' } }
     },
     { 
         title: 'Metals, Mining & Cement', 
         slug: 'metals-mining', 
         overview: 'Enhancing process reliability and reducing emissions.',
         heroImage: '/hubfs/Metals, Mining & Cement (1)-1.png',
-        modelingSimulation: { enabled: true, industriesSection: { title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } }
+        modelingSimulation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } },
+        techValidation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Leading the way in Metals innovation.' } }
     },
     { 
         title: 'Food, Beverages & CPG', 
         slug: 'food-cpg', 
         overview: 'Optimizing continuous and batch processing.',
         heroImage: '/hubfs/grid-3.png',
-        modelingSimulation: { enabled: true, industriesSection: { title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } }
+        modelingSimulation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } },
+        techValidation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Leading the way in Food & CPG innovation.' } }
     },
     { 
         title: 'Chemicals & Petrochemicals', 
         slug: 'chemicals-petrochemicals', 
         overview: 'Resolving complex fluid dynamics and reaction kinetics.',
         heroImage: '/hubfs/grid-1.png',
-        modelingSimulation: { enabled: true, industriesSection: { title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } }
+        modelingSimulation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } },
+        techValidation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Leading the way in Chemical innovation.' } }
     },
     { 
         title: 'Power & Renewables', 
         slug: 'power-renewables', 
         overview: 'Driving the new energy transition.',
         heroImage: '/hubfs/New energy.png',
-        modelingSimulation: { enabled: true, industriesSection: { title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } }
+        modelingSimulation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } },
+        techValidation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Leading the way in Power innovation.' } }
     },
     { 
         title: 'Others', 
         slug: 'others', 
         overview: 'Advanced simulation capabilities across multiple platforms.',
         heroImage: '/hubfs/grid-2.png',
-        modelingSimulation: { enabled: true, industriesSection: { title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } }
+        modelingSimulation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Your Trusted Partner in Modeling & Simulation.' } },
+        techValidation: { enabled: true, industriesSection: { enabled: true, title: 'Industries', subtitle: 'Leading the way in Multi-industry innovation.' } }
     }
 ];
 

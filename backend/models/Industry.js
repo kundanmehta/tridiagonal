@@ -22,6 +22,7 @@ const ServiceAreaSchema = new mongoose.Schema({
       desc: String,
       image: String,
       ctaText: { type: String, default: 'VIEW MORE' },
+      link: String,
     }]
   },
   showcase: {
@@ -44,6 +45,7 @@ const ServiceAreaSchema = new mongoose.Schema({
     }]
   },
   industriesSection: {
+    enabled: { type: Boolean, default: true },
     title: { type: String, default: 'Industries' },
     subtitle: { type: String, default: 'Your Trusted Partner in Modeling & Simulation.' }
   },
