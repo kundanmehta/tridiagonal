@@ -26,7 +26,19 @@ const sidebarNav = [
   },
   { label: 'Form Builder', href: '/admin/forms', icon: ClipboardList },
   { label: 'Services', href: '/admin/services', icon: Settings },
-  { label: 'Industries', href: '/admin/industries', icon: Factory },
+  {
+    label: 'Industries',
+    icon: Factory,
+    children: [
+      { label: 'Oil & Gas', href: '/admin/industries/oil-gas', icon: Factory },
+      { label: 'Pharma & Medical', href: '/admin/industries/pharma-medical', icon: Factory },
+      { label: 'Metals & Mining', href: '/admin/industries/metals-mining', icon: Factory },
+      { label: 'Food & CPG', href: '/admin/industries/food-cpg', icon: Factory },
+      { label: 'Chemicals & Petro', href: '/admin/industries/chemicals-petrochemicals', icon: Factory },
+      { label: 'Power & Renewables', href: '/admin/industries/power-renewables', icon: Factory },
+      { label: 'Others', href: '/admin/industries/others', icon: Factory },
+    ],
+  },
   {
     label: 'Resources',
     icon: BookOpen,

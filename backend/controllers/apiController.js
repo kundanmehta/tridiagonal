@@ -46,6 +46,50 @@ exports.getIndustryBySlug = async (req, res) => {
   }
 };
 
+exports.getIndustryById = async (req, res) => {
+  try {
+    const industry = await Industry.findById(req.params.id);
+    if (!industry) return res.status(404).json({ error: 'Industry not found' });
+    res.json({ message: 'Success', data: industry });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch industry' });
+  }
+};
+
+exports.createIndustry = async (req, res) => {
+  try {
+    const industry = new Industry(req.body);
+    await industry.save();
+    res.status(201).json({ message: 'Industry created successfully', data: industry });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to create industry' });
+  }
+};
+
+exports.updateIndustry = async (req, res) => {
+  try {
+    const industry = await Industry.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!industry) return res.status(404).json({ error: 'Industry not found' });
+    res.json({ message: 'Industry updated successfully', data: industry });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to update industry' });
+  }
+};
+
+exports.deleteIndustry = async (req, res) => {
+  try {
+    const industry = await Industry.findByIdAndDelete(req.params.id);
+    if (!industry) return res.status(404).json({ error: 'Industry not found' });
+    res.json({ message: 'Industry deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete industry' });
+  }
+};
+
 
 exports.getResources = async (req, res) => {
   try {

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -294,66 +294,12 @@ const MODAL_DATA = {
 };
 
 export default function AdvancedModelingPage() {
-  const [industryData, setIndustryData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('About Practice');
   const [activeIndustryIdx, setActiveIndustryIdx] = useState(null);
-  const [allIndustries, setAllIndustries] = useState([]);
   const [useCasesSlide, setUseCasesSlide] = useState(0);
   const [useCasesInTransition, setUseCasesInTransition] = useState(true);
   const [selectedCapability, setSelectedCapability] = useState(null);
   const sectionRefs = useRef({});
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-        
-        // Fetch current industry data
-        const res = await fetch(`${baseUrl}/api/industries/oil-gas`);
-        const json = await res.json();
-        if (json.data) {
-          setIndustryData(json.data);
-        }
-
-        // Fetch all industries for the dynamic Industries section
-        const allRes = await fetch(`${baseUrl}/api/industries`);
-        const allJson = await allRes.json();
-        if (allJson.data) {
-          const filtered = allJson.data
-            .filter(ind => ind.modelingSimulation?.enabled && ind.slug !== 'oil-gas')
-            .map(ind => ({
-              name: ind.title,
-              desc: ind.overview,
-              image: ind.heroImage || ind.modelingSimulation?.hero?.bgImage || "/hubfs/Metals, Mining & Cement (1)-1.png",
-              href: `/industries/${ind.slug}/advance-modeling-and-simulation`
-            }));
-          setAllIndustries(filtered);
-        }
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  const config = industryData?.modelingSimulation || {};
-  const hero = config.hero || { title: 'Advanced Modeling & Simulation', desc: 'Serving Upstream, Midstream & Downstream segment.' };
-  const intro = config.intro || { heading: 'High-Fidelity Engineering Solutions', paragraphs: [] };
-  const mainBody = config.mainBody || { title: 'What We Do', cards: [] };
-  const showcase = config.showcase || { title: 'Use Cases', cards: [] };
-  const whyChooseUs = config.whyChooseUs || { title: 'Why Choose Us?', items: [] };
-  const modalsFromDb = config.modals || [];
-
-  // Map modals from DB to the structure frontend expects
-  const dynamicModals = {};
-  modalsFromDb.forEach(m => {
-    dynamicModals[m.capabilityName] = m;
-  });
-
-  const MODAL_DATA_FINAL = Object.keys(dynamicModals).length > 0 ? dynamicModals : MODAL_DATA;
 
   // Auto-scroll Use Cases slider (continuous loop)
   useEffect(() => {
@@ -365,34 +311,26 @@ export default function AdvancedModelingPage() {
   }, []);
 
   // Handle snapping back for seamless infinite scroll (Use Cases)
-  const useCasesCardsCount = showcase.cards?.length || 0;
   useEffect(() => {
-    if (useCasesCardsCount > 0 && useCasesSlide === useCasesCardsCount) {
+    if (useCasesSlide === useCasesCards.length) {
       const timeout = setTimeout(() => {
         setUseCasesInTransition(false);
         setUseCasesSlide(0);
       }, 500);
       return () => clearTimeout(timeout);
     }
-  }, [useCasesSlide, useCasesCardsCount]);
-
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a1a', color: '#fff' }}>
-        <div style={{ fontSize: '20px', fontWeight: '600' }}>Loading...</div>
-      </div>
-    );
-  }
+  }, [useCasesSlide]);
 
   return (
     <main style={{ paddingTop: 'var(--nav-height)', background: '#1a1a1a' }}>
-      {/* ── HERO ── */}
+
+      {/* ΓöÇΓöÇ HERO ΓöÇΓöÇ */}
       <section
         className="hero-section"
         style={{
           position: 'relative',
           overflow: 'hidden',
-          background: `url('${hero.bgImage || '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
+          background: "url('/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png') center center / cover no-repeat",
           minHeight: 'auto',
           padding: '80px 0 60px',
         }}
@@ -405,7 +343,7 @@ export default function AdvancedModelingPage() {
           </div>
 
           <div style={{ marginBottom: '10px' }}>
-            <span style={{ color: '#fff', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: '800', display: 'block' }}>{industryData?.title || 'Oil & Gas'}</span>
+            <span style={{ color: '#fff', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: '800', display: 'block' }}>Oil & Gas</span>
           </div>
 
           <h1
@@ -418,7 +356,7 @@ export default function AdvancedModelingPage() {
               lineHeight: 1.1,
             }}
           >
-            {hero.title}
+            Advanced Modeling &amp; <span className="gradient-text">Simulation</span>
           </h1>
 
           <p
@@ -432,12 +370,12 @@ export default function AdvancedModelingPage() {
               letterSpacing: '0.5px'
             }}
           >
-            {hero.desc}
+            Serving Upstream, Midstream &amp; Downstream segment.
           </p>
         </div>
       </section>
 
-      {/* ── ABOUT PRACTICE (Intro Section) ── */}
+      {/* ΓöÇΓöÇ ABOUT PRACTICE (Intro Section) ΓöÇΓöÇ */}
       <section
         id="about-practice"
         data-section="About Practice"
@@ -448,17 +386,18 @@ export default function AdvancedModelingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%,480px),1fr))', gap: '80px', alignItems: 'center' }}>
             <div>
               <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.1)', padding: '6px 18px', borderRadius: '30px', marginBottom: '24px' }}>
-                <span style={{ color: 'var(--color-teal)', fontSize: '13px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>{intro.badge}</span>
+                <span style={{ color: 'var(--color-teal)', fontSize: '13px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>Expertise & Experience</span>
               </div>
               <h2 style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '800', marginBottom: '32px', lineHeight: 1.2 }}>
-                {intro.heading}
+                High-Fidelity Engineering Solutions
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {intro.paragraphs?.map((p, idx) => (
-                  <p key={idx} style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.9', fontSize: '18px', fontWeight: '400' }}>
-                    {p}
-                  </p>
-                ))}
+                <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.9', fontSize: '18px', fontWeight: '400' }}>
+                  The oil and gas industry is vast and encompasses various streams, each specializing in different aspects of exploration, production, refining, and distribution. Tridiagonal Solutions has extensive experience working across each segment using its exclusive capabilities in **CFD** & **FEA**.
+                </p>
+                <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.9', fontSize: '18px', fontWeight: '400' }}>
+                  Our engineers address complex engineering problems with advanced analytical and mathematical skills, utilizing the latest CAE tools. We deliver ultimate solutions tailored for troubleshooting and process optimization.
+                </p>
               </div>
             </div>
             
@@ -472,8 +411,8 @@ export default function AdvancedModelingPage() {
               border: '1px solid rgba(255,255,255,0.08)'
             }}>
               <Image
-                src={intro.image || "/hubfs/Digital Twin.jpg"}
-                alt="Infrastructure Visualization"
+                src="/hubfs/Digital Twin.jpg"
+                alt="Oil & Gas Infrastructure Visualization"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
                 style={{ objectFit: 'cover' }}
@@ -485,7 +424,7 @@ export default function AdvancedModelingPage() {
         </div>
       </section>
 
-      {/* ── CAPABILITIES ── */}
+      {/* ΓöÇΓöÇ CAPABILITIES ΓöÇΓöÇ */}
       <section
         id="capabilities"
         data-section="Capabilities"
@@ -495,13 +434,13 @@ export default function AdvancedModelingPage() {
         <div className="content-wrapper-lg">
           <div style={{ marginBottom: '60px', textAlign: 'center' }}>
             <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.1)', padding: '4px 14px', borderRadius: '20px', marginBottom: '16px' }}>
-              <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>{mainBody.badge}</span>
+              <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>What we do</span>
             </div>
             <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '800', marginBottom: '20px' }}>
-              {mainBody.title}
+              What We Do
             </h2>
             <p className="section-desc" style={{ color: '#fff', maxWidth: '900px', margin: '0 auto', lineHeight: '1.8', fontSize: '16px', fontWeight: '500' }}>
-              {mainBody.desc}
+              Tridiagonal is actively involved in R&D projects and Joint-Industry-Programs (JIP) with global companies. We work with oil and gas industry majors like National oil companies, global owner-operators, Engineering service providers, process equipment designers, and Engineering Procurement Construction(EPC) firms.
             </p>
           </div>
 
@@ -520,7 +459,7 @@ export default function AdvancedModelingPage() {
           ` }} />
 
           <div className="capabilities-grid-layout">
-            {mainBody.cards?.map((cap, i) => (
+            {CAPABILITIES_DATA.map((cap, i) => (
               <div key={i}
                 style={{
                   position: 'relative',
@@ -536,16 +475,16 @@ export default function AdvancedModelingPage() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'rgba(71,188,135,0.3)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
               >
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${cap.image}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25 }} />
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${cap.img}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25 }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,0.98) 100%)' }} />
                 
                 <div style={{ position: 'relative', zIndex: 1, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700', marginBottom: '16px', lineHeight: 1.3 }}>{cap.title}</h3>
                   <div style={{ flex: 1, marginBottom: '32px' }}>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                      {cap.desc?.split('\n').map((line, idx) => {
-                        const isSub = line.trim().startsWith('-') || line.trim().startsWith('○');
-                        const cleanLine = line.replace(/^[•○\s-]*/, '').trim();
+                      {cap.desc.split('\n').map((line, idx) => {
+                        const isSub = line.trim().startsWith('-') || line.trim().startsWith('Γùï');
+                        const cleanLine = line.replace(/^[ΓÇóΓùï\s-]*/, '').trim();
                         if (!cleanLine) return null;
                         return (
                           <li key={idx} style={{
@@ -591,7 +530,7 @@ export default function AdvancedModelingPage() {
                     onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    {cap.ctaText || 'VIEW MORE'} <ArrowRight size={14} color="#000" />
+                    VIEW MORE <ArrowRight size={14} color="#000" />
                   </button>
                 </div>
               </div>
@@ -600,7 +539,7 @@ export default function AdvancedModelingPage() {
         </div>
       </section>
 
-      {/* ── USE CASES ── */}
+      {/* ΓöÇΓöÇ USE CASES ΓöÇΓöÇ */}
       <section
         id="use-cases"
         data-section="Use Cases"
@@ -612,10 +551,10 @@ export default function AdvancedModelingPage() {
             <div style={{ flex: '0 0 350px', display: 'flex', flexDirection: 'column' }}>
               <div className="dvr-line" style={{ marginBottom: '16px' }} />
               <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px' }}>
-                {showcase.title}
+                Use Cases
               </h2>
               <p className="section-desc" style={{ color: '#fff', opacity: 0.9, fontSize: '18px', lineHeight: 1.6, marginBottom: '40px' }}>
-                {showcase.desc}
+                At Tridiagonal, we pride ourselves on staying at the forefront of technological advancements. Our team is dedicated to incorporating the latest applications in Oil & Gas, such as hydrogen production, storage, and transportation, into our consulting services. By leveraging state-of-the-art simulation tools, we empower our clients to navigate the evolving energy landscape with confidence. To learn more about our experience with CFD & FEA, please refer to our case studies.
               </p>
               <Link href="/resources/case-studies" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -631,12 +570,12 @@ export default function AdvancedModelingPage() {
             <div style={{ flex: '1', minWidth: '0', position: 'relative', overflow: 'hidden' }}>
               <div style={{
                 display: 'flex', transition: useCasesInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-                transform: `translateX(-${useCasesSlide * (100 / (showcase.cards?.length + 3 || 3))}%)`,
-                width: `calc(${(showcase.cards?.length + 3 || 3)} * 33.3333%)`
+                transform: `translateX(-${useCasesSlide * (100 / (useCasesCards.length + 3))}%)`,
+                width: `calc(${(useCasesCards.length + 3)} * 33.3333%)`
               }}>
-                {[...(showcase.cards || []), ...(showcase.cards?.slice(0, 3) || [])].map((card, idx) => (
-                  <div key={idx} style={{ flex: `0 0 ${100 / (showcase.cards?.length + 3 || 3)}%`, minWidth: 0, padding: '0 10px' }}>
-                    <div style={{ borderRadius: '24px', background: card.gradient || 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)', padding: card.isCaseStudy ? '4px' : '3px', marginBottom: '20px', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                {[...useCasesCards, useCasesCards[0], useCasesCards[1], useCasesCards[2]].map((card, idx) => (
+                  <div key={idx} style={{ flex: `0 0 ${100 / (useCasesCards.length + 3)}%`, minWidth: 0, padding: '0 10px' }}>
+                    <div style={{ borderRadius: '24px', background: card.customGradient, padding: card.isCaseStudy ? '4px' : '3px', marginBottom: '20px', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                       <div style={{ background: card.isCaseStudy ? '#fff' : '#1c1c1c', borderRadius: '20px', width: '100%', height: '100%', position: 'relative', minHeight: '300px' }}>
                          <Image 
                            src={card.image} 
@@ -653,9 +592,9 @@ export default function AdvancedModelingPage() {
                 ))}
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '40px' }}>
-                {showcase.cards?.map((_, idx) => (
+                {useCasesCards.map((_, idx) => (
                   <button key={idx} suppressHydrationWarning onClick={() => setUseCasesSlide(idx)}
-                    style={{ width: '12px', height: '12px', borderRadius: '50%', background: (useCasesSlide % (showcase.cards?.length || 1)) === idx ? 'var(--color-teal)' : '#fff', border: 'none', cursor: 'pointer', opacity: (useCasesSlide % (showcase.cards?.length || 1)) === idx ? 1 : 0.5 }}
+                    style={{ width: '12px', height: '12px', borderRadius: '50%', background: (useCasesSlide % useCasesCards.length) === idx ? 'var(--color-teal)' : '#fff', border: 'none', cursor: 'pointer', opacity: (useCasesSlide % useCasesCards.length) === idx ? 1 : 0.5 }}
                   />
                 ))}
               </div>
@@ -664,7 +603,7 @@ export default function AdvancedModelingPage() {
         </div>
       </section>
 
-      {/* ── WHY TRIDIAGONAL ── */}
+      {/* ΓöÇΓöÇ WHY TRIDIAGONAL ΓöÇΓöÇ */}
       <section
         id="why-tridiagonal"
         data-section="Why Tridiagonal"
@@ -680,21 +619,12 @@ export default function AdvancedModelingPage() {
             @media (max-width: 600px) { .why-grid-layout { grid-template-columns: 1fr; } }
           `}} />
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h2 style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '800' }}>{whyChooseUs.title}</h2>
+            <h2 style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '800' }}>Why Choose Us?</h2>
           </div>
           <div className="why-grid-layout">
-            {whyChooseUs.items?.map((item, i) => (
+            {whyItems.map((item, i) => (
               <div key={i} className="why-grid-cell">
-                <div style={{ color: 'var(--color-teal)', marginBottom: '12px' }}>
-                   {/* Fallback icon if none provided in DB */}
-                   {item.icon === 'Users' ? (
-                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                   ) : item.icon === 'Briefcase' ? (
-                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                   ) : (
-                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                   )}
-                </div>
+                <div style={{ color: 'var(--color-teal)', marginBottom: '12px' }}>{item.icon}</div>
                 <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700' }}>{item.title}</h3>
                 <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '16px' }}>{item.desc}</p>
               </div>
@@ -703,7 +633,7 @@ export default function AdvancedModelingPage() {
         </div>
       </section>
 
-      {/* ── INDUSTRIES ── */}
+      {/* ΓöÇΓöÇ INDUSTRIES ΓöÇΓöÇ */}
       <section
         id="industries"
         data-section="Industries"
@@ -713,11 +643,11 @@ export default function AdvancedModelingPage() {
         <div className="content-wrapper-lg">
           <div className="inds-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 400px) 1fr', gap: '80px' }}>
             <div style={{ position: 'sticky', top: '120px', height: 'fit-content' }}>
-              <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700' }}>{config.industriesSection?.title || 'Industries'}</h2>
-              <p style={{ color: '#fff', opacity: 0.9, fontSize: '18px' }}>{config.industriesSection?.subtitle || 'Your Trusted Partner in Modeling & Simulation.'}</p>
+              <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700' }}>Industries</h2>
+              <p style={{ color: '#fff', opacity: 0.9, fontSize: '18px' }}>Your Trusted Partner in Modeling & Simulation.</p>
               <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
                 <Image 
-                  src={allIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"} 
+                  src={industries[activeIndustryIdx || 0].image} 
                   alt="industry" 
                   fill 
                   sizes="(max-width: 768px) 100vw, 400px"
@@ -727,27 +657,25 @@ export default function AdvancedModelingPage() {
               </div>
             </div>
             <div onMouseLeave={() => setActiveIndustryIdx(null)}>
-              {allIndustries.length > 0 ? allIndustries.map((ind, i) => (
+              {industries.map((ind, i) => (
                 <div key={ind.name} onMouseEnter={() => setActiveIndustryIdx(i)} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '30px 0', cursor: 'pointer' }}>
                   <h3 style={{ color: activeIndustryIdx === i ? 'var(--color-teal)' : '#fff', transition: 'color 0.3s' }}>{ind.name}</h3>
                   {activeIndustryIdx === i && (
                     <div style={{ marginTop: '20px' }}>
                       <p style={{ color: 'rgba(255,255,255,0.8)' }}>{ind.desc}</p>
-                      <Link href={ind.href} style={{ color: 'var(--color-teal)', fontWeight: '700', textDecoration: 'none', display: 'block', marginTop: '10px' }}>VIEW DETAILS →</Link>
+                      <Link href={ind.href} style={{ color: 'var(--color-teal)', fontWeight: '700', textDecoration: 'none', display: 'block', marginTop: '10px' }}>VIEW DETAILS ΓåÆ</Link>
                     </div>
                   )}
                 </div>
-              )) : (
-                <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading other industries...</p>
-              )}
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── CAPABILITY MODAL OVERLAY ── */}
-      {selectedCapability && MODAL_DATA_FINAL[selectedCapability] && (() => {
-        const data = MODAL_DATA_FINAL[selectedCapability];
+      {/* ΓöÇΓöÇ CAPABILITY MODAL OVERLAY ΓöÇΓöÇ */}
+      {selectedCapability && MODAL_DATA[selectedCapability] && (() => {
+        const data = MODAL_DATA[selectedCapability];
         return (
           <div style={{
             position: 'fixed', inset: 0, zIndex: 10000,
@@ -770,7 +698,7 @@ export default function AdvancedModelingPage() {
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <span style={{ background: 'rgba(71,188,135,0.1)', color: 'var(--color-teal)', padding: '6px 16px', borderRadius: '30px', fontSize: '13px', fontWeight: '800', letterSpacing: '1px' }}>
-                  {industryData?.title?.toUpperCase() || 'OIL AND GAS'}
+                  OIL AND GAS
                 </span>
                 <button 
                   onClick={() => setSelectedCapability(null)}
@@ -828,25 +756,23 @@ export default function AdvancedModelingPage() {
                   )}
 
                   {/* Siemens Tools */}
-                  {data.tools && data.tools.length > 0 && (
-                    <div>
-                      <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '32px' }}>
-                        <div style={{ width: '4px', height: '16px', background: 'var(--color-teal)', borderRadius: '2px' }} />
-                        <span style={{ color: 'var(--color-teal)', fontSize: '14px', fontWeight: '800', letterSpacing: '2px' }}>SIEMENS TOOLS APPLIED</span>
-                      </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                        {data.tools.map(tool => (
-                          <span key={tool} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', padding: '12px 24px', borderRadius: '40px', fontSize: '14px', fontWeight: '600', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
+                  <div>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '32px' }}>
+                      <div style={{ width: '4px', height: '16px', background: 'var(--color-teal)', borderRadius: '2px' }} />
+                      <span style={{ color: 'var(--color-teal)', fontSize: '14px', fontWeight: '800', letterSpacing: '2px' }}>SIEMENS TOOLS APPLIED</span>
                     </div>
-                  )}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                      {data.tools.map(tool => (
+                        <span key={tool} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', padding: '12px 24px', borderRadius: '40px', fontSize: '14px', fontWeight: '600', border: '1px solid rgba(255,255,255,0.1)' }}>
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* Technical Sections */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                    {data.technicalSections?.map((sec, idx) => (
+                    {data.technicalSections.map((sec, idx) => (
                       <div key={idx} style={{ paddingLeft: '24px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
                         <span style={{ color: 'var(--color-teal)', fontSize: '13px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>{sec.title}</span>
                         <h4 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', marginBottom: '16px' }}>{sec.subtitle}</h4>

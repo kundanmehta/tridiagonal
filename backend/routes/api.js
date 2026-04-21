@@ -14,6 +14,7 @@ router.get('/careers', apiController.getCareers);
 // Dynamic slug routes
 router.get('/services/:slug', apiController.getServiceBySlug);
 router.get('/industries/:slug', apiController.getIndustryBySlug);
+router.get('/industries-by-id/:id', apiController.getIndustryById);
 
 // Contact form (public submit)
 router.post('/contact', apiController.submitContact);
@@ -78,6 +79,11 @@ router.get('/categories', apiController.getCategories);
 router.post('/categories', verifyToken, apiController.createCategory);
 router.put('/categories/:id', verifyToken, apiController.updateCategory);
 router.delete('/categories/:id', verifyToken, apiController.deleteCategory);
+
+// Industries Admin
+router.post('/industries', verifyToken, apiController.createIndustry);
+router.put('/industries/:id', verifyToken, apiController.updateIndustry);
+router.delete('/industries/:id', verifyToken, apiController.deleteIndustry);
 
 module.exports = router;
 
