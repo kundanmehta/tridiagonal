@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
 import { API_URL } from '@/lib/apiConfig';
+import {
     Factory, Layout, Plus, Trash2, ChevronRight,
     Monitor, ShieldCheck, Image as ImageIcon, Save, X, Eye
 } from 'lucide-react';

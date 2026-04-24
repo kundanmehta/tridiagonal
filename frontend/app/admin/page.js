@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import {
 import { API_URL } from '@/lib/apiConfig';
+import {
   FileText, Settings, Factory, BookOpen, Calendar,
   Briefcase, Users, Mail, ArrowUpRight, Home,
 } from 'lucide-react';

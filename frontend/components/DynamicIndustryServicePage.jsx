@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
 import { API_URL } from '@/lib/apiConfig';
+import {
   Users, Briefcase, Settings, Handshake, Globe, Home,
   ArrowRight, ChevronRight, X, Monitor, Clock, TrendingUp, DollarSign
 } from 'lucide-react';
