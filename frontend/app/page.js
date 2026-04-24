@@ -15,8 +15,9 @@ async function getHomePageData() {
   try {
     const backendUrl = API_URL;
     console.log('[Server] Fetching HomePage data from MongoDB API...');
-    const res = await fetch(`${backendUrl}/api/homepage`, { cache: 'no-store' });
-    if (!res.ok) {
+    const res = await fetch(`${backendUrl}/api/homepage`, { 
+      next: { revalidate: 60 } // Revalidate every minute
+    });
       console.warn('Failed to fetch HomePage Data');
       return {};
     }

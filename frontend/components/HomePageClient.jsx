@@ -242,6 +242,14 @@ export default function HomePageClient({ initialData }) {
     }
   }, [resourceSlide, heroResSlides.length]);
 
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.log("Autoplay was prevented or video is still loading:", error);
+      });
+    }
+  }, [heroVideo]);
+
   return (
     <main style={{ paddingTop: 'var(--nav-height)' }}>
 
