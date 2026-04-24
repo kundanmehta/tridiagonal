@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import DynamicIndustryServicePage from '@/components/DynamicIndustryServicePage';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
 
@@ -70,9 +68,11 @@ export default function IndustryServicePage() {
 
     return (
         <>
-            <Navbar />
-            <DynamicIndustryServicePage data={serviceData} parentIndustryName={data.title} />
-            <Footer />
+            <DynamicIndustryServicePage 
+                data={serviceData} 
+                parentIndustryName={data.title} 
+                serviceType={service} 
+            />
         </>
     );
 }

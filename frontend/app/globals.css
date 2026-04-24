@@ -366,20 +366,20 @@ ol {
 
 /* Mega Menu Dropdown */
 .mega-dropdown-wrapper {
-    position: fixed;
-    position: absolute;
-    top: 90%;
-    left: 0;
-    right: 0;
-    background: #363636;
-    border-top: 1px solid var(--color-teal);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-6px);
-    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
-    pointer-events: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  position: absolute;
+  top: 90%;
+  left: 0;
+  right: 0;
+  background: #363636;
+  border-top: 1px solid var(--color-teal);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  pointer-events: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .mega-dropdown-wrapper.open {
@@ -400,20 +400,20 @@ ol {
 }
 
 .mega-close-btn {
-    position: absolute;
-    top: 1.5rem;
-    right: 5px;
-    background: none;
-    border: 1px solid var(--color-teal);
-    border-radius: 50%;
-    color: var(--color-teal);
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
+  position: absolute;
+  top: 1.5rem;
+  right: 5px;
+  background: none;
+  border: 1px solid var(--color-teal);
+  border-radius: 50%;
+  color: var(--color-teal);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .mega-close-btn:hover {
@@ -716,7 +716,6 @@ ol {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.35) 100%);
 }
 
 .hero-content {
@@ -1713,8 +1712,8 @@ ol {
 }
 
 .fade-in-up {
-    opacity: 100;
-    animation: .65s cubic-bezier(.16, 1, .3, 1) forwards fadeInUp;
+  opacity: 100;
+  animation: .65s cubic-bezier(.16, 1, .3, 1) forwards fadeInUp;
 }
 
 .delay-100 {

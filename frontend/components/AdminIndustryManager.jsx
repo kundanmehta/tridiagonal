@@ -100,8 +100,8 @@ export default function AdminIndustryManager({ slug }) {
 
     const updateField = (path, value) => {
         setEditing(prev => {
-            const newData = { ...prev };
             const keys = path.split('.');
+            const newData = JSON.parse(JSON.stringify(prev)); // Deep clone for safety
             let current = newData;
             for (let i = 0; i < keys.length - 1; i++) {
                 if (!current[keys[i]]) current[keys[i]] = {};
@@ -114,8 +114,8 @@ export default function AdminIndustryManager({ slug }) {
 
     const addItem = (path, defaultItem) => {
         setEditing(prev => {
-            const newData = { ...prev };
             const keys = path.split('.');
+            const newData = JSON.parse(JSON.stringify(prev)); // Deep clone for safety
             let current = newData;
             for (let i = 0; i < keys.length - 1; i++) {
                 if (!current[keys[i]]) current[keys[i]] = {};
@@ -129,8 +129,8 @@ export default function AdminIndustryManager({ slug }) {
 
     const removeItem = (path, index) => {
         setEditing(prev => {
-            const newData = { ...prev };
             const keys = path.split('.');
+            const newData = JSON.parse(JSON.stringify(prev)); // Deep clone for safety
             let current = newData;
             for (let i = 0; i < keys.length - 1; i++) {
                 current = current[keys[i]];
@@ -386,7 +386,16 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                             <input className="admin-input-sm" style={{ marginBottom: 0, flex: 1 }} value={card.image} onChange={e => updateField(`${area}.mainBody.cards.${i}.image`, e.target.value)} />
                                             <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '12px' }}>Upload <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, `${area}.mainBody.cards.${i}.image`)} /></label>
                                         </div>
-                                        {card.image && <img src={card.image} alt="preview" style={{ maxWidth: '100px', borderRadius: '6px', marginBottom: '8px', border: '1px solid #e2e8f0' }} />}
+                                        {card.image && (
+                                            <div style={{ marginBottom: '8px' }}>
+                                                <img 
+                                                    src={card.image.startsWith('http') ? card.image : `${API_URL}${card.image}`} 
+                                                    alt="preview" 
+                                                    style={{ maxWidth: '100px', borderRadius: '6px', border: '1px solid #e2e8f0' }} 
+                                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                                />
+                                            </div>
+                                        )}
                                         
                                         <div className="grid-2" style={{ gap: '10px' }}>
                                             <div>
@@ -428,7 +437,16 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                                     <input className="admin-input-sm" style={{ marginBottom: 0, flex: 1 }} value={card.image} onChange={e => updateField(`${area}.showcase.cards.${i}.image`, e.target.value)} />
                                                     <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '12px' }}>Upload <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, `${area}.showcase.cards.${i}.image`)} /></label>
                                                 </div>
-                                                {card.image && <img src={card.image} alt="preview" style={{ maxWidth: '80px', borderRadius: '6px', marginBottom: '8px', border: '1px solid #e2e8f0' }} />}
+                                                {card.image && (
+                                                    <div style={{ marginBottom: '8px' }}>
+                                                        <img 
+                                                            src={card.image.startsWith('http') ? card.image : `${API_URL}${card.image}`} 
+                                                            alt="preview" 
+                                                            style={{ maxWidth: '80px', borderRadius: '6px', border: '1px solid #e2e8f0' }} 
+                                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                                        />
+                                                    </div>
+                                                )}
                                                 <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}><input type="checkbox" checked={card.isCaseStudy} onChange={e => updateField(`${area}.showcase.cards.${i}.isCaseStudy`, e.target.checked)} /> Is Case Study</label>
                                             </div>
                                         ))}
@@ -517,7 +535,16 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                                         <input className="admin-input-sm" style={{ marginBottom: 0 }} value={modal.image || ''} onChange={e => updateField(`${area}.modals.${i}.image`, e.target.value)} />
                                                         <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>Upload <input type="file" hidden onChange={e => handleImageUpload(e, `${area}.modals.${i}.image`)} /></label>
                                                     </div>
-                                                    {modal.image && <img src={modal.image} alt="Modal Preview" style={{ maxWidth: '150px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />}
+                                                    {modal.image && (
+                                                        <div style={{ marginTop: '10px' }}>
+                                                            <img 
+                                                                src={modal.image.startsWith('http') ? modal.image : `${API_URL}${modal.image}`} 
+                                                                alt="Modal Preview" 
+                                                                style={{ maxWidth: '150px', borderRadius: '8px', border: '1px solid #e2e8f0' }} 
+                                                                onError={(e) => { e.target.style.display = 'none'; }}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 <div className="full-width"><label className="admin-label">Tools Applied (Comma separated)</label><input className="admin-input-sm" value={modal.tools?.join(', ') || ''} onChange={e => updateField(`${area}.modals.${i}.tools`, e.target.value.split(',').map(t => t.trim()))} /></div>
