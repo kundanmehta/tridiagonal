@@ -262,7 +262,13 @@ export default function HomePageClient({ initialData }) {
         aria-label="Hero"
       >
         {/* Background Support: Video or Image Choice */}
-        <div className="hero-video-wrap" aria-hidden="true" style={{ background: `url(${heroImage}) center/cover no-repeat` }}>
+        <div 
+          className="hero-video-wrap" 
+          aria-hidden="true" 
+          style={{ 
+            background: heroBgType === 'video' ? 'black' : `url(${heroImage}) center/cover no-repeat` 
+          }}
+        >
           {heroBgType === 'video' && heroVideo ? (
             <video
               ref={videoRef}
@@ -271,7 +277,6 @@ export default function HomePageClient({ initialData }) {
               loop
               playsInline
               preload="auto"
-              poster={heroImage}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             >
               <source src={heroVideo} type="video/mp4" />
