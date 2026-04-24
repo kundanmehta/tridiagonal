@@ -18,6 +18,7 @@ async function getHomePageData() {
     const res = await fetch(`${backendUrl}/api/homepage`, { 
       next: { revalidate: 60 } // Revalidate every minute
     });
+    if (!res.ok) {
       console.warn('Failed to fetch HomePage Data');
       return {};
     }
