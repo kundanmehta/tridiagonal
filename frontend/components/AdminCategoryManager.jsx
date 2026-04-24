@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Check, Search } from 'lucide-react';
+import { API_URL } from '@/lib/apiConfig';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 export default function AdminCategoryManager({ resType }) {
     const [categories, setCategories] = useState([]);

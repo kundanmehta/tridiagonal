@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown, X } from 'lucide-react';
 import RichTextEditor from '../../../../components/RichTextEditor';
+import { API_URL } from '@/lib/apiConfig';
 
 const EMPTY_NEWS = {
   title: '', slug: '', date: '', type: 'News',
@@ -16,7 +17,7 @@ export default function AdminNewsEditor() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
   const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
 
   const fetchItems = () => {

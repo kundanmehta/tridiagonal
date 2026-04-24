@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
 import WebinarRegistrationForm from '@/components/WebinarRegistrationForm';
+import { API_URL } from '@/lib/apiConfig';
 
 // Mock DB
 const mockBrochures = [
@@ -83,7 +84,7 @@ export default function BrochureSinglePage() {
     firstName: '', lastName: '', email: '', company: '', phone: '', country: '', consent: false
   });
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     if (slug) {

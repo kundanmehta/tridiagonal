@@ -7,6 +7,7 @@ import {
     Image as ImageIcon, User, Briefcase, Factory
 } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
+import { API_URL } from '@/lib/apiConfig';
 
 export default function AdminResourceManager({ resType }) {
     const [items, setItems] = useState([]);
@@ -19,7 +20,7 @@ export default function AdminResourceManager({ resType }) {
     const [services, setServices] = useState([]);
     const [forms, setForms] = useState([]);
 
-    const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+    
     const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
 
     const fetchItems = () => {

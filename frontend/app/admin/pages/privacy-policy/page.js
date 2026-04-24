@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import RichTextEditor from '../../../../components/RichTextEditor';
+import { API_URL } from '@/lib/apiConfig';
 
 export default function AdminPrivacyPolicyEditor() {
   const [data, setData] = useState(null);
@@ -11,7 +12,7 @@ export default function AdminPrivacyPolicyEditor() {
   // Accordion state
   const [expandedSection, setExpandedSection] = useState(1);
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');

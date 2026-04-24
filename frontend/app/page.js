@@ -1,4 +1,5 @@
 import HomePageClient from '../components/HomePageClient';
+import { API_URL } from '@/lib/apiConfig';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +13,7 @@ export const metadata = {
 
 async function getHomePageData() {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+    const backendUrl = API_URL;
     console.log('[Server] Fetching HomePage data from MongoDB API...');
     const res = await fetch(`${backendUrl}/api/homepage`, { cache: 'no-store' });
     if (!res.ok) {

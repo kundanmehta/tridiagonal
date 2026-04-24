@@ -192,16 +192,16 @@ async function seed() {
     // Use insertOne to bypass pre-save hook
     await mongoose.connection.collection('homepages').insertOne(initialData);
     // Add some dummy blogs for Resources section testing
-    const Blog = require('./models/Blog');
+    const Resource = require('./models/Resource');
     const dummyBlogs = [
-      { title: 'Advanced CFD for Reactor Safety', slug: 'cfd-reactor-safety', category: 'Webinar', content: 'This webinar covers the latest in CFD modeling for chemical reactor safety...', coverImage: '/hubfs/Blog CFD DEM.png' },
-      { title: 'Fluid Structure Interaction Basics', slug: 'fsi-basics', category: 'Tech Blog', content: 'Understanding the interplay between fluid dynamics and structural mechanics...', coverImage: '/hubfs/CFD FEA Coupled-1.png' },
-      { title: '2024 Product Brochure', slug: 'product-brochure-2024', category: 'Brochure', content: 'Download our latest product overview for 2024 detailing all new services...', coverImage: '/hubfs/image%20(10).png' },
-      { title: 'Sustainable Process Engineering Publication', slug: 'sustainable-publication', category: 'Publication', content: 'Our recent research on sustainable engineering practices published in the JPE...', coverImage: '/hubfs/image%20(11).png' }
+      { title: 'Advanced CFD for Reactor Safety', slug: 'cfd-reactor-safety', category: 'Webinar', resourceType: 'Blog', content: 'This webinar covers the latest in CFD modeling for chemical reactor safety...', coverImage: '/hubfs/Blog CFD DEM.png', isActive: true },
+      { title: 'Fluid Structure Interaction Basics', slug: 'fsi-basics', category: 'Tech Blog', resourceType: 'Blog', content: 'Understanding the interplay between fluid dynamics and structural mechanics...', coverImage: '/hubfs/CFD FEA Coupled-1.png', isActive: true },
+      { title: '2024 Product Brochure', slug: 'product-brochure-2024', category: 'Brochure', resourceType: 'Blog', content: 'Download our latest product overview for 2024 detailing all new services...', coverImage: '/hubfs/image%20(10).png', isActive: true },
+      { title: 'Sustainable Process Engineering Publication', slug: 'sustainable-publication', category: 'Publication', resourceType: 'Blog', content: 'Our recent research on sustainable engineering practices published in the JPE...', coverImage: '/hubfs/image%20(11).png', isActive: true }
     ];
     
     for (const b of dummyBlogs) {
-      await Blog.findOneAndUpdate({ slug: b.slug }, b, { upsert: true, new: true });
+      await Resource.findOneAndUpdate({ slug: b.slug }, b, { upsert: true, new: true });
     }
 
     console.log('✅ Home Page and Dummy Blogs successfully seeded into MongoDB!');

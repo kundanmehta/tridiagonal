@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { API_URL } from '@/lib/apiConfig';
 
 const mockData = [
   {
@@ -65,7 +66,7 @@ export default function PublicationsPatentsPage() {
   const [types, setTypes] = useState(['All Types']);
   const [industries, setIndustries] = useState(['All Industries']);
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     // Fetch Publications

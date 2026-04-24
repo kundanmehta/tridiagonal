@@ -10,16 +10,19 @@ const authRoutes = require('./routes/auth');
 const app = express();
 
 // CORS — allow frontend
-const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const defaultOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const envOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
 if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
+  envOrigins.push(process.env.FRONTEND_URL);
 }
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
 
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked for origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },

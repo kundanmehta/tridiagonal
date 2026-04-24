@@ -1,8 +1,9 @@
 import { Settings, Plus, Edit2, Trash2 } from 'lucide-react';
+import { API_URL } from '@/lib/apiConfig';
 
 async function getServices() {
   try {
-    const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+    
     const res = await fetch(`${API_URL}/api/services`, { cache: 'no-store' });
     if (!res.ok) return [];
     const json = await res.json();

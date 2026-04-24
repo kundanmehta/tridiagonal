@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
+import { API_URL } from '@/lib/apiConfig';
 
 // Mock Blog Database
 const mockBlogs = [
@@ -91,7 +92,7 @@ const mockBlogs = [
   }
 ];
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 async function getBlog(slug) {
   try {

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CAPABILITIES_DATA } from './data';
+import { API_URL } from '@/lib/apiConfig';
 
 const NAV_SECTIONS = ['About Practice', 'Capabilities', 'Use Cases', 'Why Tridiagonal', 'Industries'];
 
@@ -307,7 +308,7 @@ export default function AdvancedModelingPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+        const baseUrl = API_URL;
         
         // Fetch current industry data
         const res = await fetch(`${baseUrl}/api/industries/oil-gas`);

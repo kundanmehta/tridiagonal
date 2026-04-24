@@ -133,6 +133,15 @@ const clientLogos = [
   'Shell', 'BASF', 'Siemens', 'SABIC', 'Total', 'ExxonMobil', 'Dow', 'AkzoNobel', 'Honeywell', 'ABB',
 ];
 
+import { API_URL } from '@/lib/apiConfig';
+
+const getFullImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
+  if (path.startsWith('/hubfs') || path.startsWith('/images')) return path;
+  return `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
 /* ============================================================
    PAGE COMPONENT
    ============================================================ */
@@ -141,7 +150,7 @@ export default function HomePageClient({ initialData }) {
   // Dynamic Content Merging: Favor DB if populated, otherwise use exact pristine pristine arrays above
   const svcCards = initialData?.serviceCards?.length > 0 ? initialData.serviceCards : serviceCards;
   const wwaCards = initialData?.whoWeAreCards?.length > 0 ? initialData.whoWeAreCards.map(c => ({
-    ...c, bg: c.backgroundImage ? (c.backgroundImage.startsWith('url') ? c.backgroundImage : `url("${c.backgroundImage}")`) : c.bg
+    ...c, bg: c.backgroundImage ? (c.backgroundImage.startsWith('url') ? c.backgroundImage : `url("${getFullImageUrl(c.backgroundImage)}")`) : c.bg
   })) : wwCards;
   const metrics = initialData?.keyHighlights?.counters?.length > 0 ? initialData.keyHighlights.counters : counters;
   const clientLogosList = initialData?.clientLogos?.length > 0 ? initialData.clientLogos.map(l => l.name) : clientLogos;
@@ -159,8 +168,8 @@ export default function HomePageClient({ initialData }) {
   const heroTitleLine1 = heroData.titleLine1 || "Process Consulting and";
   const heroTitleLine2 = heroData.titleLine2 || "Technology Solutions";
   const heroDesc = heroData.description || "We deliver \u2018Value\u2019 by leveraging advanced technologies to address process related challenges.";
-  const heroVideo = heroData.videoUrl || "";
-  const heroImage = heroData.imageUrl || "/hubfs/Capture-1.webp";
+  const heroVideo = getFullImageUrl(heroData.videoUrl) || "";
+  const heroImage = getFullImageUrl(heroData.imageUrl) || "/hubfs/Capture-1.webp";
   const heroBgType = heroData.backgroundType || "video";
   const heroCtaText = heroData.ctaText || "LEARN MORE";
   const heroCtaLink = heroData.ctaLink || "#services";
@@ -245,7 +254,7 @@ export default function HomePageClient({ initialData }) {
         aria-label="Hero"
       >
         {/* Background Support: Video or Image Choice */}
-        <div className="hero-video-wrap" aria-hidden="true" style={{ background: `url("${heroImage}") center/cover no-repeat` }}>
+        <div className="hero-video-wrap" aria-hidden="true" style={{ background: `url(${heroImage}) center/cover no-repeat` }}>
           {heroBgType === 'video' && heroVideo ? (
             <video
               ref={videoRef}
@@ -589,7 +598,7 @@ export default function HomePageClient({ initialData }) {
                 style={{
                   width: '100%',
                   height: '420px',
-                  background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("${initialData?.brandIdentity?.thumbnailImage || '/hubfs/Capture-1.webp'}") center/cover no-repeat`,
+                  background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${getFullImageUrl(initialData?.brandIdentity?.thumbnailImage) || '/hubfs/Capture-1.webp'}) center/cover no-repeat`,
                   backgroundColor: '#ccc',
                   display: 'flex',
                   alignItems: 'center',

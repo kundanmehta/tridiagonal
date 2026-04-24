@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { API_URL } from '@/lib/apiConfig';
 
 const NAV_SECTIONS = ['About Practice', 'Opportunities', 'Why Tridiagonal', 'Industries'];
 
@@ -72,8 +73,8 @@ export default function TechValidationPage() {
     const fetchData = async () => {
       try {
         const [indRes, allIndsRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com'}/api/industries/oil-gas`),
-          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com'}/api/industries`)
+          fetch(`${API_URL}/api/industries/oil-gas`),
+          fetch(`${API_URL}/api/industries`)
         ]);
         
         const indData = await indRes.json();

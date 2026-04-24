@@ -3,11 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
+import { API_URL } from '@/lib/apiConfig';
   Users, Briefcase, Settings, Handshake, Globe, Home,
   ArrowRight, ChevronRight, X, Monitor, Clock, TrendingUp, DollarSign
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 const ICON_MAP = {
   'Users': <Users size={40} />,
@@ -43,7 +44,7 @@ export default function DynamicIndustryServicePage({ data, parentIndustryName, s
   useEffect(() => {
     const fetchRelated = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com'}/api/industries`);
+        const res = await fetch(`${API_URL}/api/industries`);
         const json = await res.json();
         if (json.data) {
           // Filter out current industry and map to correct service path

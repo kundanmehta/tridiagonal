@@ -1,8 +1,9 @@
 import AboutUsClient from '../../components/AboutUsClient';
+import { API_URL } from '@/lib/apiConfig';
 
 export const dynamic = 'force-dynamic';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 export async function generateMetadata() {
   return {

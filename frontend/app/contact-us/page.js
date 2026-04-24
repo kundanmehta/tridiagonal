@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { API_URL } from '@/lib/apiConfig';
 
 function useInView(threshold = 0.2) {
   const ref = useRef(null);
@@ -60,7 +61,7 @@ export default function ContactUs() {
   const [submitMsg, setSubmitMsg] = useState('');
   const [agreed, setAgreed] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     // Fetch contact page data

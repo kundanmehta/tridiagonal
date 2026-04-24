@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown, X, Users, Calendar as CalendarIcon, Clock, Globe, Plus, Trash2, Layout, Video, UserCheck } from 'lucide-react';
 import RichTextEditor from '../../../../components/RichTextEditor';
+import { API_URL } from '@/lib/apiConfig';
 
 const EMPTY_WEBINAR = {
   title: '', slug: '', eventDate: '', duration: '45 mins', sessionType: 'Online Technical Session',
@@ -21,7 +22,7 @@ export default function AdminWebinars({ typeFilter = 'Upcoming' }) {
   const [viewingRegs, setViewingRegs] = useState(null); // Webinar ID
   const [registrations, setRegistrations] = useState([]);
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
   const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
 
   const fetchItems = () => {

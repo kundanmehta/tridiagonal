@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, X, ChevronDown } from 'lucide-react';
+import { API_URL } from '@/lib/apiConfig';
 
 function CustomSelect({ label, value, options, onChange, style = {} }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -147,7 +148,7 @@ export default function Resources() {
     types: ['All', 'Blogs', 'Case Study', 'Brochures', 'Publications']
   };
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     // Fetch Resources

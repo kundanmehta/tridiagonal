@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/lib/apiConfig';
 
 const FIELD_TYPES = [
   { value: 'text', label: 'Text' },
@@ -18,7 +19,7 @@ export default function AdminFormBuilder() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   const fetchForms = () => {
     fetch(`${API_URL}/api/forms`, {

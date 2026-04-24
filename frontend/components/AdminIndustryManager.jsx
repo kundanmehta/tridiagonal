@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import {
+import { API_URL } from '@/lib/apiConfig';
     Factory, Layout, Plus, Trash2, ChevronRight,
     Monitor, ShieldCheck, Image as ImageIcon, Save, X, Eye
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 export default function AdminIndustryManager({ slug }) {
     const [industries, setIndustries] = useState([]);

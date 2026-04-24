@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
+import { API_URL } from '@/lib/apiConfig';
   FileText, Settings, Factory, BookOpen, Calendar,
   Briefcase, Users, Mail, ArrowUpRight, Home,
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 const quickActions = [
   { label: 'Edit Home Page', href: '/admin/pages/home', icon: Home, color: '#00AEEF' },

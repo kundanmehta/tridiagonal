@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, use } from 'react';
+import { API_URL } from '@/lib/apiConfig';
 
 export default function FormSubmissionsPage({ params }) {
   const resolvedParams = use(params);
@@ -7,7 +8,7 @@ export default function FormSubmissionsPage({ params }) {
   const [submissions, setSubmissions] = useState([]);
   const [formName, setFormName] = useState('');
   const [loading, setLoading] = useState(true);
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');

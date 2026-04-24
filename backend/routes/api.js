@@ -80,6 +80,16 @@ router.post('/categories', verifyToken, apiController.createCategory);
 router.put('/categories/:id', verifyToken, apiController.updateCategory);
 router.delete('/categories/:id', verifyToken, apiController.deleteCategory);
 
+// Careers CMS
+router.get('/careers/page', apiController.getCareersPage);
+router.put('/careers/page', verifyToken, apiController.updateCareersPage);
+router.get('/careers/jobs', apiController.getCareersJobs);
+router.get('/careers/jobs/all', verifyToken, apiController.getAllCareersJobs);
+router.get('/careers/jobs/:id', apiController.getCareersJobById);
+router.post('/careers/jobs', verifyToken, apiController.createCareersJob);
+router.put('/careers/jobs/:id', verifyToken, apiController.updateCareersJob);
+router.delete('/careers/jobs/:id', verifyToken, apiController.deleteCareersJob);
+
 // Industries Admin
 router.post('/industries', verifyToken, apiController.createIndustry);
 router.put('/industries/:id', verifyToken, apiController.updateIndustry);

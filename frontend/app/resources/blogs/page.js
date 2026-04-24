@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { API_URL } from '@/lib/apiConfig';
 
 const mockBlogs = [
   {
@@ -67,7 +68,7 @@ export default function BlogsPage() {
   const [categories, setCategories] = useState(['All']);
   const [industries, setIndustries] = useState(['All Industries']);
   const [services, setServices] = useState(['All Services']);
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     // Fetch Blogs

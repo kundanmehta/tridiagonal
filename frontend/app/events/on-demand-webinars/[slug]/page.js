@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import WebinarRegistrationForm from '../../../../components/WebinarRegistrationForm';
 import { eventsData } from '../../data';
+import { API_URL } from '@/lib/apiConfig';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 async function getWebinar(slug) {
   try {

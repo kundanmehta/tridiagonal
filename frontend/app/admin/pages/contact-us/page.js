@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/lib/apiConfig';
 
 export default function AdminContactPageEditor() {
   const [data, setData] = useState(null);
@@ -7,7 +8,7 @@ export default function AdminContactPageEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');

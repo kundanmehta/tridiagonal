@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/apiConfig';
 
 const EMPTY_JOB = {
   id: '', title: '', department: '', location: 'Pune, India', type: 'Full-time',
@@ -30,7 +31,7 @@ export default function AdminCareersEditor() {
   const [newJob, setNewJob] = useState({ ...EMPTY_JOB });
   const [jobSaving, setJobSaving] = useState(null); // index or 'new'
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
   const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
 
   useEffect(() => {

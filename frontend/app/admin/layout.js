@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
+import { API_URL } from '@/lib/apiConfig';
   LayoutDashboard, FileText, Settings, Factory, BookOpen,
   Calendar, Briefcase, Users, Handshake, Image as ImageIcon,
   Mail, Globe, LogOut, ChevronDown, Home, ChevronRight,
   ClipboardList, Phone,
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+
 
 const sidebarNav = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },

@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/lib/apiConfig';
 
 export default function PrivacyPolicy() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
+  
 
   useEffect(() => {
     fetch(`${API_URL}/api/privacy-policy`)

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { API_URL } from '@/lib/apiConfig';
 
 /* ─── SVG Icons for Core Values (fixed, by index) ─── */
 const VALUE_ICONS = [
@@ -43,6 +44,13 @@ const FALLBACK_JOBS = [
   { id: 'intern-fea', title: 'Intern (FEA)', department: 'Advanced Modeling & Simulation (CFD/FEA)', date: 'October 1, 2024', location: 'Pune, India', type: 'Internship' },
 ];
 
+const getFullImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
+  if (path.startsWith('/hubfs') || path.startsWith('/images')) return path;
+  return `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
 /* ═══════════════════════════════════════════════════════════════ */
 export default function Careers() {
   const [pageData, setPageData] = useState(null);
@@ -51,8 +59,7 @@ export default function Careers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDept, setSelectedDept] = useState('All Departments');
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
-
+  
   useEffect(() => {
     // Fetch page config
     fetch(`${API_URL}/api/careers/page`)
@@ -64,7 +71,7 @@ export default function Careers() {
             heroSection: {
               title: d.heroSection?.title || FALLBACK_PAGE.heroSection.title,
               description: d.heroSection?.description || FALLBACK_PAGE.heroSection.description,
-              bgImage: d.heroSection?.bgImage || FALLBACK_PAGE.heroSection.bgImage,
+              bgImage: getFullImageUrl(d.heroSection?.bgImage || FALLBACK_PAGE.heroSection.bgImage),
             },
             coreValuesSection: {
               heading: d.coreValuesSection?.heading || FALLBACK_PAGE.coreValuesSection.heading,
