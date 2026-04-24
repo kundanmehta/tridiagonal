@@ -2,7 +2,8 @@ import { Settings, Plus, Edit2, Trash2 } from 'lucide-react';
 
 async function getServices() {
   try {
-    const res = await fetch('http://localhost:5000/api/services', { cache: 'no-store' });
+    const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    const res = await fetch(`${API_URL}/api/services`, { cache: 'no-store' });
     if (!res.ok) return [];
     const json = await res.json();
     return json.data;
