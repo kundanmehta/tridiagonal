@@ -51,7 +51,7 @@ export default function Careers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDept, setSelectedDept] = useState('All Departments');
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
   useEffect(() => {
     // Fetch page config

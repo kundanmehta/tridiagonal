@@ -11,7 +11,7 @@ export default function AdminPrivacyPolicyEditor() {
   // Accordion state
   const [expandedSection, setExpandedSection] = useState(1);
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');

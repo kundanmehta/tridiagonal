@@ -6,7 +6,7 @@ import {
   Briefcase, Users, Mail, ArrowUpRight, Home,
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
 const quickActions = [
   { label: 'Edit Home Page', href: '/admin/pages/home', icon: Home, color: '#00AEEF' },

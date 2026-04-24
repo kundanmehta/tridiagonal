@@ -9,7 +9,7 @@ export default function AdminAboutPageEditor() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
   useEffect(() => {
     fetch(`${API_URL}/api/aboutpage`, {

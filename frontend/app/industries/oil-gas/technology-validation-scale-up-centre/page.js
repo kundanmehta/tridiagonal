@@ -72,8 +72,8 @@ export default function TechValidationPage() {
     const fetchData = async () => {
       try {
         const [indRes, allIndsRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/industries/oil-gas`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/industries`)
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com'}/api/industries/oil-gas`),
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com'}/api/industries`)
         ]);
         
         const indData = await indRes.json();

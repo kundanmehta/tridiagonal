@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
 /* ─── Static fallback jobs (same as before) ─── */
 const JOBS_DATA = {

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import DynamicIndustryServicePage from '@/components/DynamicIndustryServicePage';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
 export default function IndustryServicePage() {
     const { industry, service } = useParams();

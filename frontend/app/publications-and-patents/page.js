@@ -65,7 +65,7 @@ export default function PublicationsPatentsPage() {
   const [types, setTypes] = useState(['All Types']);
   const [industries, setIndustries] = useState(['All Industries']);
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
   useEffect(() => {
     // Fetch Publications

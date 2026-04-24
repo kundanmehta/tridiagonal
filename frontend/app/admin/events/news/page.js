@@ -16,7 +16,7 @@ export default function AdminNewsEditor() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
   const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
 
   const fetchItems = () => {

@@ -10,7 +10,7 @@ export default function AdminHomePageEditor() {
   const [message, setMessage] = useState('');
   const [allCaseStudies, setAllCaseStudies] = useState([]);
   const [allBlogs, setAllBlogs] = useState([]);
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
   useEffect(() => {
     // Corrected to fetch from the actual API endpoint

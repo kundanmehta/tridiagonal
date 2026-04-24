@@ -307,7 +307,7 @@ export default function AdvancedModelingPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
         
         // Fetch current industry data
         const res = await fetch(`${baseUrl}/api/industries/oil-gas`);

@@ -30,7 +30,7 @@ export default function AdminCareersEditor() {
   const [newJob, setNewJob] = useState({ ...EMPTY_JOB });
   const [jobSaving, setJobSaving] = useState(null); // index or 'new'
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
   const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
 
   useEffect(() => {

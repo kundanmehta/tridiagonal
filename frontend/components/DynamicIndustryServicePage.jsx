@@ -7,7 +7,7 @@ import {
   ArrowRight, ChevronRight, X, Monitor, Clock, TrendingUp, DollarSign
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
 const ICON_MAP = {
   'Users': <Users size={40} />,
@@ -43,7 +43,7 @@ export default function DynamicIndustryServicePage({ data, parentIndustryName, s
   useEffect(() => {
     const fetchRelated = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/industries`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com'}/api/industries`);
         const json = await res.json();
         if (json.data) {
           // Filter out current industry and map to correct service path

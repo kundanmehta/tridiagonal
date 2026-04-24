@@ -12,7 +12,7 @@ export const metadata = {
 
 async function getHomePageData() {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
     console.log('[Server] Fetching HomePage data from MongoDB API...');
     const res = await fetch(`${backendUrl}/api/homepage`, { cache: 'no-store' });
     if (!res.ok) {

@@ -147,7 +147,7 @@ export default function Resources() {
     types: ['All', 'Blogs', 'Case Study', 'Brochures', 'Publications']
   };
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
   useEffect(() => {
     // Fetch Resources

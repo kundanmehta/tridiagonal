@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 export default function PrivacyPolicy() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://silver-wasp-603471.hostingersite.com';
 
   useEffect(() => {
     fetch(`${API_URL}/api/privacy-policy`)
