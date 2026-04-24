@@ -1,5 +1,7 @@
 import AboutUsClient from '../../components/AboutUsClient';
 
+export const dynamic = 'force-dynamic';
+
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000';
 
 export async function generateMetadata() {

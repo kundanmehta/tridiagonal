@@ -1,5 +1,7 @@
 import HomePageClient from '../components/HomePageClient';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Process Consulting and Technology Solutions | Tridiagonal',
   description:
