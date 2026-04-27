@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import DynamicIndustryServicePage from '@/components/DynamicIndustryServicePage';
+import DynamicTechValidationPage from '@/components/DynamicTechValidationPage';
 import { API_URL } from '@/lib/apiConfig';
 
 
@@ -53,9 +54,11 @@ export default function IndustryServicePage() {
 
     // Determine which service area to render
     let serviceData = null;
+    const isTechValidation = service === 'technology-validation-and-scale-up-centre' || service === 'technology-validation-scale-up-centre';
+
     if (service === 'advance-modeling-and-simulation') {
         serviceData = data.modelingSimulation;
-    } else if (service === 'technology-validation-and-scale-up-centre' || service === 'technology-validation-scale-up-centre') {
+    } else if (isTechValidation) {
         serviceData = data.techValidation;
     }
 
@@ -69,11 +72,19 @@ export default function IndustryServicePage() {
 
     return (
         <>
-            <DynamicIndustryServicePage 
-                data={serviceData} 
-                parentIndustryName={data.title} 
-                serviceType={service} 
-            />
+            {isTechValidation ? (
+                <DynamicTechValidationPage
+                    data={serviceData}
+                    parentIndustryName={data.title}
+                    industrySlug={industry}
+                />
+            ) : (
+                <DynamicIndustryServicePage
+                    data={serviceData}
+                    parentIndustryName={data.title}
+                    serviceType={service}
+                />
+            )}
         </>
     );
 }

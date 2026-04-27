@@ -17,47 +17,47 @@ function ArrowRight({ size = 16, color = '#fff' }) {
 const iconMap = {
   'Users': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
   ),
   'Home': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/><path d="M4 12h2"/><path d="M4 15h2"/><path d="M4 18h2"/>
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><path d="M3 9h18" /><path d="M9 21V9" /><path d="M4 12h2" /><path d="M4 15h2" /><path d="M4 18h2" />
     </svg>
   ),
   'DollarSign': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
     </svg>
   ),
   'Clock': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
     </svg>
   ),
   'Settings': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
     </svg>
   ),
   'TrendingUp': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/>
+      <path d="M23 6l-9.5 9.5-5-5L1 18" /><path d="M17 6h6v6" />
     </svg>
   ),
   'Briefcase': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
     </svg>
   ),
   'Handshake': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
     </svg>
   ),
   'Globe': (
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      <circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </svg>
   )
 };
@@ -76,10 +76,10 @@ export default function TechValidationPage() {
           fetch(`${API_URL}/api/industries/oil-gas`),
           fetch(`${API_URL}/api/industries`)
         ]);
-        
+
         const indData = await indRes.json();
         const allInds = await allIndsRes.json();
-        
+
         if (indData.data) {
           setIndustryData(indData.data);
         }
@@ -128,20 +128,20 @@ export default function TechValidationPage() {
         style={{
           position: 'relative',
           overflow: 'hidden',
-          background: `url('${hero.bgImage || '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
+          background: `url('${hero.bgImage ? (hero.bgImage.startsWith('http') ? hero.bgImage : `${API_URL}${hero.bgImage}`) : '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
           minHeight: 'auto',
           padding: '80px 0 60px',
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(26, 26, 26, 0.88)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(26, 26, 26, 0.1)' }} />
 
         <div className="content-wrapper-lg" style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.12)', border: '1px solid rgba(71,188,135,0.3)', borderRadius: '30px', padding: '6px 20px', marginBottom: '16px' }}>
-            <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>Industry</span>
+          <div style={{ display: 'inline-block', background: 'rgb(56 167 117)', border: '1px solid rgba(71,188,135,0.3)', borderRadius: '30px', padding: '6px 20px', marginBottom: '16px' }}>
+            <span style={{ color: '#fff', fontSize: '12px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>Industry</span>
           </div>
 
           <div style={{ marginBottom: '10px' }}>
-            <span style={{ color: '#fff', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: '800', display: 'block' }}>{industryData.title}</span>
+            <span style={{ color: '#fff', fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: '600', display: 'block' }}>{industryData.title}</span>
           </div>
 
           <h1
@@ -160,8 +160,8 @@ export default function TechValidationPage() {
           <p
             className="hero-desc fade-in-up delay-200"
             style={{
-              color: 'rgba(255,255,255,0.95)',
-              fontSize: '22px',
+              color: 'rgb(255 255 255 / 87%)',
+              fontSize: '18px',
               maxWidth: '800px',
               margin: '0 auto',
               fontWeight: '500',
@@ -197,11 +197,11 @@ export default function TechValidationPage() {
                 ))}
               </div>
             </div>
-            
-            <div style={{ 
-              position: 'relative', 
-              borderRadius: '32px', 
-              overflow: 'hidden', 
+
+            <div style={{
+              position: 'relative',
+              borderRadius: '32px',
+              overflow: 'hidden',
               aspectRatio: '16/10',
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
               border: '1px solid rgba(255,255,255,0.08)'
@@ -240,7 +240,8 @@ export default function TechValidationPage() {
             </p>
           </div>
 
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             .opp-grid {
               display: grid;
               grid-template-columns: repeat(3, 1fr);
@@ -254,7 +255,6 @@ export default function TechValidationPage() {
             }
             .opp-card {
               position: relative;
-              background: #000;
               border-radius: 24px;
               border: 1px solid rgba(255, 255, 255, 0.1);
               overflow: hidden;
@@ -283,14 +283,11 @@ export default function TechValidationPage() {
               transform: scale(1.05);
             }
             .opp-overlay {
-              position: absolute;
-              inset: 0;
-              background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.95) 100%);
-              transition: opacity 0.4s;
+                position: absolute;
+                inset: 0;
+                transition: opacity 0.4s;
             }
-            .opp-card:hover .opp-overlay {
-              background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.98) 100%);
-            }
+           
           ` }} />
 
           <div className="opp-grid">
@@ -304,14 +301,14 @@ export default function TechValidationPage() {
                     justifyContent: 'flex-start'
                   } : {}}
                 >
-                  <div className="opp-bg" style={{ 
-                    backgroundImage: isContactCard ? 'none' : `url('${cap.image}')`,
-                    opacity: isContactCard ? 0 : 0.5
+                  <div className="opp-bg" style={{
+                    backgroundImage: isContactCard ? 'none' : `url('${cap.image ? (cap.image.startsWith('http') ? cap.image : `${API_URL}${cap.image}`) : ''}')`,
+                    opacity: isContactCard ? 0 : 1
                   }} />
                   <div className="opp-overlay" style={{
                     background: isContactCard ? 'transparent' : undefined
                   }} />
-                  
+
                   <div style={{ position: 'relative', zIndex: 1 }}>
                     {isContactCard && (
                       <div style={{ width: '40px', height: '3px', background: 'rgba(255,255,255,0.4)', marginBottom: '24px', borderRadius: '2px' }} />
@@ -320,9 +317,9 @@ export default function TechValidationPage() {
                     <p style={{ color: isContactCard ? '#fff' : 'rgba(255,255,255,0.7)', fontSize: '16px', lineHeight: '1.6', marginBottom: '32px' }}>
                       {cap.desc}
                     </p>
-                    
+
                     {cap.link ? (
-                      <Link 
+                      <Link
                         href={cap.link}
                         style={{
                           display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -339,7 +336,7 @@ export default function TechValidationPage() {
                         {cap.ctaText || (isContactCard ? 'CONTACT US' : 'VIEW MORE')} <ArrowRight size={14} color={isContactCard ? '#fff' : "#000"} />
                       </Link>
                     ) : (
-                      <button 
+                      <button
                         onClick={() => {
                           if (isContactCard) {
                             window.location.href = '/contact-us';
@@ -350,7 +347,7 @@ export default function TechValidationPage() {
                           background: isContactCard ? 'transparent' : 'linear-gradient(90deg, #0dd0e1, #8fe03c)',
                           border: isContactCard ? '1px solid #fff' : 'none',
                           color: isContactCard ? '#fff' : '#000', padding: '12px 32px', borderRadius: '30px',
-                          fontSize: '13px', fontWeight: '800', letterSpacing: '0.5px',
+                          fontSize: '13px', fontWeight: '600', letterSpacing: '0.5px',
                           textDecoration: 'none', width: 'fit-content', cursor: 'pointer',
                           boxShadow: isContactCard ? 'none' : '0 4px 15px rgba(13,208,225,0.2)',
                           transition: 'transform 0.2s',
@@ -379,11 +376,12 @@ export default function TechValidationPage() {
           <div style={{ textAlign: 'center', marginBottom: '80px' }}>
             <h2 style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '800', marginBottom: '24px' }}>{data.whyChooseUs?.title || 'Why Tridiagonal?'}</h2>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '1000px', margin: '0 auto', lineHeight: 1.6 }}>
-              {data.whyChooseUs?.items?.[0]?.desc?.substring(0, 50) === '300+ экспертов' ? 'Tridiagonal Solutions, a top facility in Asia, offers cost-effective flow insurance testing for Oil & Gas majors. We are specialized in multiphase flow, erosion-corrosion, wax deposition, and sand management, etc.' : `Tridiagonal Solutions provides specialized testing and validation services across scales to solve complex industrial challenges.`}
+              {data.whyChooseUs?.desc || `Tridiagonal Solutions provides specialized testing and validation services across scales to solve complex industrial challenges.`}
             </p>
           </div>
 
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             .why-grid-tech {
               display: grid;
               grid-template-columns: repeat(3, 1fr);
@@ -445,13 +443,13 @@ export default function TechValidationPage() {
                   {data.industriesSection?.subtitle || 'Your Trusted Partner in Technology Validation.'}
                 </p>
                 <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
-                  <Image 
-                    src={relatedIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"} 
-                    alt="industry" 
-                    fill 
+                  <Image
+                    src={relatedIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"}
+                    alt="industry"
+                    fill
                     sizes="(max-width: 768px) 100vw, 400px"
-                    style={{ objectFit: 'cover' }} 
-                    unoptimized 
+                    style={{ objectFit: 'cover' }}
+                    unoptimized
                   />
                 </div>
               </div>

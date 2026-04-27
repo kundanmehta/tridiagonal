@@ -38,6 +38,7 @@ const ServiceAreaSchema = new mongoose.Schema({
   },
   whyChooseUs: {
     title: String,
+    desc: String,
     items: [{
       title: String,
       desc: String,

@@ -389,15 +389,15 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                         </div>
                                         {card.image && (
                                             <div style={{ marginBottom: '8px' }}>
-                                                <img 
-                                                    src={card.image.startsWith('http') ? card.image : `${API_URL}${card.image}`} 
-                                                    alt="preview" 
-                                                    style={{ maxWidth: '100px', borderRadius: '6px', border: '1px solid #e2e8f0' }} 
+                                                <img
+                                                    src={card.image.startsWith('http') ? card.image : `${API_URL}${card.image}`}
+                                                    alt="preview"
+                                                    style={{ maxWidth: '100px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
                                                     onError={(e) => { e.target.style.display = 'none'; }}
                                                 />
                                             </div>
                                         )}
-                                        
+
                                         <div className="grid-2" style={{ gap: '10px' }}>
                                             <div>
                                                 <label className="admin-label">CTA Text</label>
@@ -440,10 +440,10 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                                 </div>
                                                 {card.image && (
                                                     <div style={{ marginBottom: '8px' }}>
-                                                        <img 
-                                                            src={card.image.startsWith('http') ? card.image : `${API_URL}${card.image}`} 
-                                                            alt="preview" 
-                                                            style={{ maxWidth: '80px', borderRadius: '6px', border: '1px solid #e2e8f0' }} 
+                                                        <img
+                                                            src={card.image.startsWith('http') ? card.image : `${API_URL}${card.image}`}
+                                                            alt="preview"
+                                                            style={{ maxWidth: '80px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
                                                             onError={(e) => { e.target.style.display = 'none'; }}
                                                         />
                                                     </div>
@@ -484,6 +484,10 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                             <div style={{ marginBottom: '1rem' }}>
                                 <label className="admin-label">Section Title</label>
                                 <input className="admin-input" value={data.whyChooseUs?.title || ''} onChange={e => updateField(`${area}.whyChooseUs.title`, e.target.value)} />
+                            </div>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label className="admin-label">Section Description</label>
+                                <textarea className="admin-input" rows={2} value={data.whyChooseUs?.desc || ''} onChange={e => updateField(`${area}.whyChooseUs.desc`, e.target.value)} />
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
                                 {data.whyChooseUs?.items?.map((item, i) => (
@@ -529,7 +533,7 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                             <div className="grid-2" style={{ marginTop: '1rem' }}>
                                                 <div className="full-width"><label className="admin-label">Main Modal Title</label><input className="admin-input-sm" value={modal.mainTitle || ''} onChange={e => updateField(`${area}.modals.${i}.mainTitle`, e.target.value)} /></div>
                                                 <div className="full-width"><label className="admin-label">Overview</label><textarea className="admin-input-sm" rows={3} value={modal.overview || ''} onChange={e => updateField(`${area}.modals.${i}.overview`, e.target.value)} /></div>
-                                                
+
                                                 <div className="full-width">
                                                     <label className="admin-label">Technical Feature Image</label>
                                                     <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
@@ -538,10 +542,10 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                                     </div>
                                                     {modal.image && (
                                                         <div style={{ marginTop: '10px' }}>
-                                                            <img 
-                                                                src={modal.image.startsWith('http') ? modal.image : `${API_URL}${modal.image}`} 
-                                                                alt="Modal Preview" 
-                                                                style={{ maxWidth: '150px', borderRadius: '8px', border: '1px solid #e2e8f0' }} 
+                                                            <img
+                                                                src={modal.image.startsWith('http') ? modal.image : `${API_URL}${modal.image}`}
+                                                                alt="Modal Preview"
+                                                                style={{ maxWidth: '150px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
                                                                 onError={(e) => { e.target.style.display = 'none'; }}
                                                             />
                                                         </div>

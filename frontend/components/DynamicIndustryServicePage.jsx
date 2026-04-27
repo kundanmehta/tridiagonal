@@ -134,7 +134,7 @@ export default function DynamicIndustryServicePage({ data, parentIndustryName, s
         .hero-overlay {
           position: absolute;
           inset: 0;
-          background: rgba(26, 26, 26, 0.4);
+          background: transparent;
         }
         .section-title {
           font-size: 50px;
@@ -434,60 +434,60 @@ export default function DynamicIndustryServicePage({ data, parentIndustryName, s
 
               {/* Slider — only when cards exist */}
               {useCasesCardsCount > 0 && (
-              <div style={{ flex: '1', minWidth: '0', position: 'relative', overflow: 'hidden' }}>
-                <div style={{
-                  display: 'flex',
-                  transition: useCasesInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-                  transform: `translateX(-${useCasesSlide * (100 / (useCasesCardsCount + 3 || 3))}%)`,
-                  width: `calc(${(useCasesCardsCount + 3 || 3)} * 33.3333%)`
-                }}>
-                  {[...(showcase.cards || []), ...(showcase.cards?.slice(0, 3) || [])].map((card, idx) => (
-                    <div key={idx} style={{ flex: `0 0 ${100 / (useCasesCardsCount + 3 || 3)}%`, minWidth: 0, padding: '0 10px' }}>
-                      <div style={{
-                        borderRadius: '24px',
-                        background: card.gradient || 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)',
-                        padding: card.isCaseStudy ? '4px' : '3px',
-                        marginBottom: '20px',
-                        minHeight: '300px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        overflow: 'hidden'
-                      }}>
+                <div style={{ flex: '1', minWidth: '0', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{
+                    display: 'flex',
+                    transition: useCasesInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+                    transform: `translateX(-${useCasesSlide * (100 / (useCasesCardsCount + 3 || 3))}%)`,
+                    width: `calc(${(useCasesCardsCount + 3 || 3)} * 33.3333%)`
+                  }}>
+                    {[...(showcase.cards || []), ...(showcase.cards?.slice(0, 3) || [])].map((card, idx) => (
+                      <div key={idx} style={{ flex: `0 0 ${100 / (useCasesCardsCount + 3 || 3)}%`, minWidth: 0, padding: '0 10px' }}>
                         <div style={{
-                          background: card.isCaseStudy ? '#fff' : '#1c1c1c',
-                          borderRadius: '20px', width: '100%', height: '100%',
-                          position: 'relative', minHeight: '300px'
+                          borderRadius: '24px',
+                          background: card.gradient || 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)',
+                          padding: card.isCaseStudy ? '4px' : '3px',
+                          marginBottom: '20px',
+                          minHeight: '300px',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          overflow: 'hidden'
                         }}>
-                          <Image
-                            src={getFullImageUrl(card.image) || '/hubfs/grid-1.png'}
-                            alt={card.title || 'Use Case'}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
-                            style={{ objectFit: card.isCaseStudy ? 'contain' : 'cover' }}
-                            unoptimized
-                          />
+                          <div style={{
+                            background: card.isCaseStudy ? '#fff' : '#1c1c1c',
+                            borderRadius: '20px', width: '100%', height: '100%',
+                            position: 'relative', minHeight: '300px'
+                          }}>
+                            <Image
+                              src={getFullImageUrl(card.image) || '/hubfs/grid-1.png'}
+                              alt={card.title || 'Use Case'}
+                              fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                              style={{ objectFit: card.isCaseStudy ? 'contain' : 'cover' }}
+                              unoptimized
+                            />
+                          </div>
                         </div>
+                        <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '500' }}>{card.title}</h3>
                       </div>
-                      <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '500' }}>{card.title}</h3>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  {/* Dots */}
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '40px' }}>
+                    {showcase.cards?.map((_, idx) => (
+                      <button
+                        key={idx}
+                        suppressHydrationWarning
+                        onClick={() => setUseCasesSlide(idx)}
+                        style={{
+                          width: '10px', height: '10px', borderRadius: '50%',
+                          background: (useCasesSlide % (useCasesCardsCount || 1)) === idx ? 'var(--color-teal)' : 'rgba(255,255,255,0.3)',
+                          border: 'none', cursor: 'pointer',
+                          transition: 'all 0.3s'
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
-                {/* Dots */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '40px' }}>
-                  {showcase.cards?.map((_, idx) => (
-                    <button
-                      key={idx}
-                      suppressHydrationWarning
-                      onClick={() => setUseCasesSlide(idx)}
-                      style={{
-                        width: '10px', height: '10px', borderRadius: '50%',
-                        background: (useCasesSlide % (useCasesCardsCount || 1)) === idx ? 'var(--color-teal)' : 'rgba(255,255,255,0.3)',
-                        border: 'none', cursor: 'pointer',
-                        transition: 'all 0.3s'
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
               )}
             </div>
           </div>
@@ -499,6 +499,11 @@ export default function DynamicIndustryServicePage({ data, parentIndustryName, s
         <div className="content-wrapper-lg">
           <div style={{ textAlign: 'center', marginBottom: '80px' }}>
             <h2 className="section-title" style={{ color: 'var(--color-teal)' }}>{whyChooseUs.title || 'Why Tridiagonal?'}</h2>
+            {whyChooseUs.desc && (
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '1000px', margin: '24px auto 0', lineHeight: 1.6 }}>
+                {whyChooseUs.desc}
+              </p>
+            )}
           </div>
           <div className="why-tridiagonal-grid">
             {whyChooseUs.items?.map((item, i) => (

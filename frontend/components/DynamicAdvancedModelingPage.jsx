@@ -32,7 +32,7 @@ const capabilities = [
     desc: 'Multiphase flow, Phase change, combustion and reaction modeling are our routine areas of working. We help industry to analyze root cause of the failure. Our engineers provide deep insights for troubleshooting & process improvement.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l2 2"/><circle cx="18" cy="8" r="3"/>
+        <path d="M12 2a10 10 0 1 0 10 10" /><path d="M12 8v4l2 2" /><circle cx="18" cy="8" r="3" />
       </svg>
     ),
   },
@@ -41,8 +41,8 @@ const capabilities = [
     desc: 'DEM is utilized in pharmaceuticals for powder mixing and tablet compression, in chemicals for particle handling and crystallization, and in CPG for packaging and mixing processes. It optimizes operations, ensuring uniformity and efficiency.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="12" r="2"/>
-        <line x1="8" y1="6" x2="10" y2="11"/><line x1="14" y1="13" x2="16" y2="18"/>
+        <circle cx="6" cy="6" r="2" /><circle cx="18" cy="6" r="2" /><circle cx="6" cy="18" r="2" /><circle cx="18" cy="18" r="2" /><circle cx="12" cy="12" r="2" />
+        <line x1="8" y1="6" x2="10" y2="11" /><line x1="14" y1="13" x2="16" y2="18" />
       </svg>
     ),
   },
@@ -51,8 +51,8 @@ const capabilities = [
     desc: 'Our canvas covers the assessment of the structural integrity of equipment, vessels, and components under static and dynamic loads, preventing thermal failures with optimized heat transfer & temperature distribution. Our engineers follow ASME & API standards.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="2" x2="12" y2="22"/>
-        <line x1="2" y1="8.5" x2="22" y2="8.5"/>
+        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" /><line x1="12" y1="2" x2="12" y2="22" />
+        <line x1="2" y1="8.5" x2="22" y2="8.5" />
       </svg>
     ),
   },
@@ -61,7 +61,7 @@ const capabilities = [
     desc: 'Tridiagonal engineers are capable in solving fluid-structure interaction (FSI) problems, while coupling of DEM-FEA models the behavior of granular materials interacting with structures, provides a deeper understanding of stress distribution and particle flow.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
       </svg>
     ),
   },
@@ -70,8 +70,8 @@ const capabilities = [
     desc: 'Tridiagonal tech leaders can build a virtual replica of assets & processes in various industries to reduce simulation iterations using data interpolation. Methods like CFD, FEA & DEM can predict values that are not possible to gain from sensors.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-        <path d="M7 10h2l2-4 2 8 2-4h2"/>
+        <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+        <path d="M7 10h2l2-4 2 8 2-4h2" />
       </svg>
     ),
   },
@@ -85,75 +85,87 @@ const useCasesCards = [
 ];
 
 const industries = [
-  { 
-    name: 'Pharma and Medical Devices', 
-    desc: 'Accelerating product development and ensuring regulatory compliance through high-fidelity simulations of medical devices and mixing processes.', 
+  {
+    name: 'Pharma and Medical Devices',
+    desc: 'Accelerating product development and ensuring regulatory compliance through high-fidelity simulations of medical devices and mixing processes.',
     href: '/industries/pharmaceutical',
-    image: '/hubfs/image(34).png' 
+    image: '/hubfs/image(34).png'
   },
-  { 
-    name: 'Metals, Mining & Cement', 
-    desc: 'Enhancing process reliability and reducing emissions in heavy manufacturing through multiphase flow analysis and heat transfer modeling.', 
+  {
+    name: 'Metals, Mining & Cement',
+    desc: 'Enhancing process reliability and reducing emissions in heavy manufacturing through multiphase flow analysis and heat transfer modeling.',
     href: '/industries/metals',
-    image: '/hubfs/Metals, Mining & Cement (1)-1.png' 
+    image: '/hubfs/Metals, Mining & Cement (1)-1.png'
   },
-  { 
-    name: 'Food, Beverages & CPG', 
-    desc: 'Optimizing continuous and batch processing, improving product consistency, and maximizing efficiency in high-volume consumer goods manufacturing.', 
+  {
+    name: 'Food, Beverages & CPG',
+    desc: 'Optimizing continuous and batch processing, improving product consistency, and maximizing efficiency in high-volume consumer goods manufacturing.',
     href: '/industries/fmcg',
-    image: '/hubfs/grid-3.png' 
+    image: '/hubfs/grid-3.png'
   },
-  { 
-    name: 'Chemicals & Petrochemicals', 
-    desc: 'Resolving complex fluid dynamics and reaction kinetics to scale-up operations and improve yield in specialty and bulk chemicals.', 
+  {
+    name: 'Chemicals & Petrochemicals',
+    desc: 'Resolving complex fluid dynamics and reaction kinetics to scale-up operations and improve yield in specialty and bulk chemicals.',
     href: '/industries/chemical',
-    image: '/hubfs/grid-1.png' 
+    image: '/hubfs/grid-1.png'
   },
-  { 
-    name: 'Power & Renewables', 
-    desc: 'Driving the new energy transition with advanced simulation of CCUS, green hydrogen production, and renewable infrastructure reliability.', 
+  {
+    name: 'Power & Renewables',
+    desc: 'Driving the new energy transition with advanced simulation of CCUS, green hydrogen production, and renewable infrastructure reliability.',
     href: '/industries/power',
-    image: '/hubfs/New energy.png' 
+    image: '/hubfs/New energy.png'
   },
-  { 
-    name: 'Others', 
-    desc: 'Our advanced simulation capabilities span numerous other distinct workflows including water treatment, semiconductors, and specialized manufacturing.', 
+  {
+    name: 'Others',
+    desc: 'Our advanced simulation capabilities span numerous other distinct workflows including water treatment, semiconductors, and specialized manufacturing.',
     href: '/industries',
-    image: '/hubfs/grid-2.png' 
+    image: '/hubfs/grid-2.png'
   },
 ];
 
 const whyItems = [
-  { title: 'Team', desc: '300+ experts with masters and Ph.D\'s in chemical engineering.', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-    </svg>
-  ) },
-  { title: 'Consulting Expertise', desc: 'Extending over 100 man-years globally to Fortune 500 clients', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line>
-    </svg>
-  ) },
-  { title: 'Solutions', desc: 'Tailored to optimize operations and decision-making', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
-    </svg>
-  ) },
-  { title: 'Engagement models', desc: 'Flexible options including time and material, dedicated centers, and project-specific arrangements', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-    </svg>
-  ) },
-  { title: 'Value Creation', desc: 'Deploying best practices and methods to efficiently create and deliver value for customers.', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M11 3 8 9l4 13"></path><path d="M13 3l3 6-4 13"></path>
-    </svg>
-  ) },
-  { title: 'Multi Skilled Expertise', desc: 'Team having exposure and expertise of developing scalable solutions across multiple platforms.', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-    </svg>
-  ) },
+  {
+    title: 'Team', desc: '300+ experts with masters and Ph.D\'s in chemical engineering.', icon: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    )
+  },
+  {
+    title: 'Consulting Expertise', desc: 'Extending over 100 man-years globally to Fortune 500 clients', icon: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line>
+      </svg>
+    )
+  },
+  {
+    title: 'Solutions', desc: 'Tailored to optimize operations and decision-making', icon: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    )
+  },
+  {
+    title: 'Engagement models', desc: 'Flexible options including time and material, dedicated centers, and project-specific arrangements', icon: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    )
+  },
+  {
+    title: 'Value Creation', desc: 'Deploying best practices and methods to efficiently create and deliver value for customers.', icon: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M11 3 8 9l4 13"></path><path d="M13 3l3 6-4 13"></path>
+      </svg>
+    )
+  },
+  {
+    title: 'Multi Skilled Expertise', desc: 'Team having exposure and expertise of developing scalable solutions across multiple platforms.', icon: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+    )
+  },
 ];
 
 const MODAL_DATA = {
@@ -309,7 +321,7 @@ export default function AdvancedModelingPage() {
     async function fetchData() {
       try {
         const baseUrl = API_URL;
-        
+
         // Fetch current industry data
         const res = await fetch(`${baseUrl}/api/industries/oil-gas`);
         const json = await res.json();
@@ -393,12 +405,12 @@ export default function AdvancedModelingPage() {
         style={{
           position: 'relative',
           overflow: 'hidden',
-          background: `url('${hero.bgImage || '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
+          background: `url('${hero.bgImage ? (hero.bgImage.startsWith('http') ? hero.bgImage : `${API_URL}${hero.bgImage}`) : '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
           minHeight: 'auto',
           padding: '80px 0 60px',
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(26, 26, 26, 0.88)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'transparent' }} />
 
         <div className="content-wrapper-lg" style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
           <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.12)', border: '1px solid rgba(71,188,135,0.3)', borderRadius: '30px', padding: '6px 20px', marginBottom: '16px' }}>
@@ -462,12 +474,12 @@ export default function AdvancedModelingPage() {
                 ))}
               </div>
             </div>
-            
+
             {/* Intro Section Image */}
-            <div style={{ 
-              position: 'relative', 
-              borderRadius: '32px', 
-              overflow: 'hidden', 
+            <div style={{
+              position: 'relative',
+              borderRadius: '32px',
+              overflow: 'hidden',
               aspectRatio: '16/10',
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
               border: '1px solid rgba(255,255,255,0.08)'
@@ -506,7 +518,8 @@ export default function AdvancedModelingPage() {
             </p>
           </div>
 
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             .capabilities-grid-layout {
               display: grid;
               grid-template-columns: repeat(3, 1fr);
@@ -539,7 +552,7 @@ export default function AdvancedModelingPage() {
               >
                 <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${cap.image}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25 }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,0.98) 100%)' }} />
-                
+
                 <div style={{ position: 'relative', zIndex: 1, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700', marginBottom: '16px', lineHeight: 1.3 }}>{cap.title}</h3>
                   <div style={{ flex: 1, marginBottom: '32px' }}>
@@ -576,8 +589,8 @@ export default function AdvancedModelingPage() {
                       })}
                     </ul>
                   </div>
-                  
-                  <button 
+
+                  <button
                     onClick={() => setSelectedCapability(cap.title)}
                     suppressHydrationWarning
                     style={{
@@ -639,14 +652,14 @@ export default function AdvancedModelingPage() {
                   <div key={idx} style={{ flex: `0 0 ${100 / (showcase.cards?.length + 3 || 3)}%`, minWidth: 0, padding: '0 10px' }}>
                     <div style={{ borderRadius: '24px', background: card.gradient || 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)', padding: card.isCaseStudy ? '4px' : '3px', marginBottom: '20px', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                       <div style={{ background: card.isCaseStudy ? '#fff' : '#1c1c1c', borderRadius: '20px', width: '100%', height: '100%', position: 'relative', minHeight: '300px' }}>
-                         <Image 
-                           src={card.image} 
-                           alt={card.title} 
-                           fill 
-                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
-                           style={{ objectFit: card.isCaseStudy ? 'contain' : 'cover' }} 
-                           unoptimized 
-                         />
+                        <Image
+                          src={card.image}
+                          alt={card.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                          style={{ objectFit: card.isCaseStudy ? 'contain' : 'cover' }}
+                          unoptimized
+                        />
                       </div>
                     </div>
                     <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '500' }}>{card.title}</h3>
@@ -673,7 +686,8 @@ export default function AdvancedModelingPage() {
         style={{ padding: '80px 0', background: '#1c1c1c' }}
       >
         <div className="content-wrapper-lg">
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             .why-grid-layout { display: grid; grid-template-columns: repeat(3, 1fr); }
             .why-grid-cell { padding: 40px 30px; border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); transition: background 0.3s; }
             .why-grid-cell:hover { background: rgba(255,255,255,0.02); }
@@ -687,14 +701,14 @@ export default function AdvancedModelingPage() {
             {whyChooseUs.items?.map((item, i) => (
               <div key={i} className="why-grid-cell">
                 <div style={{ color: 'var(--color-teal)', marginBottom: '12px' }}>
-                   {/* Fallback icon if none provided in DB */}
-                   {item.icon === 'Users' ? (
-                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                   ) : item.icon === 'Briefcase' ? (
-                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                   ) : (
-                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                   )}
+                  {/* Fallback icon if none provided in DB */}
+                  {item.icon === 'Users' ? (
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  ) : item.icon === 'Briefcase' ? (
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                  ) : (
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                  )}
                 </div>
                 <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700' }}>{item.title}</h3>
                 <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '16px' }}>{item.desc}</p>
@@ -705,51 +719,102 @@ export default function AdvancedModelingPage() {
       </section>
 
       {/* ── INDUSTRIES ── */}
-      {config.industriesSection?.enabled !== false && (
-        <section
-          id="industries"
-          data-section="Industries"
-          ref={el => sectionRefs.current['Industries'] = el}
-          style={{ padding: '100px 0', background: '#1c1c1c' }}
-        >
-          <div className="content-wrapper-lg">
-            <div className="inds-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 400px) 1fr', gap: '80px' }}>
-              <div style={{ position: 'sticky', top: '120px', height: 'fit-content' }}>
-                <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700' }}>{config.industriesSection?.title || 'Industries'}</h2>
-                <p style={{ color: '#fff', opacity: 0.9, fontSize: '18px' }}>{config.industriesSection?.subtitle || 'Your Trusted Partner in Modeling & Simulation.'}</p>
-                <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
-                  <Image 
-                    src={allIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"} 
-                    alt="industry" 
-                    fill 
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    style={{ objectFit: 'cover' }} 
-                    unoptimized 
-                  />
-                </div>
-              </div>
-              <div onMouseLeave={() => setActiveIndustryIdx(null)}>
-                {allIndustries.length > 0 ? allIndustries.map((ind, i) => (
-                  <div key={ind.name} onMouseEnter={() => setActiveIndustryIdx(i)} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '30px 0', cursor: 'pointer' }}>
-                    <h3 style={{ color: activeIndustryIdx === i ? 'var(--color-teal)' : '#fff', transition: 'color 0.3s' }}>{ind.name}</h3>
-                    {activeIndustryIdx === i && (
-                      <div style={{ marginTop: '20px' }}>
-                        <p style={{ color: 'rgba(255,255,255,0.8)' }}>{ind.desc}</p>
-                        <Link href={ind.href} style={{ color: 'var(--color-teal)', fontWeight: '700', textDecoration: 'none', display: 'block', marginTop: '10px' }}>VIEW DETAILS →</Link>
-                      </div>
-                    )}
-                  </div>
-                )) : (
-                  <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading other industries...</p>
-                )}
+      <section
+        id="industries"
+        data-section="Industries"
+        ref={el => sectionRefs.current['Industries'] = el}
+        style={{ padding: '120px 0', background: '#1c1c1c' }}
+      >
+        <div className="content-wrapper-lg">
+          <style dangerouslySetInnerHTML={{
+            __html: `
+            .ams-industry-grid { 
+              display: grid; 
+              grid-template-columns: minmax(350px, 450px) 1fr; 
+              gap: 100px; 
+            }
+            @media (max-width: 1024px) {
+              .ams-industry-grid { 
+                grid-template-columns: 1fr; 
+                gap: 60px; 
+              }
+              .ams-industry-grid > div:first-child {
+                position: relative !important;
+                top: 0 !important;
+              }
+            }
+          ` }} />
+          <div className="ams-industry-grid">
+            {/* Left sticky panel */}
+            <div style={{ position: 'sticky', top: '120px', height: 'fit-content' }}>
+              <h2 className="section-title" style={{ color: 'var(--color-teal)', marginBottom: '20px' }}>
+                {config.industriesSection?.title || 'Industries'}
+              </h2>
+              <p style={{ color: 'rgb(255 255 255 / 86%)', fontSize: '18px', maxWidth: '380px', lineHeight: '1.6', marginBottom: '40px' }}>
+                {config.industriesSection?.subtitle || 'Your Trusted Partner in Modeling & Simulation.'}
+              </p>
+              <div style={{ width: '100%', aspectRatio: '4/5', borderRadius: '40px', overflow: 'hidden', position: 'relative', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 30px 60px rgba(0,0,0,0.4)' }}>
+                <Image
+                  src={allIndustries[activeIndustryIdx ?? 0]?.image || "/hubfs/grid-2.png"}
+                  alt="industry"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 450px"
+                  style={{ objectFit: 'cover' }}
+                  unoptimized
+                />
               </div>
             </div>
+
+            {/* Right clickable industry list */}
+            <div onMouseLeave={() => setActiveIndustryIdx(null)} style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              {allIndustries.length > 0 ? allIndustries.map((ind, i) => (
+                <Link
+                  key={i}
+                  href={ind.href}
+                  onMouseEnter={() => setActiveIndustryIdx(i)}
+                  style={{
+                    display: 'block',
+                    padding: '28px 0',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    textDecoration: 'none',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <h3 style={{
+                      fontSize: '22px',
+                      color: activeIndustryIdx === i ? 'var(--color-teal)' : '#fff',
+                      fontWeight: '700',
+                      letterSpacing: '0.5px',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      {ind.name}
+                    </h3>
+                    <svg
+                      width="20" height="20" viewBox="0 0 20 20" fill="currentColor"
+                      style={{
+                        color: 'var(--color-teal)',
+                        opacity: activeIndustryIdx === i ? 1 : 0.2,
+                        transform: activeIndustryIdx === i ? 'translateX(0)' : 'translateX(-10px)',
+                        transition: 'all 0.3s ease',
+                        flexShrink: 0
+                      }}
+                    >
+                      <path fillRule="evenodd" d="M5 10a.75.75 0 01.75-.75h6.59l-2.13-2.13a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.13-2.13H5.75A.75.75 0 015 10z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </Link>
+              )) : (
+                <p style={{ color: 'rgba(255,255,255,0.5)', padding: '28px 0' }}>Loading other industries...</p>
+              )}
+            </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* ── CAPABILITY MODAL OVERLAY ── */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes oilGasModalSlideIn {
           from { opacity: 0; transform: translateY(30px); }
           to { opacity: 1; transform: translateY(0); }
@@ -810,27 +875,27 @@ export default function AdvancedModelingPage() {
           }}>
             {/* ─ Top Navigation Bar ─ */}
             <div className="content-wrapper-lg" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '60px' }}>
-              <button 
+              <button
                 onClick={() => setSelectedCapability(null)}
                 style={{ background: 'none', border: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', cursor: 'pointer', opacity: 0.7, transition: 'opacity 0.2s' }}
                 onMouseEnter={e => e.currentTarget.style.opacity = '1'}
                 onMouseLeave={e => e.currentTarget.style.opacity = '0.7'}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 Back to Practices
               </button>
-              
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <span style={{ background: 'rgba(71,188,135,0.1)', color: 'var(--color-teal)', padding: '6px 18px', borderRadius: '30px', fontSize: '12px', fontWeight: '800', letterSpacing: '1.5px', border: '1px solid rgba(71,188,135,0.2)' }}>
                   {industryData?.title?.toUpperCase() || 'OIL AND GAS'}
                 </span>
-                <button 
+                <button
                   onClick={() => setSelectedCapability(null)}
                   style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.25s' }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
                 </button>
               </div>
             </div>
@@ -844,7 +909,7 @@ export default function AdvancedModelingPage() {
               <div className="og-modal-grid">
                 {/* ─── Left Content Column ─── */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
-                  
+
                   {/* Overview Card */}
                   <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '28px', padding: '44px', backdropFilter: 'blur(8px)' }}>
                     <div style={{ display: 'flex', gap: '24px' }}>
@@ -902,7 +967,7 @@ export default function AdvancedModelingPage() {
                     <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', fontWeight: '700', letterSpacing: '1.5px', display: 'block', marginBottom: '14px' }}>CAPABILITY</span>
                     <h5 style={{ color: '#fff', fontSize: '17px', fontWeight: '700', margin: 0, lineHeight: 1.4 }}>{selectedCapability}</h5>
                   </div>
-                  
+
                   {/* Powered By Card */}
                   <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '22px', padding: '28px 32px' }}>
                     <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', fontWeight: '700', letterSpacing: '1.5px', display: 'block', marginBottom: '14px' }}>POWERED BY</span>
@@ -916,13 +981,13 @@ export default function AdvancedModelingPage() {
                   <div style={{ background: 'linear-gradient(145deg, rgba(71,188,135,0.06), rgba(13,208,225,0.04))', border: '1px solid rgba(71,188,135,0.12)', borderRadius: '22px', padding: '36px', textAlign: 'center' }}>
                     <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(71,188,135,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(71,188,135,0.15)' }}>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                       </svg>
                     </div>
                     <h5 style={{ color: '#fff', fontSize: '18px', fontWeight: '800', marginBottom: '12px' }}>Interested in this solution?</h5>
                     <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', lineHeight: 1.6, marginBottom: '28px' }}>Our experts will design a simulation approach tailored to your engineering goals.</p>
                     <Link href="/contact-us" className="og-cta-btn">
-                      Contact Us <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                      Contact Us <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                     </Link>
                   </div>
                 </div>
