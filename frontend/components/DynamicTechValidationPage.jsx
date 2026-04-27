@@ -62,6 +62,13 @@ const iconMap = {
     )
 };
 
+const getFullImageUrl = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http') || path.startsWith('data:')) return path;
+    if (path.startsWith('/hubfs') || path.startsWith('/images')) return path;
+    return `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
 export default function DynamicTechValidationPage({ data, parentIndustryName, industrySlug }) {
     const [activeIndustryIdx, setActiveIndustryIdx] = useState(null);
     const [relatedIndustries, setRelatedIndustries] = useState([]);
@@ -111,7 +118,7 @@ export default function DynamicTechValidationPage({ data, parentIndustryName, in
                 style={{
                     position: 'relative',
                     overflow: 'hidden',
-                    background: `url('${hero.bgImage ? (hero.bgImage.startsWith('http') ? hero.bgImage : `${API_URL}${hero.bgImage}`) : '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
+                    background: `url('${getFullImageUrl(hero.bgImage) || '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
                     minHeight: 'auto',
                     padding: '80px 0 60px',
                 }}
@@ -200,7 +207,7 @@ export default function DynamicTechValidationPage({ data, parentIndustryName, in
                             border: '1px solid rgba(255,255,255,0.08)'
                         }}>
                             <Image
-                                src={intro.image ? (intro.image.startsWith('http') ? intro.image : `${API_URL}${intro.image}`) : "/hubfs/Digital Twin.jpg"}
+                                src={getFullImageUrl(intro.image) || "/hubfs/Digital Twin.jpg"}
                                 alt="Intro Visualization"
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
@@ -295,7 +302,7 @@ export default function DynamicTechValidationPage({ data, parentIndustryName, in
                                     } : {}}
                                 >
                                     <div className="opp-bg" style={{
-                                        backgroundImage: isContactCard ? 'none' : `url('${cap.image ? (cap.image.startsWith('http') ? cap.image : `${API_URL}${cap.image}`) : ''}')`,
+                                        backgroundImage: isContactCard ? 'none' : `url('${getFullImageUrl(cap.image)}')`,
                                         opacity: isContactCard ? 0 : 1
                                     }} />
                                     <div className="opp-overlay" style={{
@@ -307,7 +314,7 @@ export default function DynamicTechValidationPage({ data, parentIndustryName, in
                                             <div style={{ width: '40px', height: '3px', background: 'rgba(255,255,255,0.4)', marginBottom: '24px', borderRadius: '2px' }} />
                                         )}
                                         <h3 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', marginBottom: '16px', lineHeight: 1.3 }}>{cap.title}</h3>
-                                        <p style={{ color: isContactCard ? '#fff' : 'rgba(255,255,255,0.7)', fontSize: '16px', lineHeight: '1.6', marginBottom: '32px' }}>
+                                        <p style={{ color: isContactCard ? '#fff' : '#fff', fontSize: '16px', lineHeight: '1.6', marginBottom: '32px' }}>
                                             {cap.desc}
                                         </p>
 

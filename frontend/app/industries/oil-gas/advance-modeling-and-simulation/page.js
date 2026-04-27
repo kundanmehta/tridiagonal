@@ -26,6 +26,13 @@ function useInView(threshold = 0.2) {
   return [ref, inView];
 }
 
+const getFullImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
+  if (path.startsWith('/hubfs') || path.startsWith('/images')) return path;
+  return `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
 const capabilities = [
   {
     title: 'Computational Fluid Dynamics (CFD)',
@@ -405,7 +412,7 @@ export default function AdvancedModelingPage() {
         style={{
           position: 'relative',
           overflow: 'hidden',
-          background: `url('${hero.bgImage ? (hero.bgImage.startsWith('http') ? hero.bgImage : `${API_URL}${hero.bgImage}`) : '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
+          background: `url('${getFullImageUrl(hero.bgImage) || '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
           minHeight: 'auto',
           padding: '80px 0 60px',
         }}
@@ -550,7 +557,7 @@ export default function AdvancedModelingPage() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'rgba(71,188,135,0.3)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
               >
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${cap.image ? (cap.image.startsWith('http') ? cap.image : `${API_URL}${cap.image}`) : ''}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25 }} />
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${getFullImageUrl(cap.image)}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25 }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,0.98) 100%)' }} />
 
                 <div style={{ position: 'relative', zIndex: 1, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column' }}>
