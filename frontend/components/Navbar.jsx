@@ -3,8 +3,10 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { API_URL } from '@/lib/apiConfig';
+
 /* ─── Navigation Data ─── */
-const navItems = [
+const navItemsTemplate = [
   {
     label: 'Services',
     href: '#',
@@ -198,6 +200,9 @@ function ChevronUpArrow({ size = 24, color = 'currentColor' }) {
 
 /* ─── Main Navbar Component ─── */
 export default function Navbar() {
+  const [navItems, setNavItems]       = useState(navItemsTemplate);
+  const [dynamicMobileIndustries, setDynamicMobileIndustries] = useState(mobileSubLinks.Industries);
+
   const [scrolled, setScrolled]       = useState(false);
   const [activeMenu, setActiveMenu]   = useState(null);
   const [activeService, setActiveService] = useState(null);
@@ -213,6 +218,70 @@ export default function Navbar() {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  /* Fetch dynamic industries for the menu */
+  useEffect(() => {
+    fetch(`${API_URL}/api/industries`)
+      .then(res => res.json())
+      .then(json => {
+        if (!json.data) return;
+
+        // Deduplicate industries by title
+        const seen = new Set();
+        let uniqueIndustries = json.data.filter(ind => {
+          if (seen.has(ind.title)) return false;
+          seen.add(ind.title);
+          return true;
+        });
+
+        // Enforce the requested sorting order
+        const desiredOrder = [
+          'Oil & Gas',
+          'Pharma and Medical Devices',
+          'Metals, Mining & Cement',
+          'Food, Beverages & CPG',
+          'Chemicals & Petrochemicals',
+          'Power & Renewables',
+          'Others'
+        ];
+
+        uniqueIndustries.sort((a, b) => {
+          const indexA = desiredOrder.indexOf(a.title);
+          const indexB = desiredOrder.indexOf(b.title);
+          const weightA = indexA === -1 ? 999 : indexA;
+          const weightB = indexB === -1 ? 999 : indexB;
+          return weightA - weightB;
+        });
+
+        const dynamicLinks = uniqueIndustries.map(ind => {
+          const subAreas = [];
+          if (ind.modelingSimulation?.enabled) {
+            subAreas.push({ title: 'Advance Modeling & Simulation (CFD/FEA)', href: `/industries/${ind.slug}/advance-modeling-and-simulation` });
+          }
+          if (ind.techValidation?.enabled) {
+            subAreas.push({ title: 'Technology Validation & Scale-up Centre', href: `/industries/${ind.slug}/technology-validation-scale-up-centre` });
+          }
+
+          return {
+            title: ind.title,
+            href: `/industries/${ind.slug}`,
+            subAreas: subAreas.length > 0 ? subAreas : []
+          };
+        });
+
+        // Update Desktop Nav
+        setNavItems(prev => prev.map(item => {
+          if (item.label === 'Industries') {
+            return { ...item, links: dynamicLinks };
+          }
+          return item;
+        }));
+
+        // Update Mobile Nav
+        setDynamicMobileIndustries(dynamicLinks.map(link => ({ title: link.title, href: link.href })));
+      })
+      .catch(err => console.error("Nav fetching error:", err));
   }, []);
 
   /* Lock body when mobile open */
@@ -550,7 +619,7 @@ export default function Navbar() {
                 </span>
               </button>
               <div className={`mobile-sub-links${mobileExpanded === item.label ? ' open' : ''}`}>
-                {(mobileSubLinks[item.label] || []).map((sub) => (
+                {(item.label === 'Industries' ? dynamicMobileIndustries : mobileSubLinks[item.label] || []).map((sub) => (
                   <Link
                     key={sub.title}
                     href={sub.href}

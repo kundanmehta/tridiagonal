@@ -30,15 +30,8 @@ const sidebarNav = [
   {
     label: 'Industries',
     icon: Factory,
-    children: [
-      { label: 'Oil & Gas', href: '/admin/industries/oil-gas', icon: Factory },
-      { label: 'Pharma & Medical', href: '/admin/industries/pharma-medical', icon: Factory },
-      { label: 'Metals & Mining', href: '/admin/industries/metals-mining', icon: Factory },
-      { label: 'Food & CPG', href: '/admin/industries/food-cpg', icon: Factory },
-      { label: 'Chemicals & Petro', href: '/admin/industries/chemicals-petrochemicals', icon: Factory },
-      { label: 'Power & Renewables', href: '/admin/industries/power-renewables', icon: Factory },
-      { label: 'Others', href: '/admin/industries/others', icon: Factory },
-    ],
+    dynamic: true, // populated at runtime from API
+    children: [],
   },
   {
     label: 'Resources',
@@ -72,6 +65,7 @@ export default function AdminLayout({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [expandedSections, setExpandedSections] = useState({});
+  const [dynamicIndustries, setDynamicIndustries] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -97,6 +91,51 @@ export default function AdminLayout({ children }) {
         router.replace('/admin-login');
       });
   }, [router]);
+
+  // Load industry list dynamically so slugs always match the DB
+  useEffect(() => {
+    fetch(`${API_URL}/api/industries`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.data) {
+          // Deduplicate by title — keeps first occurrence only
+          const seen = new Set();
+          let unique = json.data.filter(ind => {
+            if (seen.has(ind.title)) return false;
+            seen.add(ind.title);
+            return true;
+          });
+
+          // Enforce the requested sorting order
+          const desiredOrder = [
+            'Oil & Gas',
+            'Pharma and Medical Devices',
+            'Metals, Mining & Cement',
+            'Food, Beverages & CPG',
+            'Chemicals & Petrochemicals',
+            'Power & Renewables',
+            'Others'
+          ];
+
+          unique.sort((a, b) => {
+            const indexA = desiredOrder.indexOf(a.title);
+            const indexB = desiredOrder.indexOf(b.title);
+            const weightA = indexA === -1 ? 999 : indexA;
+            const weightB = indexB === -1 ? 999 : indexB;
+            return weightA - weightB;
+          });
+
+          setDynamicIndustries(
+            unique.map(ind => ({
+              label: ind.title,
+              href: `/admin/industries/${ind.slug}`,
+              icon: Factory,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
@@ -160,8 +199,10 @@ export default function AdminLayout({ children }) {
         <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
           {sidebarNav.map((item) => {
             if (item.children) {
+              // Use dynamically fetched industries if this is the Industries section
+              const children = item.dynamic ? dynamicIndustries : item.children;
               const isExpanded = expandedSections[item.label];
-              const isChildActive = item.children.some(c => pathname === c.href);
+              const isChildActive = children.some(c => pathname === c.href || pathname.startsWith(c.href));
               return (
                 <div key={item.label}>
                   <button
@@ -189,8 +230,11 @@ export default function AdminLayout({ children }) {
                   </button>
                   {isExpanded && (
                     <div style={{ paddingLeft: '20px', marginTop: '2px' }}>
-                      {item.children.map((child) => {
-                        const isActive = pathname === child.href;
+                      {children.length === 0 && item.dynamic && (
+                        <p style={{ fontSize: '12px', color: '#475569', padding: '8px 12px' }}>Loading...</p>
+                      )}
+                      {children.map((child) => {
+                        const isActive = pathname === child.href || pathname.startsWith(child.href + '/');
                         return (
                           <Link
                             key={child.href}

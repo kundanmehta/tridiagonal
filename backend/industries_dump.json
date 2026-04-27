@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "oil-gas",
+    "title": "Oil & Gas"
+  },
+  {
+    "slug": "pharma-medical-devices",
+    "title": "Pharma and Medical Devices"
+  },
+  {
+    "slug": "metals-mining-cement",
+    "title": "Metals, Mining & Cement"
+  },
+  {
+    "slug": "food-beverage-cpg",
+    "title": "Food, Beverages & CPG"
+  },
+  {
+    "slug": "chemicals-petrochemicals",
+    "title": "Chemicals & Petrochemicals"
+  },
+  {
+    "slug": "power-renewables",
+    "title": "Power & Renewables"
+  },
+  {
+    "slug": "others",
+    "title": "Others"
+  },
+  {
+    "slug": "metals-mining",
+    "title": "Metals, Mining & Cement"
+  },
+  {
+    "slug": "food-cpg",
+    "title": "Food, Beverages & CPG"
+  }
+]
