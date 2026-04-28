@@ -444,7 +444,10 @@ export default function TechValidationPage() {
                 </p>
                 <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
                   <Image
-                    src={relatedIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"}
+                    src={(() => {
+                      const raw = relatedIndustries[activeIndustryIdx ?? 0]?.image || '/hubfs/grid-2.png';
+                      return (raw.startsWith('http') || raw.startsWith('/hubfs')) ? raw : `${API_URL.replace(/\/$/, '')}${raw}`;
+                    })()}
                     alt="industry"
                     fill
                     sizes="(max-width: 768px) 100vw, 400px"

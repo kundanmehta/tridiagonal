@@ -315,6 +315,7 @@ export default function AdvancedModelingPage() {
   const [useCasesSlide, setUseCasesSlide] = useState(0);
   const [useCasesInTransition, setUseCasesInTransition] = useState(true);
   const [selectedCapability, setSelectedCapability] = useState(null);
+  const [caseStudies, setCaseStudies] = useState([]);
   const sectionRefs = useRef({});
 
   useEffect(() => {
@@ -343,6 +344,15 @@ export default function AdvancedModelingPage() {
             }));
           setAllIndustries(filtered);
         }
+
+        // After industry data loads, fetch selected case studies
+        if (json.data?.modelingSimulation?.showcase?.selectedCaseStudies?.length > 0) {
+          const slugs = json.data.modelingSimulation.showcase.selectedCaseStudies;
+          const csResults = await Promise.all(
+            slugs.map(slug => fetch(`${baseUrl}/api/resources/${slug}`).then(r => r.json()).catch(() => null))
+          );
+          setCaseStudies(csResults.filter(r => r && r.data).map(r => r.data));
+        }
       } catch (err) {
         console.error('Failed to fetch data:', err);
       } finally {
@@ -368,17 +378,28 @@ export default function AdvancedModelingPage() {
 
   const MODAL_DATA_FINAL = Object.keys(dynamicModals).length > 0 ? dynamicModals : MODAL_DATA;
 
+  // Use dynamic case studies if available, else fall back to legacy cards
+  const carouselCards = caseStudies.length > 0
+    ? caseStudies.map(cs => ({
+      title: cs.title,
+      image: cs.coverImage ? (cs.coverImage.startsWith('http') ? cs.coverImage : `${API_URL.replace(/\/$/, '')}${cs.coverImage}`) : '',
+      href: `/resources/case-studies/${cs.slug}`,
+      isCaseStudy: true,
+    }))
+    : (showcase.cards || []).map(c => ({ ...c, href: '/resources/case-studies' }));
+
   // Auto-scroll Use Cases slider (continuous loop)
   useEffect(() => {
+    if (carouselCards.length === 0) return;
     const timer = setInterval(() => {
       setUseCasesInTransition(true);
       setUseCasesSlide((prev) => prev + 1);
     }, 4500);
     return () => clearInterval(timer);
-  }, []);
+  }, [carouselCards.length]);
 
   // Handle snapping back for seamless infinite scroll (Use Cases)
-  const useCasesCardsCount = showcase.cards?.length || 0;
+  const useCasesCardsCount = carouselCards.length;
   useEffect(() => {
     if (useCasesCardsCount > 0 && useCasesSlide === useCasesCardsCount) {
       const timeout = setTimeout(() => {
@@ -410,15 +431,15 @@ export default function AdvancedModelingPage() {
           padding: '80px 0 60px',
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(26, 26, 26, 0.88)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(26, 26, 26, 0.1)' }} />
 
         <div className="content-wrapper-lg" style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.12)', border: '1px solid rgba(71,188,135,0.3)', borderRadius: '30px', padding: '6px 20px', marginBottom: '16px' }}>
-            <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>Industry</span>
+          <div style={{ display: 'inline-block', background: 'rgb(56 167 117)', border: '1px solid rgba(71,188,135,0.3)', borderRadius: '30px', padding: '6px 20px', marginBottom: '16px' }}>
+            <span style={{ color: '#fff', fontSize: '12px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>Industry</span>
           </div>
 
           <div style={{ marginBottom: '10px' }}>
-            <span style={{ color: '#fff', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: '800', display: 'block' }}>{industryData?.title || 'Oil & Gas'}</span>
+            <span style={{ color: '#fff', fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: '600', display: 'block' }}>{industryData?.title || 'Oil & Gas'}</span>
           </div>
 
           <h1
@@ -431,14 +452,22 @@ export default function AdvancedModelingPage() {
               lineHeight: 1.1,
             }}
           >
-            {hero.title}
+            {hero.title ? (() => {
+              const words = hero.title.trim().split(' ');
+              if (words.length <= 2) {
+                return <>{words.length > 1 ? words[0] + ' ' : ''}<span className="gradient-text">{words[words.length - 1]}</span></>;
+              }
+              const lastTwo = words.slice(-2).join(' ');
+              const firstPart = words.slice(0, -2).join(' ');
+              return <>{firstPart} <span className="gradient-text">{lastTwo}</span></>;
+            })() : null}
           </h1>
 
           <p
             className="hero-desc fade-in-up delay-200"
             style={{
-              color: 'rgba(255,255,255,0.95)',
-              fontSize: '22px',
+              color: 'rgb(255 255 255 / 87%)',
+              fontSize: '18px',
               maxWidth: '800px',
               margin: '0 auto',
               fontWeight: '500',
@@ -550,8 +579,8 @@ export default function AdvancedModelingPage() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'rgba(71,188,135,0.3)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
               >
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${cap.image ? (cap.image.startsWith('http') ? cap.image : `${API_URL}${cap.image}`) : ''}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25 }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,0.98) 100%)' }} />
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${cap.image ? (cap.image.startsWith('http') ? cap.image : `${API_URL.replace(/\/$/, '')}${cap.image.startsWith('/') ? cap.image : '/' + cap.image}`) : ''}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'transparent' }} />
 
                 <div style={{ position: 'relative', zIndex: 1, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700', marginBottom: '16px', lineHeight: 1.3 }}>{cap.title}</h3>
@@ -615,68 +644,109 @@ export default function AdvancedModelingPage() {
       </section>
 
       {/* ── USE CASES ── */}
-      <section
-        id="use-cases"
-        data-section="Use Cases"
-        ref={el => sectionRefs.current['Use Cases'] = el}
-        style={{ background: '#242424', padding: '80px 0', overflow: 'hidden' }}
-      >
-        <div className="content-wrapper-lg">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px' }}>
-            <div style={{ flex: '0 0 350px', display: 'flex', flexDirection: 'column' }}>
-              <div className="dvr-line" style={{ marginBottom: '16px' }} />
-              <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px' }}>
-                {showcase.title}
-              </h2>
-              <p className="section-desc" style={{ color: '#fff', opacity: 0.9, fontSize: '18px', lineHeight: 1.6, marginBottom: '40px' }}>
-                {showcase.desc}
-              </p>
-              <Link href="/resources/case-studies" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: 'var(--gradient-brand)', color: '#000',
-                fontWeight: '700', textTransform: 'uppercase',
-                padding: '12px 24px', borderRadius: '40px',
-                fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none', width: 'fit-content'
-              }}>
-                VIEW MORE <ArrowRight size={14} color="#000" />
-              </Link>
-            </div>
-
-            <div style={{ flex: '1', minWidth: '0', position: 'relative', overflow: 'hidden' }}>
-              <div style={{
-                display: 'flex', transition: useCasesInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-                transform: `translateX(-${useCasesSlide * (100 / (showcase.cards?.length + 3 || 3))}%)`,
-                width: `calc(${(showcase.cards?.length + 3 || 3)} * 33.3333%)`
-              }}>
-                {[...(showcase.cards || []), ...(showcase.cards?.slice(0, 3) || [])].map((card, idx) => (
-                  <div key={idx} style={{ flex: `0 0 ${100 / (showcase.cards?.length + 3 || 3)}%`, minWidth: 0, padding: '0 10px' }}>
-                    <div style={{ borderRadius: '24px', background: card.gradient || 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)', padding: card.isCaseStudy ? '4px' : '3px', marginBottom: '20px', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                      <div style={{ background: card.isCaseStudy ? '#fff' : '#1c1c1c', borderRadius: '20px', width: '100%', height: '100%', position: 'relative', minHeight: '300px' }}>
-                        <Image
-                          src={card.image}
-                          alt={card.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
-                          style={{ objectFit: card.isCaseStudy ? 'contain' : 'cover' }}
-                          unoptimized
-                        />
-                      </div>
-                    </div>
-                    <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '500' }}>{card.title}</h3>
-                  </div>
-                ))}
+      {showcase.enabled !== false && (
+        <section
+          id="use-cases"
+          data-section="Use Cases"
+          ref={el => sectionRefs.current['Use Cases'] = el}
+          style={{ background: '#242424', padding: '80px 0', overflow: 'hidden' }}
+        >
+          <div className="content-wrapper-lg">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px' }}>
+              {/* Left panel */}
+              <div style={{ flex: '0 0 450px', display: 'flex', flexDirection: 'column' }}>
+                <div className="dvr-line" style={{ marginBottom: '16px' }} />
+                <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px' }}>
+                  {showcase.title || 'Use Cases'}
+                </h2>
+                <p className="section-desc" style={{ color: '#fff', opacity: 0.9, fontSize: '18px', lineHeight: 1.6, marginBottom: '40px' }}>
+                  {showcase.desc}
+                </p>
+                <Link href={showcase.buttonLink || '/resources/case-studies'} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  background: 'var(--gradient-brand)', color: '#000',
+                  fontWeight: '700', textTransform: 'uppercase',
+                  padding: '12px 24px', borderRadius: '40px',
+                  fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none', width: 'fit-content'
+                }}>
+                  {showcase.buttonText || 'VIEW MORE'} <ArrowRight size={14} color="#000" />
+                </Link>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '40px' }}>
-                {showcase.cards?.map((_, idx) => (
-                  <button key={idx} suppressHydrationWarning onClick={() => setUseCasesSlide(idx)}
-                    style={{ width: '12px', height: '12px', borderRadius: '50%', background: (useCasesSlide % (showcase.cards?.length || 1)) === idx ? 'var(--color-teal)' : '#fff', border: 'none', cursor: 'pointer', opacity: (useCasesSlide % (showcase.cards?.length || 1)) === idx ? 1 : 0.5 }}
-                  />
-                ))}
+
+              {/* Carousel */}
+              <div style={{ flex: '1', minWidth: '0', position: 'relative' }}>
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{
+                    display: 'flex',
+                    transition: useCasesInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+                    transform: `translateX(-${useCasesSlide * (100 / Math.min(3, carouselCards.length))}%)`,
+                  }}>
+                    {[...carouselCards, ...carouselCards.slice(0, 3)].map((card, idx) => (
+                      <div key={idx} style={{ flex: `0 0 ${100 / Math.min(3, carouselCards.length)}%`, minWidth: 0, padding: '0 10px', boxSizing: 'border-box' }}>
+                        <Link href={card.href || '/resources/case-studies'} style={{ textDecoration: 'none', display: 'block' }}>
+                          {/* Image card */}
+                          <div
+                            style={{
+                              borderRadius: '20px',
+                              overflow: 'hidden',
+                              position: 'relative',
+                              height: '260px',
+                              background: '#1a1a2e',
+                              border: '1px solid rgba(255,255,255,0.08)',
+                              marginBottom: '40px',
+                              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.5)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+                          >
+                            {card.image ? (
+                              <Image
+                                src={card.image}
+                                alt={card.title}
+                                fill
+                                sizes="33vw"
+                                style={{ objectFit: 'cover' }}
+                                unoptimized
+                              />
+                            ) : (
+                              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #0d324d, #0dd0e1)' }} />
+                            )}
+                          </div>
+
+                          {/* Title + arrow below the image */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                            <h3 style={{
+                              color: '#fff', fontSize: '15px', fontWeight: '700',
+                              lineHeight: 1.4, margin: 0, flex: 1,
+                            }}>{card.title}</h3>
+                            <div style={{
+                              width: '38px', height: '38px', borderRadius: '50%', flexShrink: 0,
+                              background: 'linear-gradient(135deg, #0dd0e1, #8fe03c)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+
+                            }}>
+                              <ArrowRight size={16} color="#000" />
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dot indicators — centered */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '50px' }}>
+                  {carouselCards.map((_, idx) => (
+                    <button key={idx} suppressHydrationWarning onClick={() => { setUseCasesInTransition(true); setUseCasesSlide(idx); }}
+                      style={{ width: '10px', height: '10px', borderRadius: '50%', background: (useCasesSlide % (carouselCards.length || 1)) === idx ? 'var(--color-teal)' : 'rgba(255,255,255,0.3)', border: 'none', cursor: 'pointer', transition: 'background 0.3s', padding: 0 }}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── WHY TRIDIAGONAL ── */}
       <section
@@ -733,7 +803,10 @@ export default function AdvancedModelingPage() {
                 <p style={{ color: '#fff', opacity: 0.9, fontSize: '18px' }}>{config.industriesSection?.subtitle || 'Your Trusted Partner in Modeling & Simulation.'}</p>
                 <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
                   <Image
-                    src={allIndustries[activeIndustryIdx || 0]?.image || "/hubfs/grid-2.png"}
+                    src={(() => {
+                      const raw = allIndustries[activeIndustryIdx ?? 0]?.image || '/hubfs/grid-2.png';
+                      return (raw.startsWith('http') || raw.startsWith('/hubfs')) ? raw : `${API_URL.replace(/\/$/, '')}${raw}`;
+                    })()}
                     alt="industry"
                     fill
                     sizes="(max-width: 768px) 100vw, 400px"

@@ -1,11 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import DynamicIndustryServicePage from '@/components/DynamicIndustryServicePage';
+import DynamicAdvancedModelingPage from '@/components/DynamicAdvancedModelingPage';
 import DynamicTechValidationPage from '@/components/DynamicTechValidationPage';
 import { API_URL } from '@/lib/apiConfig';
-
-
 
 export default function IndustryServicePage() {
     const { industry, service } = useParams();
@@ -52,15 +50,12 @@ export default function IndustryServicePage() {
         );
     }
 
-    // Determine which service area to render
-    let serviceData = null;
+    const isModeling = service === 'advance-modeling-and-simulation';
     const isTechValidation = service === 'technology-validation-and-scale-up-centre' || service === 'technology-validation-scale-up-centre';
 
-    if (service === 'advance-modeling-and-simulation') {
-        serviceData = data.modelingSimulation;
-    } else if (isTechValidation) {
-        serviceData = data.techValidation;
-    }
+    let serviceData = null;
+    if (isModeling) serviceData = data.modelingSimulation;
+    else if (isTechValidation) serviceData = data.techValidation;
 
     if (!serviceData || !serviceData.enabled) {
         return (
@@ -70,21 +65,21 @@ export default function IndustryServicePage() {
         );
     }
 
+    if (isModeling) {
+        return (
+            <DynamicAdvancedModelingPage
+                data={serviceData}
+                parentIndustryName={data.title}
+                industrySlug={industry}
+            />
+        );
+    }
+
     return (
-        <>
-            {isTechValidation ? (
-                <DynamicTechValidationPage
-                    data={serviceData}
-                    parentIndustryName={data.title}
-                    industrySlug={industry}
-                />
-            ) : (
-                <DynamicIndustryServicePage
-                    data={serviceData}
-                    parentIndustryName={data.title}
-                    serviceType={service}
-                />
-            )}
-        </>
+        <DynamicTechValidationPage
+            data={serviceData}
+            parentIndustryName={data.title}
+            industrySlug={industry}
+        />
     );
 }

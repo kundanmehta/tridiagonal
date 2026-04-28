@@ -29,6 +29,9 @@ const ServiceAreaSchema = new mongoose.Schema({
     enabled: { type: Boolean, default: false },
     title: String,
     desc: String,
+    buttonText: { type: String, default: 'VIEW MORE' },
+    buttonLink: { type: String, default: '/resources/case-studies' },
+    selectedCaseStudies: [{ type: String }],
     cards: [{
       title: String,
       image: String,
@@ -48,7 +51,8 @@ const ServiceAreaSchema = new mongoose.Schema({
   industriesSection: {
     enabled: { type: Boolean, default: true },
     title: { type: String, default: 'Industries' },
-    subtitle: { type: String, default: 'Your Trusted Partner in Modeling & Simulation.' }
+    subtitle: { type: String, default: 'Your Trusted Partner in Modeling & Simulation.' },
+    sectionImage: String,
   },
   modals: [{
     capabilityName: String,

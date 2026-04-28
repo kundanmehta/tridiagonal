@@ -184,6 +184,25 @@ export default function AdminIndustryManager({ slug }) {
                                     <label className="admin-label">Overview Description</label>
                                     <textarea className="admin-input" rows={3} value={editing.overview} onChange={e => updateField('overview', e.target.value)} required />
                                 </div>
+                                <div className="full-width">
+                                    <label className="admin-label">Industry Card Image <span style={{ fontWeight: 400, color: '#94a3b8', textTransform: 'none', letterSpacing: 0 }}>(shown in the Industries hover panel on service pages)</span></label>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        <input className="admin-input" style={{ marginBottom: 0 }} value={editing.heroImage || ''} onChange={e => updateField('heroImage', e.target.value)} placeholder="/uploads/industry-image.jpg" />
+                                        <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                                            Upload <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, 'heroImage')} />
+                                        </label>
+                                    </div>
+                                    {editing.heroImage && (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <img
+                                                src={editing.heroImage.startsWith('http') ? editing.heroImage : `${API_URL}${editing.heroImage}`}
+                                                alt="Hero preview"
+                                                style={{ maxWidth: '180px', borderRadius: '10px', border: '1px solid #e2e8f0', objectFit: 'cover', aspectRatio: '1/1.1' }}
+                                                onError={e => e.target.style.display = 'none'}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -423,37 +442,11 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                 </label>
                             </div>
                             {data.showcase?.enabled && (
-                                <>
-                                    <div className="grid-2">
-                                        <div><label className="admin-label">Title</label><input className="admin-input" value={data.showcase.title || ''} onChange={e => updateField(`${area}.showcase.title`, e.target.value)} /></div>
-                                        <div className="full-width"><label className="admin-label">Description</label><textarea className="admin-input" value={data.showcase.desc || ''} onChange={e => updateField(`${area}.showcase.desc`, e.target.value)} /></div>
-                                    </div>
-                                    <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', overflowX: 'auto', padding: '10px' }}>
-                                        {data.showcase.cards?.map((card, i) => (
-                                            <div key={i} className="sub-card" style={{ minWidth: '250px' }}>
-                                                <button type="button" onClick={() => removeItem(`${area}.showcase.cards`, i)} className="btn-danger" style={{ float: 'right' }}>X</button>
-                                                <label className="admin-label">Title</label><input className="admin-input-sm" value={card.title} onChange={e => updateField(`${area}.showcase.cards.${i}.title`, e.target.value)} />
-                                                <label className="admin-label">Image</label>
-                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
-                                                    <input className="admin-input-sm" style={{ marginBottom: 0, flex: 1 }} value={card.image} onChange={e => updateField(`${area}.showcase.cards.${i}.image`, e.target.value)} />
-                                                    <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '12px' }}>Upload <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, `${area}.showcase.cards.${i}.image`)} /></label>
-                                                </div>
-                                                {card.image && (
-                                                    <div style={{ marginBottom: '8px' }}>
-                                                        <img
-                                                            src={card.image.startsWith('http') ? card.image : `${API_URL}${card.image}`}
-                                                            alt="preview"
-                                                            style={{ maxWidth: '80px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
-                                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                                        />
-                                                    </div>
-                                                )}
-                                                <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}><input type="checkbox" checked={card.isCaseStudy} onChange={e => updateField(`${area}.showcase.cards.${i}.isCaseStudy`, e.target.checked)} /> Is Case Study</label>
-                                            </div>
-                                        ))}
-                                        <button type="button" onClick={() => addItem(`${area}.showcase.cards`, { title: '', image: '', isCaseStudy: false, gradient: 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)' })} className="btn-secondary" style={{ height: 'fit-content' }}>+ Add</button>
-                                    </div>
-                                </>
+                                <ShowcaseEditor
+                                    area={area}
+                                    data={data}
+                                    updateField={updateField}
+                                />
                             )}
                         </div>
 
@@ -474,6 +467,25 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                 <div className="full-width">
                                     <label className="admin-label">Section Subheading</label>
                                     <input className="admin-input" placeholder="e.g. Your Trusted Partner in Modeling & Simulation." value={data.industriesSection?.subtitle || ''} onChange={e => updateField(`${area}.industriesSection.subtitle`, e.target.value)} />
+                                </div>
+                                <div className="full-width">
+                                    <label className="admin-label">Section Image (shown in the left sticky panel)</label>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        <input className="admin-input" style={{ marginBottom: 0 }} value={data.industriesSection?.sectionImage || ''} onChange={e => updateField(`${area}.industriesSection.sectionImage`, e.target.value)} placeholder="/uploads/industries-section.jpg" />
+                                        <label className="btn-secondary" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                                            Upload <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, `${area}.industriesSection.sectionImage`)} />
+                                        </label>
+                                    </div>
+                                    {data.industriesSection?.sectionImage && (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <img
+                                                src={data.industriesSection.sectionImage.startsWith('http') ? data.industriesSection.sectionImage : `${API_URL}${data.industriesSection.sectionImage}`}
+                                                alt="Section preview"
+                                                style={{ maxWidth: '160px', borderRadius: '10px', border: '1px solid #e2e8f0', objectFit: 'cover', aspectRatio: '1/1.1' }}
+                                                onError={e => e.target.style.display = 'none'}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -597,6 +609,119 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
         .sub-card { background: #fdfdfd; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; position: relative; }
         .admin-input-sm { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; margin-bottom: 10px; }
       `}</style>
+        </div>
+    );
+}
+
+function ShowcaseEditor({ area, data, updateField }) {
+    const [allCaseStudies, setAllCaseStudies] = useState([]);
+    const [search, setSearch] = useState('');
+    const [csLoading, setCsLoading] = useState(true);
+
+    useEffect(() => {
+        fetch(`${API_URL}/api/resources?resourceType=Case Study&limit=200`)
+            .then(r => r.json())
+            .then(json => { setAllCaseStudies(json.data || []); setCsLoading(false); })
+            .catch(() => setCsLoading(false));
+    }, []);
+
+    const selected = data.showcase?.selectedCaseStudies || [];
+
+    const toggle = (slug) => {
+        const next = selected.includes(slug)
+            ? selected.filter(s => s !== slug)
+            : [...selected, slug];
+        updateField(`${area}.showcase.selectedCaseStudies`, next);
+    };
+
+    const filtered = allCaseStudies.filter(cs =>
+        cs.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
+        <div>
+            {/* Header fields */}
+            <div className="grid-2" style={{ marginBottom: '1.5rem' }}>
+                <div>
+                    <label className="admin-label">Section Title</label>
+                    <input className="admin-input" value={data.showcase?.title || ''} onChange={e => updateField(`${area}.showcase.title`, e.target.value)} />
+                </div>
+                <div>
+                    <label className="admin-label">Button Text (left side CTA)</label>
+                    <input className="admin-input" placeholder="VIEW MORE" value={data.showcase?.buttonText || ''} onChange={e => updateField(`${area}.showcase.buttonText`, e.target.value)} />
+                </div>
+                <div className="full-width">
+                    <label className="admin-label">Section Description</label>
+                    <textarea className="admin-input" rows={3} value={data.showcase?.desc || ''} onChange={e => updateField(`${area}.showcase.desc`, e.target.value)} />
+                </div>
+                <div className="full-width">
+                    <label className="admin-label">Button Link (default: /resources/case-studies)</label>
+                    <input className="admin-input" placeholder="/resources/case-studies" value={data.showcase?.buttonLink || ''} onChange={e => updateField(`${area}.showcase.buttonLink`, e.target.value)} />
+                </div>
+            </div>
+
+            {/* Case Study Picker */}
+            <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
+                <div style={{ background: '#f8fafc', padding: '12px 16px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
+                        📂 Select Case Studies for Carousel
+                        {selected.length > 0 && <span style={{ marginLeft: '8px', background: '#00AEEF', color: '#fff', borderRadius: '20px', padding: '2px 10px', fontSize: '11px' }}>{selected.length} selected</span>}
+                    </span>
+                    <input
+                        style={{ border: '1px solid #cbd5e1', borderRadius: '6px', padding: '6px 12px', fontSize: '13px', width: '220px' }}
+                        placeholder="🔍 Search case studies..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                    />
+                </div>
+                <div style={{ maxHeight: '320px', overflowY: 'auto', padding: '8px' }}>
+                    {csLoading && <p style={{ padding: '16px', color: '#64748b', textAlign: 'center' }}>Loading case studies…</p>}
+                    {!csLoading && filtered.length === 0 && <p style={{ padding: '16px', color: '#94a3b8', textAlign: 'center' }}>No case studies found.</p>}
+                    {filtered.map(cs => {
+                        const isChecked = selected.includes(cs.slug);
+                        return (
+                            <label key={cs.slug} style={{
+                                display: 'flex', alignItems: 'center', gap: '12px',
+                                padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
+                                background: isChecked ? 'rgba(0,174,239,0.06)' : 'transparent',
+                                border: isChecked ? '1px solid rgba(0,174,239,0.25)' : '1px solid transparent',
+                                marginBottom: '4px', transition: 'all 0.15s',
+                            }}>
+                                <input type="checkbox" checked={isChecked} onChange={() => toggle(cs.slug)} />
+                                {cs.coverImage && (
+                                    <img
+                                        src={cs.coverImage.startsWith('http') ? cs.coverImage : `${API_URL}${cs.coverImage}`}
+                                        alt=""
+                                        style={{ width: '48px', height: '36px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }}
+                                        onError={e => e.target.style.display = 'none'}
+                                    />
+                                )}
+                                <div>
+                                    <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>{cs.title}</p>
+                                    <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>/resources/case-studies/{cs.slug}</p>
+                                </div>
+                            </label>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Selected order preview */}
+            {selected.length > 0 && (
+                <div style={{ marginTop: '1rem' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Carousel Order</p>
+                    {selected.map((slug, idx) => {
+                        const cs = allCaseStudies.find(c => c.slug === slug);
+                        return (
+                            <div key={slug} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: '#f8fafc', borderRadius: '6px', marginBottom: '6px', border: '1px solid #e2e8f0' }}>
+                                <span style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 700, minWidth: '20px' }}>#{idx + 1}</span>
+                                <span style={{ fontSize: '13px', color: '#1e293b', flex: 1 }}>{cs?.title || slug}</span>
+                                <button type="button" onClick={() => toggle(slug)} style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '13px' }}>✕ Remove</button>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
