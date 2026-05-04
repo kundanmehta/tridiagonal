@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 const mockBrochures = [
   {
@@ -10,7 +10,7 @@ const mockBrochures = [
     service: 'Advanced Modeling & Simulation',
     industry: 'Oil & Gas',
     excerpt: 'Comprehensive overview of our CFD consulting solutions, encompassing multiphase flows, reacting flows, and heat transfer.',
-    img: '/hubfs/Digital Twin.jpg',
+    coverImage: '/hubfs/Digital Twin.jpg',
     slug: 'cfd-services-overview',
     date: 'Dec 15, 2023'
   },
@@ -19,7 +19,7 @@ const mockBrochures = [
     service: 'Digital Transformation',
     industry: 'Chemicals & Petrochemicals',
     excerpt: 'A deep dive into building AI-driven predictive digital twins to drastically enhance asset reliability and yield.',
-    img: '/hubfs/Flow Assurance.jpg',
+    coverImage: '/hubfs/Flow Assurance.jpg',
     slug: 'digital-twin-solutions',
     date: 'Feb 10, 2024'
   },
@@ -28,7 +28,7 @@ const mockBrochures = [
     service: 'Technology Validation',
     industry: 'Pharma & Medical Devices',
     excerpt: 'Details on our cutting-edge laboratory facilities utilized to bridge the gap between bench scale and commercial manufacturing.',
-    img: '/hubfs/image%20(10).png',
+    coverImage: '/hubfs/image(10).png',
     slug: 'scaleup-validation-capabilities',
     date: 'Apr 02, 2024'
   },
@@ -37,7 +37,7 @@ const mockBrochures = [
     service: 'Partner Solutions',
     industry: 'Metals & Mining',
     excerpt: 'Discover our integrated 1D and 3D simulation workflows powered by Siemens Simcenter to accelerate product design.',
-    img: '/hubfs/Blog CFD DEM.png',
+    coverImage: '/hubfs/Blog CFD DEM.png',
     slug: 'siemens-simcenter-partnership',
     date: 'Jun 22, 2024'
   }
@@ -204,15 +204,13 @@ export default function BrochuresPage() {
           {loading ? (
             <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '100px 0' }}>Fetching our brochures...</div>
           ) : filteredBrochures.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '20px' }}>
               {filteredBrochures.map((b, i) => (
                 <Link key={i} href={`/resources/brochures/${b.slug}`} style={{ textDecoration: 'none' }}>
                   <article className="br-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#1a1a1a', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)' }}>
-                    <div style={{ position: 'relative', width: '100%', height: '240px' }}>
-                      <Image src={b.coverImage || '/hubfs/Digital Twin.jpg'} alt={b.title} fill style={{ objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', color: '#9b51e0', padding: '6px 14px', borderRadius: '10px', fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', border: '1px solid rgba(155, 81, 224, 0.2)' }}>
-                        {b.category || 'BROCHURE'}
-                      </div>
+                    <div style={{ position: 'relative', width: '100%', height: '350px' }}>
+                      <Image src={resolveImageUrl(b.coverImage) || '/hubfs/Digital Twin.jpg'} alt={b.title} fill style={{ objectFit: 'cover' }} unoptimized={true} />
+        
                     </div>
                     <div style={{ padding: '30px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '15px' }}>
@@ -220,7 +218,7 @@ export default function BrochuresPage() {
                         <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
                         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>{b.service}</span>
                       </div>
-                      <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700', lineHeight: '1.4', marginBottom: '15px' }}>{b.title}</h3>
+                      <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '600', lineHeight: '1.4', marginBottom: '15px' }}>{b.title}</h3>
                       <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: '1.6', marginBottom: '25px', flex: 1 }}>{b.excerpt && b.excerpt.length > 130 ? b.excerpt.substring(0, 130) + '...' : b.excerpt}</p>
                       <div style={{ fontSize: '14px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 'auto' }}>
                         <span className="gradient-text">VIEW BROCHURE</span>

@@ -137,22 +137,64 @@ exports.createResource = async (req, res) => {
 
 exports.updateResource = async (req, res) => {
   try {
-    const resource = await Resource.findOneAndUpdate(
-      { slug: req.params.slug },
+    const { slug } = req.params;
+    const cleanId = slug.trim();
+    console.log(`[updateResource] Targeted ID/Slug: ${cleanId}`);
+
+    // Direct collection access to be 100% sure we find it
+    const collection = mongoose.connection.db.collection('resources');
+    
+    let resource;
+    if (mongoose.Types.ObjectId.isValid(cleanId)) {
+      resource = await collection.findOne({ _id: new mongoose.Types.ObjectId(cleanId) });
+    }
+
+    if (!resource) {
+      resource = await collection.findOne({ slug: cleanId });
+    }
+
+    if (!resource && req.body.title) {
+      resource = await collection.findOne({ title: req.body.title });
+    }
+
+    if (!resource) {
+      console.error(`[updateResource] FATAL: Resource NOT FOUND in direct collection search: ${cleanId}`);
+      return res.status(404).json({ error: 'Resource not found' });
+    }
+
+    // Now update using the model for validation and hooks, but using the REAL ID we found
+    const updatedResource = await Resource.findByIdAndUpdate(
+      resource._id,
       { $set: req.body },
       { new: true, runValidators: true }
     );
-    if (!resource) return res.status(404).json({ error: 'Resource not found' });
-    res.json({ message: 'Resource updated successfully', data: resource });
+
+    if (!updatedResource) {
+      // Fallback: if Mongoose still can't find it by its own ID, use direct update
+       await collection.updateOne({ _id: resource._id }, { $set: req.body });
+       res.json({ message: 'Resource updated successfully (Direct Update)', data: { ...resource, ...req.body } });
+    } else {
+      res.json({ message: 'Resource updated successfully', data: updatedResource });
+    }
   } catch (error) {
+    console.error(`[updateResource] Error:`, error);
     res.status(500).json({ error: error.message || 'Failed to update resource' });
   }
 };
 
 exports.deleteResource = async (req, res) => {
   try {
-    const resource = await Resource.findOneAndDelete({ slug: req.params.slug });
-    if (!resource) return res.status(404).json({ error: 'Resource not found' });
+    const { slug } = req.params;
+    let query = { slug: slug };
+    if (mongoose.Types.ObjectId.isValid(slug)) {
+      query = { _id: slug };
+    }
+
+    const resource = await Resource.findOneAndDelete(query);
+    if (!resource) {
+      console.warn(`[Delete Failed] Resource not found with query: ${JSON.stringify(query)}`);
+      return res.status(404).json({ error: 'Resource not found' });
+    }
     res.json({ message: 'Resource deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete resource' });

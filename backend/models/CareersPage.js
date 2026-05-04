@@ -19,6 +19,10 @@ const CareersPageSchema = new mongoose.Schema({
   opportunitiesSection: {
     heading: { type: String, default: 'Check out our latest opportunities' }
   },
+  applicationSection: {
+    heading: { type: String, default: 'Apply for this position' },
+    description: { type: String, default: 'Interested in this role? Click the button below to submit your application through our official careers portal. We look forward to hearing from you!' }
+  },
   selectedFormId: { type: mongoose.Schema.Types.ObjectId, ref: 'DynamicForm', default: null }
 }, { timestamps: true });
 

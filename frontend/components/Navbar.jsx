@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 import { API_URL } from '@/lib/apiConfig';
 
@@ -200,6 +201,9 @@ function ChevronUpArrow({ size = 24, color = 'currentColor' }) {
 
 /* ─── Main Navbar Component ─── */
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+
   const [navItems, setNavItems]       = useState(navItemsTemplate);
   const [dynamicMobileIndustries, setDynamicMobileIndustries] = useState(mobileSubLinks.Industries);
 
@@ -331,7 +335,10 @@ export default function Navbar() {
   return (
     <div ref={menuRef}>
       {/* ── Header ── */}
-      <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
+      <header 
+        className={`site-header${scrolled ? ' scrolled' : ''}${isHomePage && !scrolled ? ' transparent' : ''}`}
+        style={{ transition: 'background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease' }}
+      >
         {/* Main Nav */}
         <div className="nav-inner">
           {/* Logo */}

@@ -12,3 +12,10 @@ export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ||
   (isProduction 
     ? 'https://tridiagonal.com' 
     : 'http://localhost:3000');
+
+export function resolveImageUrl(img) {
+  if (!img) return '';
+  if (img.startsWith('http')) return img;
+  if (img.startsWith('/uploads/')) return `${API_URL.replace(/\/$/, '')}${img}`;
+  return img;
+}

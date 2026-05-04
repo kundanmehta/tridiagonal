@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, X, ChevronDown } from 'lucide-react';
-import { API_URL } from '@/lib/apiConfig';
+import { resolveImageUrl } from '@/lib/apiConfig';
 
 function CustomSelect({ label, value, options, onChange, style = {} }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -328,8 +328,8 @@ export default function Resources() {
                       cursor: 'pointer'
                     }}
                   >
-                    <div style={{ position: 'relative', width: '100%', height: '220px', background: '#000' }}>
-                      <Image src={res.coverImage || '/hubfs/Digital Twin.jpg'} alt={res.title} fill style={{ objectFit: 'cover', opacity: '0.9' }} />
+                    <div style={{ position: 'relative', width: '100%', height: '350px', background: '#000' }}>
+                      <Image src={resolveImageUrl(res.coverImage) || '/hubfs/Digital Twin.jpg'} alt={res.title} fill style={{ objectFit: 'cover', opacity: '0.9' }} />
                       <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', color: 'var(--color-teal)', padding: '6px 14px', borderRadius: '10px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', border: '1px solid rgba(71, 188, 135, 0.2)' }}>
                         {res.resourceType}
                       </div>
@@ -338,7 +338,7 @@ export default function Resources() {
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{res.industry}</span>
                       </div>
-                      <h3 style={{ fontSize: '19px', fontWeight: '700', color: '#fff', marginBottom: '20px', lineHeight: '1.4', flex: 1 }}>{res.title}</h3>
+                      <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#fff', marginBottom: '20px', lineHeight: '1.4', flex: 1 }}>{res.title}</h3>
                       <div style={{ fontSize: '13px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 'auto' }}>
                         <span className="gradient-text">{res.resourceType === 'Publication' ? 'EXTERNAL LINK' : 'READ MORE'}</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ color: '#00AEEF' }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>

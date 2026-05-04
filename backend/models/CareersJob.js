@@ -13,6 +13,7 @@ const CareersJobSchema = new mongoose.Schema({
   responsibilities: [{ type: String }],
   requirements: [{ type: String }],
   benefits: [{ type: String }],
+  applyExternalLink: { type: String, default: '' },
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 

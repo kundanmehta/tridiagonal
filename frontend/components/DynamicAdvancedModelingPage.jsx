@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 function ArrowRight({ size = 16, color = '#fff' }) {
   return (
@@ -11,6 +11,7 @@ function ArrowRight({ size = 16, color = '#fff' }) {
     </svg>
   );
 }
+
 
 export default function DynamicAdvancedModelingPage({ data, parentIndustryName, industrySlug }) {
   const [activeIndustryIdx, setActiveIndustryIdx] = useState(null);
@@ -32,7 +33,7 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
             .map(ind => ({
               name: ind.title,
               desc: ind.overview,
-              image: ind.heroImage || ind.modelingSimulation?.hero?.bgImage || '/hubfs/Metals, Mining & Cement (1)-1.png',
+              image: resolveImageUrl(ind.heroImage || ind.modelingSimulation?.hero?.bgImage || '/hubfs/Metals, Mining & Cement (1)-1.png'),
               href: `/industries/${ind.slug}/advance-modeling-and-simulation`,
             }));
           setAllIndustries(filtered);
@@ -66,10 +67,14 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
   const carouselCards = caseStudies.length > 0
     ? caseStudies.map(cs => ({
       title: cs.title,
-      image: cs.coverImage ? (cs.coverImage.startsWith('http') ? cs.coverImage : `${API_URL.replace(/\/$/, '')}${cs.coverImage}`) : '',
+      image: resolveImageUrl(cs.coverImage),
       href: `/resources/case-studies/${cs.slug}`,
     }))
-    : (showcase.cards || []).map(c => ({ ...c, href: '/resources/case-studies' }));
+    : (showcase.cards || []).map(c => ({
+      ...c,
+      image: resolveImageUrl(c.image),
+      href: '/resources/case-studies'
+    }));
 
   useEffect(() => {
     if (carouselCards.length === 0) return;
@@ -100,7 +105,7 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
       {/* ── HERO ── */}
       <section className="hero-section" style={{
         position: 'relative', overflow: 'hidden',
-        background: `url('${hero.bgImage ? (hero.bgImage.startsWith('http') ? hero.bgImage : `${API_URL}${hero.bgImage}`) : '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'}') center center / cover no-repeat`,
+        background: `url('${resolveImageUrl(hero.bgImage || '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png')}') center center / cover no-repeat`,
         minHeight: 'auto', padding: '80px 0 60px',
       }}>
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(26,26,26,0.1)' }} />
@@ -141,7 +146,7 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
               </div>
             </div>
             <div style={{ position: 'relative', borderRadius: '32px', overflow: 'hidden', aspectRatio: '16/10', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <Image src={intro.image || '/hubfs/Digital Twin.jpg'} alt="About Practice" fill sizes="(max-width:768px) 100vw, 50vw" style={{ objectFit: 'cover' }} unoptimized />
+              <Image src={resolveImageUrl(intro.image || '/hubfs/Digital Twin.jpg')} alt="About Practice" fill sizes="(max-width:768px) 100vw, 50vw" style={{ objectFit: 'cover' }} unoptimized />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(45deg,rgba(71,188,135,0.1),transparent)' }} />
             </div>
           </div>
@@ -166,7 +171,7 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'rgba(71,188,135,0.3)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
               >
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${cap.image ? (cap.image.startsWith('http') ? cap.image : `${API_URL.replace(/\/$/, '')}${cap.image.startsWith('/') ? cap.image : '/' + cap.image}`) : ''}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${resolveImageUrl(cap.image)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                 <div style={{ position: 'relative', zIndex: 1, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700', marginBottom: '16px', lineHeight: 1.3 }}>{cap.title}</h3>
                   <div style={{ flex: 1, marginBottom: '32px' }}>
@@ -219,7 +224,7 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
                     {[...carouselCards, ...carouselCards.slice(0, 3)].map((card, idx) => (
                       <div key={idx} style={{ flex: `0 0 ${100 / Math.min(3, carouselCards.length)}%`, minWidth: 0, padding: '0 10px', boxSizing: 'border-box' }}>
                         <Link href={card.href || '/resources/case-studies'} style={{ textDecoration: 'none', display: 'block' }}>
-                          <div style={{ borderRadius: '20px', overflow: 'hidden', position: 'relative', height: '260px', background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.08)', marginBottom: '40px', transition: 'transform 0.3s ease,box-shadow 0.3s ease' }}
+                          <div style={{ borderRadius: '20px', overflow: 'hidden', position: 'relative', aspectRatio: '1/1', background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.08)', marginBottom: '40px', transition: 'transform 0.3s ease,box-shadow 0.3s ease' }}
                             onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.5)'; }}
                             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
                           >
@@ -289,10 +294,7 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
                 <p style={{ color: '#fff', opacity: 0.9, fontSize: '18px' }}>{config.industriesSection?.subtitle || 'Your Trusted Partner in Modeling & Simulation.'}</p>
                 <div style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative', marginTop: '40px' }}>
                   <Image
-                    src={(() => {
-                      const raw = allIndustries[activeIndustryIdx ?? 0]?.image || '/hubfs/grid-2.png';
-                      return (raw.startsWith('http') || raw.startsWith('/hubfs')) ? raw : `${API_URL.replace(/\/$/, '')}${raw}`;
-                    })()}
+                    src={resolveImageUrl(allIndustries[activeIndustryIdx ?? 0]?.image || '/hubfs/grid-2.png')}
                     alt="industry" fill sizes="(max-width:768px) 100vw, 400px" style={{ objectFit: 'cover' }} unoptimized
                   />
                 </div>
@@ -349,7 +351,7 @@ export default function DynamicAdvancedModelingPage({ data, parentIndustryName, 
                   </div>
                   {modalItem.image && (
                     <div style={{ position: 'relative', borderRadius: '32px', overflow: 'hidden', aspectRatio: '21/9', border: '1px solid rgba(255,255,255,0.1)' }}>
-                      <Image src={modalItem.image} alt="Technical Feature" fill sizes="100vw" style={{ objectFit: 'cover' }} unoptimized />
+                      <Image src={resolveImageUrl(modalItem.image)} alt="Technical Feature" fill sizes="100vw" style={{ objectFit: 'cover' }} unoptimized />
                       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,transparent 60%,rgba(10,10,10,0.6) 100%)' }} />
                     </div>
                   )}

@@ -124,10 +124,7 @@ const HomePageSchema = new mongoose.Schema({
     button1Link: String,
     button2Text: String,
     button2Link: String,
-    image1: String,
-    image2: String,
-    image3: String,
-    image4: String
+    images: [String]
   },
 
   trustedPartnerSection: {
@@ -163,14 +160,13 @@ const HomePageSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Ensure we only have one Home Page document
-HomePageSchema.pre('save', async function(next) {
+HomePageSchema.pre('save', async function() {
   if (this.isNew) {
     const existing = await mongoose.models.HomePage.countDocuments();
     if (existing > 0) {
-      return next(new Error('You can only create one Home Page document!'));
+      throw new Error('You can only create one Home Page document!');
     }
   }
-  next();
 });
 
 module.exports = mongoose.models.HomePage || mongoose.model('HomePage', HomePageSchema);

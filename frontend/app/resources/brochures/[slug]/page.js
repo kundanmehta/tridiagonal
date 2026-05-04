@@ -5,71 +5,19 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
 import WebinarRegistrationForm from '@/components/WebinarRegistrationForm';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
-// Mock DB
 const mockBrochures = [
-  {
-    title: 'Advanced Computational Fluid Dynamics Services Overview',
-    service: 'Advanced Modeling & Simulation',
-    industry: 'Oil & Gas',
-    excerpt: 'Comprehensive overview of our CFD consulting solutions, encompassing multiphase flows, reacting flows, and heat transfer.',
-    img: '/hubfs/Digital Twin.jpg',
-    slug: 'cfd-services-overview',
-    date: 'Dec 15, 2023',
-    content: [
-      "Our Advanced Computational Fluid Dynamics (CFD) Services brochure offers an in-depth look at our core consulting capabilities. Tridiagonal Solutions has spent over a decade perfecting simulation workflows that directly impact the bottom line of heavy industry operations.",
-      "Inside this brochure, you will find detailed explanations of our multiphase flow modeling, reacting flow analysis, and conjugate heat transfer services. We outline our standard operating procedures, software expertise (including Ansys Fluent, OpenFOAM, and STAR-CCM+), and hardware capabilities.",
-      "Whether you are looking to optimize a single mixing tank or validate the flow assurance of a subsea production network, this document serves as the foundational guide to understanding how our engineering team integrates with yours."
-    ]
-  },
-  {
-    title: 'Digital Twin Solutions for Process Industries',
-    service: 'Digital Transformation',
-    industry: 'Chemicals & Petrochemicals',
-    excerpt: 'A deep dive into building AI-driven predictive digital twins to drastically enhance asset reliability and yield.',
-    img: '/hubfs/Flow Assurance.jpg',
-    slug: 'digital-twin-solutions',
-    date: 'Feb 10, 2024',
-    content: [
-      "The Digital Twin Solutions brochure outlines our approach to industrial digital transformation. Moving beyond basic IoT dashboards, we build rigorous physics-informed AI models that predict process anomalies before they occur.",
-      "We detail the architecture of our agentic AI frameworks which seamlessly consume live SCADA data, process it through reduced-order thermal/fluid models, and spit out optimized control parameters in real time.",
-      "Explore case highlights from the petrochemical sector where our digital twins have extended asset life by 20% and reduced unplanned downtime significantly. This brochure is essential reading for plant managers and CTOs looking to modernize heavy assets."
-    ]
-  },
-  {
-    title: 'Scale-Up & Validation Centre Capabilities',
-    service: 'Technology Validation',
-    industry: 'Pharma & Medical Devices',
-    excerpt: 'Details on our cutting-edge laboratory facilities utilized to bridge the gap between bench scale and commercial manufacturing.',
-    img: '/hubfs/image%20(10).png',
-    slug: 'scaleup-validation-capabilities',
-    date: 'Apr 02, 2024',
-    content: [
-      "Scale-up is notoriously difficult, particularly in the pharmaceutical and specialty chemicals sectors where shear sensitivity and mixing times dictate product quality.",
-      "This brochure provides a panoramic overview of our Technology Validation Centre in Pune. We highlight our array of physical testing rigs, including transparent acrylic vessels, multi-stage pipelines, and advanced diagnostic tools like Particle Image Velocimetry (PIV) and laser-based droplet sizing.",
-      "Learn how we systematically de-risk capital expenditures by coupling these empirical validation techniques with our robust computational models, ensuring that what works in the lab will work seamlessly at commercial scale."
-    ]
-  },
-  {
-    title: 'Siemens Simcenter Engineering Partnership',
-    service: 'Partner Solutions',
-    industry: 'Metals & Mining',
-    excerpt: 'Discover our integrated 1D and 3D simulation workflows powered by Siemens Simcenter to accelerate product design.',
-    img: '/hubfs/Blog CFD DEM.png',
-    slug: 'siemens-simcenter-partnership',
-    date: 'Jun 22, 2024',
-    content: [
-      "As an official engineering partner for Siemens Digital Industries Software, Tridiagonal brings unique expertise in deploying the Simcenter portfolio to solve complex multi-physics problems.",
-      "This comprehensive brochure outlines our joint workflows utilizing Simcenter Amesim for 1D system modeling, and Simcenter STAR-CCM+ for high-fidelity 3D analysis.",
-      "We showcase examples of how bridging 1D and 3D simulations accelerates the product development lifecycle by up to 40%, particularly in heavy machinery design and complex thermal management systems. Download to explore the licensing and consulting structures available through this partnership."
-    ]
-  }
+  { title: 'Advanced Computational Fluid Dynamics Services Overview', service: 'Advanced Modeling & Simulation', industry: 'Oil & Gas', excerpt: 'Comprehensive overview of our CFD consulting solutions, encompassing multiphase flows, reacting flows, and heat transfer.', coverImage: '/hubfs/Digital Twin.jpg', slug: 'cfd-services-overview', date: '2023-12-15', content: ["Our Advanced Computational Fluid Dynamics (CFD) Services brochure offers an in-depth look at our core consulting capabilities. Tridiagonal Solutions has spent over a decade perfecting simulation workflows that directly impact the bottom line of heavy industry operations.", "Inside this brochure, you will find detailed explanations of our multiphase flow modeling, reacting flow analysis, and conjugate heat transfer services. We outline our standard operating procedures, software expertise (including Ansys Fluent, OpenFOAM, and STAR-CCM+), and hardware capabilities.", "Whether you are looking to optimize a single mixing tank or validate the flow assurance of a subsea production network, this document serves as the foundational guide to understanding how our engineering team integrates with yours."] },
+  { title: 'Digital Twin Solutions for Process Industries', service: 'Digital Transformation', industry: 'Chemicals & Petrochemicals', excerpt: 'A deep dive into building AI-driven predictive digital twins to drastically enhance asset reliability and yield.', coverImage: '/hubfs/Flow Assurance.jpg', slug: 'digital-twin-solutions', date: '2024-02-10', content: ["The Digital Twin Solutions brochure outlines our approach to industrial digital transformation. Moving beyond basic IoT dashboards, we build rigorous physics-informed AI models that predict process anomalies before they occur.", "We detail the architecture of our agentic AI frameworks which seamlessly consume live SCADA data, process it through reduced-order thermal/fluid models, and spit out optimized control parameters in real time.", "Explore case highlights from the petrochemical sector where our digital twins have extended asset life by 20% and reduced unplanned downtime significantly. This brochure is essential reading for plant managers and CTOs looking to modernize heavy assets."] },
+  { title: 'Scale-Up & Validation Centre Capabilities', service: 'Technology Validation', industry: 'Pharma & Medical Devices', excerpt: 'Details on our cutting-edge laboratory facilities utilized to bridge the gap between bench scale and commercial manufacturing.', coverImage: '/hubfs/image%20(10).png', slug: 'scaleup-validation-capabilities', date: '2024-04-02', content: ["Scale-up is notoriously difficult, particularly in the pharmaceutical and specialty chemicals sectors where shear sensitivity and mixing times dictate product quality.", "This brochure provides a panoramic overview of our Technology Validation Centre in Pune. We highlight our array of physical testing rigs, including transparent acrylic vessels, multi-stage pipelines, and advanced diagnostic tools like Particle Image Velocimetry (PIV) and laser-based droplet sizing.", "Learn how we systematically de-risk capital expenditures by coupling these empirical validation techniques with our robust computational models, ensuring that what works in the lab will work seamlessly at commercial scale."] },
+  { title: 'Siemens Simcenter Engineering Partnership', service: 'Partner Solutions', industry: 'Metals & Mining', excerpt: 'Discover our integrated 1D and 3D simulation workflows powered by Siemens Simcenter to accelerate product design.', coverImage: '/hubfs/Blog CFD DEM.png', slug: 'siemens-simcenter-partnership', date: '2024-06-22', content: ["As an official engineering partner for Siemens Digital Industries Software, Tridiagonal brings unique expertise in deploying the Simcenter portfolio to solve complex multi-physics problems.", "This comprehensive brochure outlines our joint workflows utilizing Simcenter Amesim for 1D system modeling, and Simcenter STAR-CCM+ for high-fidelity 3D analysis.", "We showcase examples of how bridging 1D and 3D simulations accelerates the product development lifecycle by up to 40%, particularly in heavy machinery design and complex thermal management systems. Download to explore the licensing and consulting structures available through this partnership."] },
 ];
 
 export default function BrochureSinglePage() {
   const params = useParams();
   const { slug } = params || {};
+
   const cleanHTML = (html) => {
     if (!html) return '';
     if (typeof html !== 'string') return html;
@@ -84,29 +32,33 @@ export default function BrochureSinglePage() {
     firstName: '', lastName: '', email: '', company: '', phone: '', country: '', consent: false
   });
 
-  
-
   useEffect(() => {
     if (slug) {
-      fetch(`${API_URL}/api/resources/${slug}`)
-        .then(res => res.json())
-        .then(json => {
-          if (json.data) setBrochure(json.data);
-          else setBrochure(mockBrochures.find(b => b.slug === slug));
-          setLoading(false);
-        })
-        .catch(() => {
-          setBrochure(mockBrochures.find(b => b.slug === slug));
-          setLoading(false);
-        });
+      setLoading(true);
+      Promise.all([
+        fetch(`${API_URL}/api/resources/${slug}`).then(r => r.json()).catch(() => ({})),
+        fetch(`${API_URL}/api/resources?type=Brochure&limit=50`).then(r => r.json()).catch(() => ({}))
+      ]).then(([brRes, allRes]) => {
+        const br = brRes.data || mockBrochures.find(b => b.slug === slug);
+        setBrochure(br);
 
-      fetch(`${API_URL}/api/resources?type=Brochure&limit=4`)
-        .then(res => res.json())
-        .then(json => {
-          if (json.data) setRelatedBrochures(json.data.filter(b => b.slug !== slug).slice(0, 3));
-          else setRelatedBrochures(mockBrochures.filter(b => b.slug !== slug).slice(0, 3));
-        })
-        .catch(() => setRelatedBrochures(mockBrochures.filter(b => b.slug !== slug).slice(0, 3)));
+        if (br) {
+          let all = allRes.data || mockBrochures;
+          all = all.filter(b => b.slug !== slug);
+
+          // Score: +2 for matching industry, +1 for matching service
+          all.sort((a, b) => {
+            let scoreA = 0, scoreB = 0;
+            if (a.industry === br.industry) scoreA += 2;
+            if (a.service === br.service) scoreA += 1;
+            if (b.industry === br.industry) scoreB += 2;
+            if (b.service === br.service) scoreB += 1;
+            return scoreB - scoreA;
+          });
+          setRelatedBrochures(all.slice(0, 4));
+        }
+        setLoading(false);
+      });
     }
   }, [slug, API_URL]);
 
@@ -139,7 +91,6 @@ export default function BrochureSinglePage() {
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top right, rgba(255, 126, 0, 0.08) 0%, transparent 70%)' }} />
 
         <div className="content-wrapper-lg" style={{ position: 'relative', zIndex: 1 }}>
-          {/* Breadcrumbs */}
           <nav style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.4)', fontSize: '12px', marginBottom: '30px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '1px' }}>
             <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link>
             <span>/</span>
@@ -175,26 +126,15 @@ export default function BrochureSinglePage() {
       </section>
 
       {/* Main Content Body */}
-      <section style={{ background: '#111', padding: '40px 0 100px' }}>
+      <section style={{ background: '#111', padding: '40px 0 80px' }}>
         <div className="content-wrapper-lg">
           <div className="cs-detail-layout">
 
             {/* Left Content Area */}
             <div className="cs-detail-left">
-              <div className="featured-image-container">
-                <Image
-                  src={brochure.coverImage || '/hubfs/Digital Twin.jpg'}
-                  alt={brochure.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  priority
-                />
-              </div>
 
               <div className="blog-body-text">
-                <p className="blog-lead-text" style={{ borderLeftColor: '#FF7E00' }}>
-                  {cleanHTML(brochure.excerpt)}
-                </p>
+                <p className="blog-lead-text" style={{ borderLeftColor: '#FF7E00' }}>{cleanHTML(brochure.excerpt)}</p>
                 {Array.isArray(brochure.content) ? (
                   brochure.content.map((para, i) => (
                     <div key={i} dangerouslySetInnerHTML={{ __html: cleanHTML(para) }} style={{ marginBottom: '20px' }} />
@@ -213,12 +153,7 @@ export default function BrochureSinglePage() {
                   <>
                     {brochure.selectedFormId ? (
                       <div className="dynamic-form-container">
-                        <WebinarRegistrationForm
-                          webinarTitle={brochure.title}
-                          preloadedFormConfig={brochure.selectedFormId}
-                          customTitle="Register to Access"
-                          noStyles={true}
-                        />
+                        <WebinarRegistrationForm webinarTitle={brochure.title} preloadedFormConfig={brochure.selectedFormId} customTitle="Register to Access" noStyles={true} />
                       </div>
                     ) : (
                       <>
@@ -238,8 +173,8 @@ export default function BrochureSinglePage() {
                             <label>Corporate Email*</label>
                             <input type="email" required placeholder="email@company.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                           </div>
-                          <button type="submit" className="glow-button" style={{ width: '100%', justifyContent: 'center', marginTop: '10px', background: '#FF7E00' }}>
-                            <span className="gradient-text">Get Brochure Link</span>
+                          <button type="submit" className="glow-button" style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}>
+                            <span>Get Brochure Link</span>
                           </button>
                         </form>
                       </>
@@ -252,36 +187,19 @@ export default function BrochureSinglePage() {
                     </div>
                     <h4 style={{ color: '#fff', marginBottom: '10px' }}>Thank You!</h4>
                     <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>We've sent the brochure to your email.</p>
-                    <button className="glow-button" style={{ width: '100%', background: '#FF7E00' }} onClick={() => window.open(brochure.fileUrl || '#', '_blank')}>
-                      <span className="gradient-text">View Direct PDF</span>
+                    <button className="glow-button" style={{ width: '100%' }} onClick={() => window.open(brochure.fileUrl || '#', '_blank')}>
+                      <span>View Direct PDF</span>
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Related/Share Section */}
+              {/* Share Section */}
               <div className="sidebar-card" style={{ marginTop: '30px' }}>
-                <h3 className="sidebar-title">Related Brochures</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-                  {relatedBrochures.map((related) => (
-                    <Link href={`/resources/brochures/${related.slug}`} key={related.slug} className="related-post-item">
-                      <div className="related-thumb">
-                        <Image src={related.coverImage || '/hubfs/Digital Twin.jpg'} alt={related.title} fill style={{ objectFit: 'cover' }} />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <h4 className="related-title-text">{related.title}</h4>
-                        <span className="related-cat-text" style={{ color: '#FF7E00' }}>{related.industry}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-
-                <div style={{ marginTop: '40px', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <h3 style={{ fontSize: '15px', color: '#fff', marginBottom: '20px', fontWeight: '600' }}>Share Brochure</h3>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`} target="_blank" rel="noopener noreferrer" className="social-share-btn">LinkedIn</a>
-                    <a href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle}`} target="_blank" rel="noopener noreferrer" className="social-share-btn">Twitter</a>
-                  </div>
+                <h3 style={{ fontSize: '15px', color: '#fff', marginBottom: '20px', fontWeight: '600' }}>Share Brochure</h3>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`} target="_blank" rel="noopener noreferrer" className="social-share-btn">LinkedIn</a>
+                  <a href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle}`} target="_blank" rel="noopener noreferrer" className="social-share-btn">Twitter</a>
                 </div>
               </div>
             </div>
@@ -289,15 +207,54 @@ export default function BrochureSinglePage() {
         </div>
       </section>
 
+      {/* Related Insights Grid */}
+      {relatedBrochures.length > 0 && (
+        <section style={{ background: '#111', padding: '0 0 100px' }}>
+          <div className="content-wrapper-lg">
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '60px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+                <h2 className="gradient-text" style={{ fontSize: '32px', fontWeight: '800', margin: 0 }}>Related Insights</h2>
+                <Link href="/resources/brochures" style={{ color: 'var(--color-teal)', fontWeight: '600', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  View All
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
+                </Link>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+                {relatedBrochures.map((insight) => (
+                  <Link key={insight.slug} href={`/resources/brochures/${insight.slug}`} style={{ textDecoration: 'none' }}>
+                    <article className="cs-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#1a1a1a', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)' }}>
+                      <div style={{ position: 'relative', width: '100%', height: '350px' }}>
+                        <Image src={resolveImageUrl(insight.coverImage) || '/hubfs/Digital Twin.jpg'} alt={insight.title} fill style={{ objectFit: 'cover' }} unoptimized={true} />
+                      </div>
+                      <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ marginBottom: '12px' }}>
+                          <span style={{ color: '#FF7E00', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>{insight.industry}</span>
+                        </div>
+                        <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', lineHeight: '1.4', marginBottom: '20px' }}>{insight.title}</h3>
+                        <div style={{ fontSize: '13px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 'auto' }}>
+                          <span className="gradient-text">READ MORE</span>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ color: '#00AEEF' }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <style>{`
-        .back-link { color: var(--color-teal); text-decoration: none; font-size: 13px; display: inline-flex; alignItems: center; gap: 10px; font-weight: 700; letter-spacing: 1.5px; transition: all 0.3s ease; }
+        .back-link { color: var(--color-teal); text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 1.5px; transition: all 0.3s ease; }
         .back-link:hover { gap: 15px; opacity: 0.8; }
         .category-badge { display: inline-block; background: rgba(0, 174, 239, 0.1); color: #00AEEF; padding: 8px 18px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid rgba(0, 174, 239, 0.2); }
         .service-badge-outline { display: inline-block; background: transparent; color: rgba(255,255,255,0.6); padding: 8px 18px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid rgba(255,255,255,0.1); }
-        .blog-title { color: #fff; fontSize: clamp(30px, 4.5vw, 52px); font-weight: 800; line-height: 1.15; max-width: 950px; letter-spacing: -0.02em; }
+        .blog-title { color: #fff; font-size: clamp(30px, 4.5vw, 52px); font-weight: 800; line-height: 1.15; max-width: 950px; letter-spacing: -0.02em; }
         .cs-detail-layout { display: flex; gap: 40px; align-items: flex-start; }
-        .cs-detail-left { flex: 1; maxWidth: 850px; min-width: 0; }
+        .cs-detail-left { flex: 1; min-width: 0; }
         .cs-detail-right { flex: 0 0 470px; position: sticky; top: 100px; }
+        @media (max-width: 1024px) { .cs-detail-layout { flex-direction: column; } .cs-detail-right { flex: none; width: 100%; position: static; } }
         .featured-image-container { position: relative; width: 100%; height: 480px; border-radius: 24px; overflow: hidden; margin-bottom: 50px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
         .blog-body-text { color: rgba(255,255,255,0.7); line-height: 1.85; font-size: 1.15rem; }
         .blog-body-text p { margin-bottom: 25px; }
@@ -308,18 +265,12 @@ export default function BrochureSinglePage() {
         .form-group label { display: block; color: rgba(255,255,255,0.5); font-size: 12px; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group input { width: 100%; padding: 12px 16px; background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.3s; }
         .form-group input:focus { border-color: var(--color-teal); }
-        .glow-button { background: #00AEEF; color: #fff; border: none; padding: 15px 30px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 14px; transition: all 0.3s; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .glow-button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 174, 239, 0.4); background: #008fcc; }
+        .glow-button { background: var(--gradient-brand); color: #fff; border: none; padding: 16px 30px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 14px; transition: all 0.3s; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(0, 174, 239, 0.2); }
+        .glow-button:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(0, 174, 239, 0.4); opacity: 0.9; }
         .sidebar-card { background: rgba(255,255,255,0.02); padding: 35px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); }
-        .sidebar-title { font-size: 16px; color: #fff; margin-bottom: 25px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 700; }
-        .related-post-item { display: flex; gap: 15px; text-decoration: none; transition: transform 0.3s; }
-        .related-post-item:hover { transform: translateX(5px); }
-        .related-thumb { width: 85px; height: 60px; position: relative; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #000; }
-        .related-title-text { font-size: 13px; color: #fff; line-height: 1.4; margin: 0 0 4px 0; font-weight: 600; transition: color 0.3s; }
-        .related-post-item:hover .related-title-text { color: var(--color-teal); }
-        .related-cat-text { font-size: 10px; color: #00AEEF; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
         .social-share-btn { flex: 1; background: rgba(255,255,255,0.03); color: #fff; border: 1px solid rgba(255,255,255,0.08); padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-align: center; text-decoration: none; transition: all 0.3s; }
         .social-share-btn:hover { border-color: var(--color-teal); color: var(--color-teal); background: rgba(255,255,255,0.06); }
+        .cs-card:hover { transform: translateY(-10px); border-color: rgba(0, 174, 239, 0.3) !important; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
       `}</style>
     </main>
   );

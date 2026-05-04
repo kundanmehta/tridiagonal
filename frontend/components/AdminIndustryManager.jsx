@@ -619,7 +619,7 @@ function ShowcaseEditor({ area, data, updateField }) {
     const [csLoading, setCsLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${API_URL}/api/resources?resourceType=Case Study&limit=200`)
+        fetch(`${API_URL}/api/resources?type=Case Study&limit=200`)
             .then(r => r.json())
             .then(json => { setAllCaseStudies(json.data || []); setCsLoading(false); })
             .catch(() => setCsLoading(false));

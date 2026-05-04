@@ -133,14 +133,9 @@ const clientLogos = [
   'Shell', 'BASF', 'Siemens', 'SABIC', 'Total', 'ExxonMobil', 'Dow', 'AkzoNobel', 'Honeywell', 'ABB',
 ];
 
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
-const getFullImageUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('http') || path.startsWith('data:')) return path;
-  if (path.startsWith('/hubfs') || path.startsWith('/images')) return path;
-  return `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`;
-};
+const getFullImageUrl = (path) => resolveImageUrl(path);
 
 /* ============================================================
    PAGE COMPONENT
@@ -251,7 +246,7 @@ export default function HomePageClient({ initialData }) {
   }, [heroVideo]);
 
   return (
-    <main style={{ paddingTop: 'var(--nav-height)' }}>
+    <main>
 
       {/* ============================================================
           1. HERO
@@ -888,7 +883,7 @@ export default function HomePageClient({ initialData }) {
                     }}>
                       <div style={{
                         background: card.isCaseStudy ? '#fff' : '#1c1c1c',
-                        borderRadius: '20px', overflow: 'hidden', height: 'auto', minHeight: '300px',
+                        borderRadius: '20px', overflow: 'hidden', aspectRatio: '1/1',
                         position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', minWidth: 0
                       }}>
                         {card.isCaseStudy ? (
@@ -1118,10 +1113,10 @@ export default function HomePageClient({ initialData }) {
                     {[...heroResSlides, heroResSlides[0]].map((slide, idx) => (
                       <div key={idx} style={{ width: `${100 / (heroResSlides.length + 1)}%`, display: 'flex', flexDirection: 'column', height: '100%' }}>
                         {/* Top Image Box */}
-                        <div className="resource-card-image" style={{ position: 'relative', background: '#ccc' }}>
+                        <div className="resource-card-image" style={{ position: 'relative', background: '#111' }}>
                           {slide.image && (typeof slide.image === 'string' ? slide.image.trim() !== '' : true) ? (
                             <Image
-                              src={slide.image}
+                              src={resolveImageUrl(slide.image)}
                               alt={slide.title || 'Resource'}
                               fill
                               style={{ objectFit: 'cover' }}
@@ -1192,98 +1187,119 @@ export default function HomePageClient({ initialData }) {
       {/* ============================================================
           9.5. CULTURE & PEOPLE — Masonry Grid
           ============================================================ */}
-      <section aria-label={cultureData?.title || "Explore Our Culture and People"} style={{ background: '#1a1a1a', padding: '40px 0 80px 0' }}>
+      {/* ============================================================
+          9. CULTURE & PEOPLE SECTION (Redesigned)
+          ============================================================ */}
+      <section aria-labelledby="culture-heading" style={{ background: '#0f0f0f', padding: '100px 0', overflow: 'hidden' }}>
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes marquee-vertical {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+          }
+          .culture-marquee-container {
+            height: 650px;
+            overflow: hidden;
+            position: relative;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+          }
+          .culture-marquee-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: marquee-vertical 40s linear infinite;
+          }
+          .culture-marquee-content:hover {
+            animation-play-state: paused;
+          }
+          .culture-image-item {
+            width: 100%;
+            height: 420px;
+            object-fit: cover;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.4s ease;
+          }
+          .culture-image-item:hover {
+            transform: scale(1.02);
+          }
+          
+          @media (max-width: 1000px) {
+            .culture-split-grid {
+              grid-template-columns: 1fr !important;
+              gap: 50px !important;
+            }
+            .culture-marquee-container {
+              height: 450px;
+            }
+            .culture-image-item {
+              height: 300px;
+            }
+          }
+        `}} />
         <div className="content-wrapper-lg">
-          {/* Header */}
-          <div style={{ marginBottom: '48px' }}>
-            <div className="dvr-line" style={{ marginBottom: '16px' }} />
-            <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.2, marginBottom: '16px' }}>
-              {cultureData?.title || "Explore Our Culture and People"}
-            </h2>
-            <p className="section-desc" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', lineHeight: 1.7, maxWidth: '620px' }}>
-              {cultureData?.description || "Are you seeking an exciting role that will challenge and inspire you? Work with diverse and driven people on global projects that are truly shaping the process industry. Seize the opportunity to learn, grow, and realize your ambitions."}
-            </p>
-          </div>
+          <div className="culture-split-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+            
+            {/* Left Column: Text & CTA Card */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+              <div>
+                <div style={{ background: 'var(--gradient-brand)', width: '60px', height: '4px', marginBottom: '24px', borderRadius: '2px' }} />
+                <h2 id="culture-heading" className="section-title" style={{ color: '#47bc87', fontSize: ' clamp(32px, 5vw, 54px)', marginBottom: '24px', lineHeight: 1.1 }}>
+                  {cultureData?.title || "Explore Our Culture and People"}
+                </h2>
+                <p className="section-desc" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '520px', lineHeight: 1.6 }}>
+                  {cultureData?.description || "Are you seeking an exciting role that will challenge and inspire you? We are looking for talented individuals who share our vision and values."}
+                </p>
+              </div>
 
-          {/* Masonry Grid — exactly matching the reference layout */}
-          <div className="culture-masonry-grid">
-            {/* LEFT COLUMN */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Box: Looking to Work with us? */}
-              <div style={{
-                background: '#242424',
-                borderRadius: '16px',
-                padding: '40px 36px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                minHeight: '200px',
+              <div style={{ 
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)', 
+                border: '1px solid rgba(255,255,255,0.1)',
+                padding: '48px 40px',
+                borderRadius: '32px',
+                maxWidth: '520px',
+                backdropFilter: 'blur(10px)'
               }}>
-                <h3 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', marginBottom: '28px' }}>
+                <h3 style={{ color: '#fff', fontSize: '26px', fontWeight: '700', marginBottom: '28px' }}>
                   {cultureData?.cardHeading || "Looking to Work with us?"}
                 </h3>
-                <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-                  <Link href={cultureData?.button1Link || "/careers"} style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '8px',
-                    background: 'var(--gradient-brand)', color: '#000',
-                    fontWeight: '700', textTransform: 'uppercase',
-                    padding: '12px 24px', borderRadius: '40px',
-                    fontSize: '14px', letterSpacing: '0.04em', textDecoration: 'none',
-                  }}>
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <Link href={cultureData?.button1Link || "/careers"} className="btn-primary" style={{ background: 'var(--gradient-brand)', color: '#000', fontWeight: '700', padding: '14px 28px', textDecoration: 'none' }}>
                     {cultureData?.button1Text || "VIEW OPENING"} <ArrowRight size={14} color="#000" />
                   </Link>
-                  <Link href={cultureData?.button2Link || "/about-us"} style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '8px',
-                    background: 'transparent', color: '#fff',
-                    fontWeight: '600', textTransform: 'uppercase',
-                    padding: '11px 24px', borderRadius: '40px',
-                    fontSize: '14px', letterSpacing: '0.04em', textDecoration: 'none',
-                    border: '1.5px solid rgba(255,255,255,0.4)',
-                  }}>
+                  <Link href={cultureData?.button2Link || "/about-us"} className="btn-outline-white" style={{ padding: '13px 28px', textDecoration: 'none' }}>
                     {cultureData?.button2Text || "ABOUT US"} <ArrowRight size={14} color="#fff" />
                   </Link>
                 </div>
               </div>
+            </div>
 
-              {/* Image 1 — team group photo (left) */}
-              <div style={{ borderRadius: '16px', overflow: 'hidden', flex: 1 }}>
-                <img
-                  src={cultureData?.image1 || "/hubfs/grid-1.jpg"}
-                  alt="Tridiagonal team"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', minHeight: '280px' }}
-                />
-              </div>
-
-              {/* Image 4 — office/workspace */}
-              <div style={{ borderRadius: '16px', overflow: 'hidden' }}>
-                <img
-                  src={cultureData?.image4 || "/hubfs/grid-4.webp"}
-                  alt="Tridiagonal office"
-                  style={{ width: '100%', height: '260px', objectFit: 'cover', display: 'block' }}
-                />
+            {/* Right Column: Infinite Marquee Carousel */}
+            <div className="culture-marquee-container">
+              <div className="culture-marquee-content">
+                {/* 
+                   Vertical Infinite Marquee Logic:
+                   We repeat the list 2x to ensure seamless scrolling.
+                */}
+                {[1, 2].map((loop) => (
+                  <div key={loop} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {cultureData?.images?.length > 0 ? (
+                      cultureData.images.map((img, idx) => (
+                        <img key={`${idx}-${loop}`} src={getFullImageUrl(img)} alt={`Culture ${idx}`} className="culture-image-item" />
+                      ))
+                    ) : (
+                      <>
+                        <img src="/hubfs/grid-1.jpg" alt="Culture 1" className="culture-image-item" />
+                        <img src="/hubfs/grid-2.webp" alt="Culture 2" className="culture-image-item" />
+                        <img src="/hubfs/grid-3.webp" alt="Culture 3" className="culture-image-item" />
+                        <img src="/hubfs/grid-4.webp" alt="Culture 4" className="culture-image-item" />
+                      </>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* RIGHT COLUMN */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Image 2 — tall team photo (right top, taller) */}
-              <div style={{ borderRadius: '16px', overflow: 'hidden' }}>
-                <img
-                  src={cultureData?.image2 || "/hubfs/grid-2.webp"}
-                  alt="Tridiagonal leadership team"
-                  style={{ width: '100%', height: '380px', objectFit: 'cover', display: 'block' }}
-                />
-              </div>
-
-              {/* Image 3 — group learning/workshop */}
-              <div style={{ borderRadius: '16px', overflow: 'hidden', flex: 1 }}>
-                <img
-                  src={cultureData?.image3 || "/hubfs/grid-3.webp"}
-                  alt="Tridiagonal team activity"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', minHeight: '280px' }}
-                />
-              </div>
-            </div>
           </div>
         </div>
       </section>

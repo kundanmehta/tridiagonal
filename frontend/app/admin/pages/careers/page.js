@@ -7,6 +7,7 @@ const EMPTY_JOB = {
   id: '', title: '', department: '', location: 'Pune, India', type: 'Full-time',
   date: '', experience: '', education: '', overview: '',
   responsibilities: [''], requirements: [''], benefits: [''],
+  applyExternalLink: '',
   isActive: true,
 };
 
@@ -63,7 +64,10 @@ export default function AdminCareersEditor() {
         opportunitiesSection: {
           heading: d.opportunitiesSection?.heading || 'Check out our latest opportunities',
         },
-        selectedFormId: d.selectedFormId?._id || d.selectedFormId || '',
+        applicationSection: {
+          heading: d.applicationSection?.heading || 'Apply for this position',
+          description: d.applicationSection?.description || 'Interested in this role? Click the button below to submit your application through our official careers portal. We look forward to hearing from you!',
+        },
       });
       setJobs(jobsJson.data || []);
       setForms(formsJson.data || []);
@@ -77,13 +81,28 @@ export default function AdminCareersEditor() {
     setSaving(true);
     setMessage('');
     try {
+      // 1. Save Page Data
       const res = await fetch(`${API_URL}/api/careers/page`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(pageData),
       });
-      setMessage(res.ok ? '✅ Page settings saved!' : '❌ Error saving settings.');
-    } catch { setMessage('❌ Network error.'); }
+
+      // 2. Save all jobs concurrently
+      if (jobs && jobs.length > 0) {
+        await Promise.all(
+          jobs.map(job => 
+            fetch(`${API_URL}/api/careers/jobs/${job.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+              body: JSON.stringify(job),
+            })
+          )
+        );
+      }
+
+      setMessage(res.ok ? '✅ All changes saved successfully!' : '❌ Error saving settings.');
+    } catch { setMessage('❌ Network error while saving.'); }
     setSaving(false);
   };
 
@@ -283,6 +302,11 @@ export default function AdminCareersEditor() {
             <input className="admin-input" value={job.education} onChange={e => updateFn('education', e.target.value)} placeholder="Master's in Engineering" />
           </div>
           <div className="admin-col-full">
+            <label className="admin-label">External Application Link (Optional)</label>
+            <input className="admin-input" value={job.applyExternalLink || ''} onChange={e => updateFn('applyExternalLink', e.target.value)} placeholder="https://external-careers-portal.com/job/123" />
+            <p style={{ fontSize: '12px', color: '#64748b', marginTop: '6px' }}>If provided, the application form on the job detail page will be replaced with a link to this URL.</p>
+          </div>
+          <div className="admin-col-full">
             <label className="admin-label">About the Role (Overview)</label>
             <textarea className="admin-textarea" rows={4} value={job.overview} onChange={e => updateFn('overview', e.target.value)} placeholder="Describe the role..." />
           </div>
@@ -395,25 +419,26 @@ export default function AdminCareersEditor() {
           </div>
         </section>
 
-        {/* 4. FORM SELECTOR */}
+
+        {/* 4. APPLICATION SECTION SETTINGS */}
         <section className="admin-section">
-          <div className="admin-section-header"><span className="admin-badge">4</span><h2 style={{ margin: 0, fontWeight: 700 }}>Application Form (Job Detail Page)</h2></div>
+          <div className="admin-section-header"><span className="admin-badge">4</span><h2 style={{ margin: 0, fontWeight: 700 }}>Application CTA Settings</h2></div>
           <div className="admin-form-body">
-            <label className="admin-label">Select Form to Display on Each Job Detail Page</label>
-            <select className="admin-select" value={pageData.selectedFormId || ''} style={{ maxWidth: '500px' }} onChange={e => setPageData(p => ({ ...p, selectedFormId: e.target.value }))}>
-              <option value="">-- No Form Selected (form hidden) --</option>
-              {forms.map(f => <option key={f._id} value={f._id}>{f.name} ({f.fields?.length || 0} fields)</option>)}
-            </select>
-            {forms.length === 0 && (
-              <p style={{ color: '#f59e0b', marginTop: '0.75rem', fontSize: '14px' }}>
-                ⚠ No forms yet. <a href="/admin/forms" style={{ color: '#00AEEF' }}>Create one in the Form Builder</a> first.
-              </p>
-            )}
-            {pageData.selectedFormId && <p style={{ color: '#16a34a', marginTop: '0.5rem', fontSize: '13px' }}>✓ Form selected — it will appear on every job detail page.</p>}
+            <div className="admin-grid">
+              <div className="admin-col-full">
+                <label className="admin-label">Section Heading</label>
+                <input className="admin-input" value={pageData.applicationSection.heading} onChange={e => setPageData(p => ({ ...p, applicationSection: { ...p.applicationSection, heading: e.target.value } }))} placeholder="Apply for this position" />
+              </div>
+              <div className="admin-col-full">
+                <label className="admin-label">Section Description</label>
+                <textarea className="admin-textarea" rows={3} value={pageData.applicationSection.description} onChange={e => setPageData(p => ({ ...p, applicationSection: { ...p.applicationSection, description: e.target.value } }))} placeholder="Describe the application process..." />
+              </div>
+            </div>
+            <p style={{ marginTop: '1rem', fontSize: '13px', color: '#64748b' }}>
+              ℹ This text will appear on every job detail page. The "Apply Now" button will link to the external URL set for each specific job.
+            </p>
           </div>
         </section>
-
-        {/* STICKY SAVE BAR */}
         <div className="admin-bottom-bar">
           <button type="submit" disabled={saving} className="admin-btn-save">
             {saving ? (
@@ -430,7 +455,6 @@ export default function AdminCareersEditor() {
         <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       </form>
 
-      {/* 5. JOB POSTINGS */}
       <section className="admin-section">
         <div className="admin-section-header">
           <span className="admin-badge">5</span>

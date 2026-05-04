@@ -77,18 +77,20 @@ export default function AdminHomePageEditor() {
           manualSlides: fetchedData.resourcesSection?.manualSlides || [],
           slides: fetchedData.resourcesSection?.slides || []
         },
-        cultureSection: fetchedData.cultureSection || {
-          title: "Explore Our Culture and People",
-          description: "Are you seeking an exciting role that will challenge and inspire you?...",
-          cardHeading: "Looking to Work with us?",
-          button1Text: "VIEW OPENING",
-          button1Link: "/careers",
-          button2Text: "ABOUT US",
-          button2Link: "/about-us",
-          image1: "",
-          image2: "",
-          image3: "",
-          image4: ""
+        cultureSection: {
+          title: fetchedData.cultureSection?.title || "Explore Our Culture and People",
+          description: fetchedData.cultureSection?.description || "Are you seeking an exciting role that will challenge and inspire you? We are looking for talented individuals who share our vision and values.",
+          cardHeading: fetchedData.cultureSection?.cardHeading || "Looking to Work with us?",
+          button1Text: fetchedData.cultureSection?.button1Text || "VIEW OPENING",
+          button1Link: fetchedData.cultureSection?.button1Link || "/careers",
+          button2Text: fetchedData.cultureSection?.button2Text || "ABOUT US",
+          button2Link: fetchedData.cultureSection?.button2Link || "/about-us",
+          images: fetchedData.cultureSection?.images || [
+            fetchedData.cultureSection?.image1,
+            fetchedData.cultureSection?.image2,
+            fetchedData.cultureSection?.image3,
+            fetchedData.cultureSection?.image4
+          ].filter(img => img && img.trim() !== "")
         },
         trustedPartnerSection: fetchedData.trustedPartnerSection || {
           title: "Looking for Trusted Partner for executing your programs?",
@@ -1402,37 +1404,53 @@ export default function AdminHomePageEditor() {
               </div>
             </div>
 
-            <h3 style={{ fontSize: '1rem', color: '#475569', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.4rem' }}>Masonry Image Grid</h3>
-            <div className="admin-grid" style={{ gap: '20px' }}>
-              {[1, 2, 3, 4].map(num => (
-                <div key={num} style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                  <label className="admin-label">Image {num}</label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {data?.cultureSection?.[`image${num}`] ? (
-                      <img src={data.cultureSection[`image${num}`]} alt="" style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '4px' }} />
-                    ) : (
-                      <div style={{ width: '100%', height: '100px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.8rem', borderRadius: '4px' }}>No Image</div>
-                    )}
-                    <input type="file" onChangeCapture={async (e) => {
-                      const file = e.target.files[0];
-                      if (!file) return;
-                      const formData = new FormData();
-                      formData.append('file', file);
-                      try {
-                        const res = await fetch(`${API_URL}/api/upload`, {
-                          method: 'POST',
-                          headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
-                          body: formData
-                        });
-                        const json = await res.json();
-                        if (json.url) {
-                          setData(p => ({...p, cultureSection: {...p.cultureSection, [`image${num}`]: json.url}}));
-                        }
-                      } catch (err) { console.error('Upload error', err); }
-                    }} className="admin-input-file" />
+            <h3 style={{ fontSize: '1rem', color: '#475569', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.4rem' }}>Carousel Images</h3>
+            <div className="admin-array-list">
+              {(data?.cultureSection?.images || []).map((img, idx) => (
+                <div key={idx} className="admin-array-card" style={{ background: '#fff' }}>
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Image #{idx + 1}</h3>
+                    <button type="button" onClick={() => {
+                      const newImgs = [...(data.cultureSection.images || [])];
+                      newImgs.splice(idx, 1);
+                      setData(p => ({...p, cultureSection: {...p.cultureSection, images: newImgs}}));
+                    }} className="admin-btn-remove">Remove Image</button>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    {img && <img src={img} alt="" style={{ height: '80px', width: '80px', objectFit: 'cover', borderRadius: '4px' }} />}
+                    <div style={{ flex: 1 }}>
+                      <input type="text" value={img || ''} onChange={e => {
+                        const newImgs = [...(data.cultureSection.images || [])];
+                        newImgs[idx] = e.target.value;
+                        setData(p => ({...p, cultureSection: {...p.cultureSection, images: newImgs}}));
+                      }} className="admin-input" placeholder="Image URL" style={{ marginBottom: '8px' }} />
+                      <input type="file" accept="image/*" onChangeCapture={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        try {
+                          const res = await fetch(`${API_URL}/api/upload`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
+                            body: formData
+                          });
+                          const json = await res.json();
+                          if (json.url) {
+                            const newImgs = [...(data.cultureSection.images || [])];
+                            newImgs[idx] = json.url;
+                            setData(p => ({...p, cultureSection: {...p.cultureSection, images: newImgs}}));
+                          }
+                        } catch (err) { console.error('Upload error', err); }
+                      }} className="admin-input-file" />
+                    </div>
                   </div>
                 </div>
               ))}
+              <button type="button" className="admin-btn-add" onClick={() => {
+                const newImgs = [...(data?.cultureSection?.images || []), ''];
+                setData(p => ({...p, cultureSection: {...p.cultureSection, images: newImgs}}));
+              }}>+ Add Carousel Image</button>
             </div>
           </div>
         </div>

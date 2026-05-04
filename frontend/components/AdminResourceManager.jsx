@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import {
     FileText, Plus, Trash2, Calendar as CalendarIcon,
     ExternalLink, FileDown, Search, Filter,
-    Image as ImageIcon, User, Briefcase, Factory
+    Image as ImageIcon, User, Briefcase, Factory,
+    ArrowUp, ArrowDown, Type, AlignLeft,
+    Image as ImageLucide
 } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 export default function AdminResourceManager({ resType }) {
     const [items, setItems] = useState([]);
@@ -70,8 +72,10 @@ export default function AdminResourceManager({ resType }) {
         e.preventDefault();
         setSaving(true);
         setMessage('');
-        const method = editing._id ? 'PUT' : 'POST';
-        const url = editing._id ? `${API_URL}/api/resources/${editing.slug}` : `${API_URL}/api/resources`;
+        const isNew = !editing._id;
+        const method = isNew ? 'POST' : 'PUT';
+        const url = isNew ? `${API_URL}/api/resources` : `${API_URL}/api/resources/${editing._id || editing.slug}`;
+        console.log(`[AdminResourceManager] handleSave - method: ${method}, url: ${url}, isNew: ${isNew}`);
 
         try {
             const res = await fetch(url, {
@@ -79,22 +83,23 @@ export default function AdminResourceManager({ resType }) {
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ ...editing, resourceType: resType })
             });
+            const json = await res.json();
             if (res.ok) {
                 setMessage('✅ Resource saved successfully!');
-                setEditing(null);
                 fetchItems();
+                // Stay on the edit page — update editing state with the saved data
+                if (json.data) setEditing(json.data);
             } else {
-                const err = await res.json();
-                setMessage(`❌ Error: ${err.error || 'Failed to save'}`);
+                setMessage(`❌ Error: ${json.error || 'Failed to save'}`);
             }
         } catch { setMessage('❌ Network error'); }
         setSaving(false);
     };
 
-    const handleDelete = async (slug) => {
+    const handleDelete = async (slug, id) => {
         if (!confirm('Permanently delete this resource?')) return;
         try {
-            const res = await fetch(`${API_URL}/api/resources/${slug}`, {
+            const res = await fetch(`${API_URL}/api/resources/${id || slug}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -118,6 +123,44 @@ export default function AdminResourceManager({ resType }) {
         } catch { alert('Upload failed'); }
     };
 
+    // Block management helpers
+    const addBlock = (type) => {
+        const newBlock = { blockType: type, text: '', subValue: '', image: '', link: '' };
+        setEditing(p => ({
+            ...p,
+            contentBlocks: [...(p.contentBlocks || []), newBlock]
+        }));
+    };
+
+    const removeBlock = (index) => {
+        setEditing(p => ({
+            ...p,
+            contentBlocks: p.contentBlocks.filter((_, i) => i !== index)
+        }));
+    };
+
+    const updateBlock = (index, updates) => {
+        setEditing(p => {
+            const blocks = [...(p.contentBlocks || [])];
+            blocks[index] = { ...blocks[index], ...updates };
+            return { ...p, contentBlocks: blocks };
+        });
+    };
+
+    const moveBlock = (index, direction) => {
+        setEditing(p => {
+            const blocks = [...(p.contentBlocks || [])];
+            if (direction === 'up' && index > 0) {
+                [blocks[index], blocks[index - 1]] = [blocks[index - 1], blocks[index]];
+            } else if (direction === 'down' && index < blocks.length - 1) {
+                [blocks[index], blocks[index + 1]] = [blocks[index + 1], blocks[index]];
+            }
+            return { ...p, contentBlocks: blocks };
+        });
+    };
+
+    const slugify = (text) => text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+
     if (loading) return <div style={{ padding: '2rem', color: '#64748b' }}>Loading {resType}s...</div>;
 
     if (editing) {
@@ -128,7 +171,11 @@ export default function AdminResourceManager({ resType }) {
                     <h1 style={{ fontSize: '28px', fontWeight: 800 }}>{editing._id ? 'Edit' : 'Create'} {resType}</h1>
                 </div>
 
-                {message && <div className="alert-success">{message}</div>}
+                {message && (
+                    <div className={message.startsWith('❌') ? 'alert-error' : 'alert-success'}>
+                        {message}
+                    </div>
+                )}
 
                 <form onSubmit={handleSave}>
                     <div className="admin-card">
@@ -136,11 +183,33 @@ export default function AdminResourceManager({ resType }) {
                         <div className="admin-grid-2">
                             <div className="full-width">
                                 <label className="admin-label">Title</label>
-                                <input className="admin-input" value={editing.title} onChange={e => setEditing(p => ({ ...p, title: e.target.value }))} required />
+                                <input 
+                                    className="admin-input" 
+                                    value={editing.title} 
+                                    onChange={e => {
+                                        const newTitle = e.target.value;
+                                        setEditing(p => {
+                                            const updates = { ...p, title: newTitle };
+                                            // Auto-generate slug if it's currently empty or looks like it was auto-generated from previous title
+                                            const currentSlug = p.slug || '';
+                                            const oldAutoSlug = p.title ? slugify(p.title) : '';
+                                            if (!currentSlug || currentSlug === oldAutoSlug) {
+                                                updates.slug = slugify(newTitle);
+                                            }
+                                            return updates;
+                                        });
+                                    }} 
+                                    required 
+                                />
                             </div>
                             <div>
                                 <label className="admin-label">Slug</label>
-                                <input className="admin-input" value={editing.slug} onChange={e => setEditing(p => ({ ...p, slug: e.target.value }))} placeholder="auto-generated-if-empty" />
+                                <input 
+                                    className="admin-input" 
+                                    value={editing.slug} 
+                                    onChange={e => setEditing(p => ({ ...p, slug: e.target.value }))} 
+                                    placeholder="auto-generated" 
+                                />
                             </div>
                             <div>
                                 <label className="admin-label">Date</label>
@@ -200,12 +269,17 @@ export default function AdminResourceManager({ resType }) {
                         <div className="admin-grid-2">
                             <div className="full-width">
                                 <label className="admin-label">Featured Image URL</label>
-                                <div style={{ display: 'flex', gap: '10px' }}>
+                                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                                     <input className="admin-input" value={editing.coverImage || ''} onChange={e => setEditing(p => ({ ...p, coverImage: e.target.value }))} />
-                                    <label className="btn-secondary" style={{ cursor: 'pointer' }}>
+                                    <label className="btn-secondary" style={{ cursor: 'pointer', flexShrink: 0 }}>
                                         Upload
                                         <input type="file" hidden onChange={e => handleImageUpload(e, (url) => setEditing(p => ({ ...p, coverImage: url })))} />
                                     </label>
+                                    {editing.coverImage && (
+                                        <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0', flexShrink: 0 }}>
+                                            <img src={resolveImageUrl(editing.coverImage)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             {resType === 'Brochure' && (
@@ -243,18 +317,147 @@ export default function AdminResourceManager({ resType }) {
                         </div>
                     </div>
 
-                    {(resType === 'Blog' || resType === 'Case Study') && (
+                    {resType === 'Blog' ? (
                         <div className="admin-card">
-                            <h2 className="admin-card-title">Content Area</h2>
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <label className="admin-label">Short Excerpt (Summary)</label>
-                                <textarea className="admin-textarea" rows={3} value={editing.excerpt} onChange={e => setEditing(p => ({ ...p, excerpt: e.target.value }))} />
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <h2 className="admin-card-title" style={{ margin: 0 }}>Structured Content Blocks</h2>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button type="button" className="btn-secondary" onClick={() => addBlock('heading')}><Type size={16} /> Heading</button>
+                                    <button type="button" className="btn-secondary" onClick={() => addBlock('text')}><AlignLeft size={16} /> Text</button>
+                                    <button type="button" className="btn-secondary" onClick={() => addBlock('image')}><ImageLucide size={16} /> Image</button>
+                                </div>
                             </div>
-                            <RichTextEditor
-                                label="Full Content (HTML)"
-                                value={editing.content || ''}
-                                onChange={v => setEditing(p => ({ ...p, content: v }))}
-                            />
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                {(editing.contentBlocks || []).map((block, idx) => {
+                                    const bType = block.blockType || block.type; // Fallback for legacy
+                                    return (
+                                        <div key={idx} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', position: 'relative' }}>
+                                            {/* Block Controls */}
+                                            <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '5px' }}>
+                                                <button type="button" className="icon-btn" onClick={() => moveBlock(idx, 'up')} disabled={idx === 0} title="Move Up"><ArrowUp size={14} /></button>
+                                                <button type="button" className="icon-btn" onClick={() => moveBlock(idx, 'down')} disabled={idx === editing.contentBlocks.length - 1} title="Move Down"><ArrowDown size={14} /></button>
+                                                <button type="button" className="icon-btn delete" onClick={() => removeBlock(idx)} title="Remove Block"><Trash2 size={14} /></button>
+                                            </div>
+
+                                            <div style={{ paddingRight: '100px' }}>
+                                                <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: '#00AEEF', marginBottom: '10px', display: 'block' }}>{bType} Block</span>
+                                                
+                                                {bType === 'heading' && (
+                                                    <input 
+                                                        className="admin-input" 
+                                                        style={{ fontWeight: 700, fontSize: '18px' }} 
+                                                        placeholder="Enter section heading (e.g. Overview)..." 
+                                                        value={block.text} 
+                                                        onChange={e => updateBlock(idx, { text: e.target.value })} 
+                                                    />
+                                                )}
+
+                                                {bType === 'text' && (
+                                                    <RichTextEditor 
+                                                        value={block.text} 
+                                                        onChange={v => updateBlock(idx, { text: v })} 
+                                                    />
+                                                )}
+
+                                                {bType === 'image' && (
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '20px' }}>
+                                                        <label style={{ width: '120px', height: '120px', background: '#e2e8f0', border: '2px dashed #cbd5e1', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden' }}>
+                                                            {block.image ? (
+                                                                <img src={resolveImageUrl(block.image)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                            ) : (
+                                                                <Plus size={24} color="#94a3b8" />
+                                                            )}
+                                                            <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, (url) => updateBlock(idx, { image: url }))} />
+                                                        </label>
+                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                            <div>
+                                                                <label className="admin-label">Image Link (Optional)</label>
+                                                                <input className="admin-input" placeholder="https://..." value={block.link} onChange={e => updateBlock(idx, { link: e.target.value })} />
+                                                            </div>
+                                                            <div>
+                                                                <label className="admin-label">Caption / Alt Text</label>
+                                                                <input className="admin-input" placeholder="Enter caption..." value={block.subValue} onChange={e => updateBlock(idx, { subValue: e.target.value })} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                {(editing.contentBlocks || []).length === 0 && (
+                                    <div style={{ textAlign: 'center', padding: '40px', background: '#f8fafc', border: '2px dashed #e2e8f0', borderRadius: '12px', color: '#64748b' }}>
+                                        No content blocks yet. Use the buttons above to start building your blog with headings, text, and images.
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        (resType === 'Blog' || resType === 'Case Study') && (
+                            <div className="admin-card">
+                                <h2 className="admin-card-title">Content Area</h2>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label className="admin-label">Short Excerpt (Summary)</label>
+                                    <textarea className="admin-textarea" rows={3} value={editing.excerpt} onChange={e => setEditing(p => ({ ...p, excerpt: e.target.value }))} />
+                                </div>
+                                <RichTextEditor
+                                    label="Full Content (HTML)"
+                                    value={editing.content || ''}
+                                    onChange={v => setEditing(p => ({ ...p, content: v }))}
+                                />
+                            </div>
+                        )
+                    )}
+
+                    {resType === 'Blog' && (
+                        <div className="admin-card">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <h2 className="admin-card-title" style={{ margin: 0 }}>Technical Contributors</h2>
+                                <button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={() => setEditing(p => ({
+                                        ...p,
+                                        contributors: [...(p.contributors || []), { name: '', role: '', organization: 'Tridiagonal Solutions' }]
+                                    }))}
+                                >
+                                    + Add Contributor
+                                </button>
+                            </div>
+                            {(editing.contributors || []).length === 0 && (
+                                <p style={{ color: '#94a3b8', fontSize: '14px' }}>No contributors added yet. Click "Add Contributor" above.</p>
+                            )}
+                            {(editing.contributors || []).map((c, idx) => (
+                                <div key={idx} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr 1fr auto', gap: '12px', alignItems: 'end', marginBottom: '12px', padding: '16px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                                    {/* Avatar Upload */}
+                                    <div>
+                                        <label className="admin-label">Photo</label>
+                                        <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: c.image ? 'transparent' : '#e2e8f0', border: '2px dashed #cbd5e1', cursor: 'pointer', overflow: 'hidden' }}>
+                                            {c.image ? (
+                                                <img src={resolveImageUrl(c.image)} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                            ) : (
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                                            )}
+                                            <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(e, (url) => { const u = [...(editing.contributors || [])]; u[idx] = { ...u[idx], image: url }; setEditing(p => ({ ...p, contributors: u })); })} />
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label className="admin-label">Full Name</label>
+                                        <input className="admin-input" placeholder="Mr. John Smith" value={c.name} onChange={e => { const u = [...(editing.contributors || [])]; u[idx] = { ...u[idx], name: e.target.value }; setEditing(p => ({ ...p, contributors: u })); }} />
+                                    </div>
+                                    <div>
+                                        <label className="admin-label">Role / Title</label>
+                                        <input className="admin-input" placeholder="Project Manager - CFD" value={c.role} onChange={e => { const u = [...(editing.contributors || [])]; u[idx] = { ...u[idx], role: e.target.value }; setEditing(p => ({ ...p, contributors: u })); }} />
+                                    </div>
+                                    <div>
+                                        <label className="admin-label">Organization</label>
+                                        <input className="admin-input" placeholder="Tridiagonal Solutions" value={c.organization} onChange={e => { const u = [...(editing.contributors || [])]; u[idx] = { ...u[idx], organization: e.target.value }; setEditing(p => ({ ...p, contributors: u })); }} />
+                                    </div>
+                                    <button type="button" onClick={() => { const u = (editing.contributors || []).filter((_, i) => i !== idx); setEditing(p => ({ ...p, contributors: u })); }} style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#ef4444', padding: '10px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700 }}>✕</button>
+                                </div>
+                            ))}
                         </div>
                     )}
 
@@ -275,8 +478,13 @@ export default function AdminResourceManager({ resType }) {
           .btn-primary { background: #00AEEF; color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; }
           .btn-secondary { padding: 10px 18px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
           .btn-secondary:hover { border-color: #00AEEF; color: #00AEEF; }
-          .alert-success { padding: 1rem; background: #f0fdf4; color: #166534; borderRadius: 10px; margin-bottom: 2rem; border: 1px solid #bbf7d0; }
+          .alert-success { padding: 1rem; background: #f0fdf4; color: #166534; border-radius: 10px; margin-bottom: 2rem; border: 1px solid #bbf7d0; font-weight: 600; }
+          .alert-error { padding: 1rem; background: #fef2f2; color: #991b1b; border-radius: 10px; margin-bottom: 2rem; border: 1px solid #fecaca; font-weight: 600; }
           .admin-bottom-bar { position: fixed; bottom: 0; right: 0; left: 260px; background: #fff; padding: 1rem 3rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; z-index: 1000; }
+          .icon-btn { background: #fff; border: 1px solid #e2e8f0; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+          .icon-btn:hover { border-color: #00AEEF; color: #00AEEF; }
+          .icon-btn.delete:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+          .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
         `}</style>
             </div>
         );
@@ -303,7 +511,7 @@ export default function AdminResourceManager({ resType }) {
                             <div style={{ display: 'flex', gap: '1rem' }}>
                                 <div style={{ width: '80px', height: '80px', background: '#f1f5f9', borderRadius: '8px', overflow: 'hidden' }}>
                                     {item.coverImage ? (
-                                        <img src={item.coverImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <img src={resolveImageUrl(item.coverImage)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     ) : (
                                         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}><ImageIcon size={24} /></div>
                                     )}
@@ -320,7 +528,7 @@ export default function AdminResourceManager({ resType }) {
                                 <button className="btn-secondary" onClick={() => { setMessage(''); setEditing(item); }}>Edit</button>
                                 {item.externalUrl && <a href={item.externalUrl} target="_blank" className="btn-secondary"><ExternalLink size={14} /> View Link</a>}
                                 {item.fileUrl && <a href={item.fileUrl} target="_blank" className="btn-secondary"><FileDown size={14} /> PDF</a>}
-                                <button className="btn-secondary" style={{ color: '#ef4444', marginLeft: 'auto' }} onClick={() => handleDelete(item.slug)}><Trash2 size={14} /></button>
+                                <button className="btn-secondary" style={{ color: '#ef4444', marginLeft: 'auto' }} onClick={() => handleDelete(item.slug, item._id)}><Trash2 size={14} /></button>
                             </div>
                         </div>
                     ))

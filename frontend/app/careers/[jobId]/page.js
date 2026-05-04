@@ -186,8 +186,7 @@ export default function JobDetailPage() {
   const jobId = params.jobId;
 
   const [job, setJob] = useState(null);
-  const [formConfig, setFormConfig] = useState(null);
-  const [formId, setFormId] = useState(null);
+  const [pageConfig, setPageConfig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -213,19 +212,12 @@ export default function JobDetailPage() {
         setLoading(false);
       });
 
-    // Fetch careers page config to get selectedFormId
+    // Fetch careers page config
     fetch(`${API_URL}/api/careers/page`)
       .then(r => r.json())
       .then(json => {
-        const d = json.data;
-        if (d?.selectedFormId) {
-          const fid = typeof d.selectedFormId === 'object' ? d.selectedFormId._id : d.selectedFormId;
-          setFormId(fid);
-          if (typeof d.selectedFormId === 'object') {
-            setFormConfig(d.selectedFormId);
-          } else {
-            fetch(`${API_URL}/api/forms/${fid}`).then(r => r.json()).then(fj => setFormConfig(fj.data));
-          }
+        if (json.data) {
+          setPageConfig(json.data);
         }
       })
       .catch(() => {});
@@ -302,15 +294,42 @@ export default function JobDetailPage() {
               </div>
             </div>
 
-            {/* RIGHT: Application Form */}
+            {/* RIGHT: Application Action (CTA) */}
             <div className="job-detail-right">
-              <div className="job-form-card">
-                {formConfig ? (
-                  <DynamicForm formConfig={formConfig} jobTitle={job.title} formId={formId} />
+              <div className="job-form-card" style={{ textAlign: 'center' }}>
+                <h3 className="gradient-text" style={{ fontSize: '24px', fontWeight: '800', marginBottom: '16px' }}>
+                  {pageConfig?.applicationSection?.heading || 'Apply for this position'}
+                </h3>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '15.5px', lineHeight: '1.7', marginBottom: '32px' }}>
+                  {pageConfig?.applicationSection?.description || 'Interested in this role? Click the button below to submit your application through our official careers portal. We look forward to hearing from you!'}
+                </p>
+                
+                {job?.applyExternalLink ? (
+                  <a 
+                    href={job.applyExternalLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-primary" 
+                    style={{ 
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '16px 40px',
+                      fontSize: '16px', 
+                      fontWeight: '750', 
+                      textDecoration: 'none',
+                      margin: '0 auto'
+                    }}
+                  >
+                    APPLY NOW
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                  </a>
                 ) : (
-                  <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" style={{ marginBottom: '16px' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '15px', lineHeight: '1.6' }}>Application form not configured yet.<br/>Please check back soon.</p>
+                  <div style={{ padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.1)' }}>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>
+                      No external application link configured for this role yet. <br/>
+                      Please contact HR or check back later.
+                    </p>
                   </div>
                 )}
               </div>
@@ -339,7 +358,7 @@ export default function JobDetailPage() {
         .job-info-card { background: #242424; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
         .job-info-label { color: rgba(255,255,255,0.4); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .job-info-value { color: #fff; font-size: 15px; font-weight: 500; }
-        .job-form-card { background: #242424; border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 35px; }
+        .job-form-card { background: #242424; border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 70px 35px; }
       `}} />
     </main>
   );

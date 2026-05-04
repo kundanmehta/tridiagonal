@@ -2,14 +2,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 const mockBlogs = [
   {
     title: 'Fluid Structure Interaction Analysis (FSI): Maximizing Efficiency',
     category: 'Engineering',
     excerpt: 'In the fast-paced industrial landscape, the challenges faced by sectors such as oil and gas, crude refining...',
-    img: '/hubfs/CFD FEA Coupled-1.png',
+    coverImage: '/hubfs/CFD FEA Coupled-1.png',
     slug: 'fsi-efficiency',
     date: 'Oct 12, 2023'
   },
@@ -17,7 +17,7 @@ const mockBlogs = [
     title: 'Advanced CFD Modeling For Reactor Safety',
     category: 'Modeling',
     excerpt: 'Discover how computational modeling is preventing catastrophic failures and streamlining the maintenance of critical systems...',
-    img: '/hubfs/Blog CFD DEM.png',
+    coverImage: '/hubfs/Blog CFD DEM.png',
     slug: 'cfd-reactor-safety',
     date: 'Nov 05, 2023'
   },
@@ -25,7 +25,7 @@ const mockBlogs = [
     title: 'Enhancing Asphaltene Testing Methodologies',
     category: 'Technology',
     excerpt: 'A deep dive into scalable strategies to enhance extraction rates while managing long-term flow assurance concerns...',
-    img: '/hubfs/Asphaltene Blog.png',
+    coverImage: '/hubfs/Asphaltene Blog.png',
     slug: 'asphaltene-testing',
     date: 'Jan 22, 2024'
   },
@@ -33,7 +33,7 @@ const mockBlogs = [
     title: 'Optimizing Heat Exchangers with Agentic AI',
     category: 'Technology',
     excerpt: 'How AI-driven tools can drastically reduce trial-and-error in thermal analysis and heat exchanger designs.',
-    img: '/hubfs/image%20(10).png',
+    coverImage: '/hubfs/image(10).png',
     slug: 'heat-exchanger-ai',
     date: 'Feb 15, 2024'
   },
@@ -41,7 +41,7 @@ const mockBlogs = [
     title: 'DEM for Particle Mixing in Pharmaceuticals',
     category: 'Modeling',
     excerpt: 'Understanding mixing efficiency, powder behavior, and coating mechanics using Discrete Element Method simulations.',
-    img: '/hubfs/image%20(12).png',
+    coverImage: '/hubfs/image(12).png',
     slug: 'dem-pharma',
     date: 'Mar 08, 2024'
   },
@@ -49,7 +49,7 @@ const mockBlogs = [
     title: 'Flow Assurance in Subsea Pipelines',
     category: 'Engineering',
     excerpt: 'Addressing flow assurance challenges like wax deposition and hydrates formation using sophisticated simulation software.',
-    img: '/hubfs/Flow Assurance.jpg',
+    coverImage: '/hubfs/Flow Assurance.jpg',
     slug: 'flow-assurance-subsea',
     date: 'Apr 02, 2024'
   }
@@ -216,21 +216,19 @@ export default function BlogsPage() {
           {loading ? (
             <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '100px 0' }}>Fetching our latest insights...</div>
           ) : filteredBlogs.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '20px' }}>
               {filteredBlogs.map((blog, i) => (
                 <Link key={i} href={`/resources/blogs/${blog.slug}`} style={{ textDecoration: 'none' }}>
                   <article className="blog-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#1a1a1a', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)' }}>
-                    <div style={{ position: 'relative', width: '100%', height: '240px' }}>
-                      <Image src={blog.coverImage || '/hubfs/Digital Twin.jpg'} alt={blog.title} fill style={{ objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', color: '#00AEEF', padding: '6px 14px', borderRadius: '10px', fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', border: '1px solid rgba(0, 174, 239, 0.2)' }}>
-                        {blog.category}
-                      </div>
+                    <div style={{ position: 'relative', width: '100%', height: '350px' }}>
+                      <Image src={resolveImageUrl(blog.coverImage) || '/hubfs/Digital Twin.jpg'} alt={blog.title} fill style={{ objectFit: 'cover' }} unoptimized={true} />
+                      
                     </div>
                     <div style={{ padding: '30px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '15px', fontWeight: '500' }}>
                         {new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                       </span>
-                      <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700', lineHeight: '1.4', marginBottom: '15px' }}>{blog.title}</h3>
+                      <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '600', lineHeight: '1.4', marginBottom: '15px' }}>{blog.title}</h3>
                       <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: '1.6', marginBottom: '25px', flex: 1 }}>{blog.excerpt && blog.excerpt.length > 130 ? blog.excerpt.substring(0, 130) + '...' : blog.excerpt}</p>
                       <div style={{ fontSize: '14px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span className="gradient-text">READ ARTICLE</span>

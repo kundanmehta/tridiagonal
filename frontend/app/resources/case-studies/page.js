@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 const mockCaseStudies = [
   {
@@ -10,7 +10,7 @@ const mockCaseStudies = [
     service: 'Advanced Modeling & Simulation',
     industry: 'Oil & Gas',
     excerpt: 'Detailed CFD analysis of sand erosion inside subsea tie-backs leading to a 30% reduction in pipe wear.',
-    img: '/hubfs/Digital Twin.jpg',
+    coverImage: '/hubfs/Digital Twin.jpg',
     slug: 'reducing-erosion-subsea',
     date: 'Dec 02, 2023'
   },
@@ -19,7 +19,7 @@ const mockCaseStudies = [
     service: 'Technology Validation',
     industry: 'Pharma & Medical Devices',
     excerpt: 'Using physical scale-up modeling and computational fluid dynamics to maximize cell viability in heavy agitation tanks.',
-    img: '/hubfs/image%20(10).png',
+    coverImage: '/hubfs/image(10).png',
     slug: 'optimizing-mixing-bioreactors',
     date: 'Jan 14, 2024'
   },
@@ -28,7 +28,7 @@ const mockCaseStudies = [
     service: 'Digital Transformation',
     industry: 'Metals & Mining',
     excerpt: 'Implementation of a holistic digital twin using Agentic AI to predict slab defects and thermal anomalies.',
-    img: '/hubfs/Flow Assurance.jpg',
+    coverImage: '/hubfs/Flow Assurance.jpg',
     slug: 'digital-twin-caster-tracking',
     date: 'Feb 19, 2024'
   },
@@ -37,7 +37,7 @@ const mockCaseStudies = [
     service: 'Advanced Modeling & Simulation',
     industry: 'Chemicals & Petrochemicals',
     excerpt: 'Redesigning cross-flow heat exchangers using automated thermal CFD mapping to prevent localized overheating.',
-    img: '/hubfs/CFD FEA Coupled-1.png',
+    coverImage: '/hubfs/CFD FEA Coupled-1.png',
     slug: 'thermal-profiling-heat-exchangers',
     date: 'Mar 10, 2024'
   },
@@ -46,7 +46,7 @@ const mockCaseStudies = [
     service: 'Partner Solutions',
     industry: 'Oil & Gas',
     excerpt: 'A seamless integration of Siemens Simcenter to identify complex multiphase flow regimes during heavy oil extraction.',
-    img: '/hubfs/Blog CFD DEM.png',
+    coverImage: '/hubfs/Blog CFD DEM.png',
     slug: 'flow-assurance-siemens-simcenter',
     date: 'Apr 05, 2024'
   },
@@ -55,7 +55,7 @@ const mockCaseStudies = [
     service: 'Technology Validation',
     industry: 'Food & Beverages',
     excerpt: 'Experimental fluid dynamics and pilot plant testing applied to optimize commercial scale crystallization networks.',
-    img: '/hubfs/image%20(12).png',
+    coverImage: '/hubfs/image(12).png',
     slug: 'crystallization-process-scaleup',
     date: 'May 22, 2024'
   }
@@ -222,15 +222,13 @@ export default function CaseStudiesPage() {
           {loading ? (
             <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '100px 0' }}>Fetching our success stories...</div>
           ) : filteredCaseStudies.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '20px' }}>
               {filteredCaseStudies.map((cs, i) => (
                 <Link key={i} href={`/resources/case-studies/${cs.slug}`} style={{ textDecoration: 'none' }}>
                   <article className="cs-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#1a1a1a', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)' }}>
-                    <div style={{ position: 'relative', width: '100%', height: '240px' }}>
-                      <Image src={cs.coverImage || '/hubfs/Digital Twin.jpg'} alt={cs.title} fill style={{ objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', color: '#00AEEF', padding: '6px 14px', borderRadius: '10px', fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', border: '1px solid rgba(0, 174, 239, 0.2)' }}>
-                        {cs.category}
-                      </div>
+                    <div style={{ position: 'relative', width: '100%', height: '350px' }}>
+                      <Image src={resolveImageUrl(cs.coverImage) || '/hubfs/Digital Twin.jpg'} alt={cs.title} fill style={{ objectFit: 'cover' }} unoptimized={true} />
+                    
                     </div>
                     <div style={{ padding: '30px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '15px' }}>
@@ -238,7 +236,7 @@ export default function CaseStudiesPage() {
                         <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
                         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>{cs.service}</span>
                       </div>
-                      <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700', lineHeight: '1.4', marginBottom: '15px' }}>{cs.title}</h3>
+                      <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '600', lineHeight: '1.4', marginBottom: '15px' }}>{cs.title}</h3>
                       <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: '1.6', marginBottom: '25px', flex: 1 }}>{cs.excerpt && cs.excerpt.length > 130 ? cs.excerpt.substring(0, 130) + '...' : cs.excerpt}</p>
                       <div style={{ fontSize: '14px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span className="gradient-text">READ CASE STUDY</span>
