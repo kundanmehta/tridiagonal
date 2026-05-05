@@ -3,6 +3,19 @@ const Resource = require('../models/Resource');
 const Category = require('../models/Category');
 const Service = require('../models/Service');
 const Industry = require('../models/Industry');
+const Settings = require('../models/Settings');
+const FormSubmission = require('../models/FormSubmission');
+const Contact = require('../models/Contact');
+const DynamicForm = require('../models/DynamicForm');
+const ContactPage = require('../models/ContactPage');
+const AboutPage = require('../models/AboutPage');
+const CareersPage = require('../models/CareersPage');
+const CareersJob = require('../models/CareersJob');
+const HomePage = require('../models/HomePage');
+const PrivacyPolicy = require('../models/PrivacyPolicy');
+const WebinarRegistration = require('../models/WebinarRegistration');
+const News = require('../models/News');
+const Webinar = require('../models/Webinar');
 
 exports.getPages = async (req, res) => {
   res.json({ message: 'Success', data: [] });
@@ -214,10 +227,6 @@ exports.getCareers = async (req, res) => {
   res.json({ message: 'Success', data: [] });
 };
 
-const Contact = require('../models/Contact');
-const WebinarRegistration = require('../models/WebinarRegistration');
-const News = require('../models/News');
-const Webinar = require('../models/Webinar');
 
 exports.submitContact = async (req, res) => {
   try {
@@ -225,6 +234,18 @@ exports.submitContact = async (req, res) => {
     const newContact = new Contact({ firstName, lastName, email, message });
     await newContact.save();
     console.log('Contact form safely stored in Database:', newContact._id);
+
+    // Send email notification (async)
+    try {
+      const globalSettings = await Settings.findOne({ singleton: true });
+      const targetEmail = globalSettings?.recipientEmail || process.env.SMTP_USER;
+      if (targetEmail) {
+        await sendFormNotification(targetEmail, 'Contact Us', req.body);
+      }
+    } catch (mailErr) {
+      console.error('Failed to send Contact notification email:', mailErr.message);
+    }
+
     res.json({ message: 'Successfully received message' });
   } catch (error) {
     console.error('Error saving contact:', error);
@@ -243,7 +264,6 @@ exports.getContacts = async (req, res) => {
   }
 };
 
-const HomePage = require('../models/HomePage');
 
 // GET /api/homepage — Fetch HomePage Data
 exports.getHomePage = async (req, res) => {
@@ -368,7 +388,6 @@ exports.uploadPublicFile = async (req, res) => {
   }
 };
 
-const PrivacyPolicy = require('../models/PrivacyPolicy');
 
 // GET /api/privacy-policy
 exports.getPrivacyPolicy = async (req, res) => {
@@ -395,11 +414,8 @@ exports.updatePrivacyPolicy = async (req, res) => {
   }
 };
 
-// ═══════════════════════════════════════════════════════════
 // DYNAMIC FORM BUILDER
 // ═══════════════════════════════════════════════════════════
-const DynamicForm = require('../models/DynamicForm');
-const FormSubmission = require('../models/FormSubmission');
 const { sendFormNotification } = require('../config/mailer');
 
 // GET /api/forms — List all forms
@@ -487,11 +503,20 @@ exports.submitDynamicForm = async (req, res) => {
     console.log(`✅ Form submission saved: ${form.name} (${submission._id})`);
 
     // Send email notification (async, don't block response)
-    if (form.adminEmail) {
-      sendFormNotification(form.adminEmail, form.name, req.body).catch(err => {
+    const triggerEmail = async () => {
+      try {
+        const globalSettings = await Settings.findOne({ singleton: true });
+        const targetEmail = form.adminEmail || globalSettings?.recipientEmail || process.env.SMTP_USER;
+        
+        if (targetEmail) {
+          await sendFormNotification(targetEmail, form.name, req.body);
+        }
+      } catch (err) {
         console.error('Email notification failed:', err.message);
-      });
-    }
+      }
+    };
+    
+    triggerEmail();
 
     res.json({ message: 'Form submitted successfully' });
   } catch (error) {
@@ -511,10 +536,7 @@ exports.getFormSubmissions = async (req, res) => {
   }
 };
 
-// ═══════════════════════════════════════════════════════════
-// CONTACT PAGE CMS
-// ═══════════════════════════════════════════════════════════
-const ContactPage = require('../models/ContactPage');
+// GET /api/contactpage
 
 // GET /api/contactpage
 exports.getContactPage = async (req, res) => {
@@ -540,10 +562,7 @@ exports.updateContactPage = async (req, res) => {
   }
 };
 
-// ═══════════════════════════════════════════════════════════
-// ABOUT PAGE CMS
-// ═══════════════════════════════════════════════════════════
-const AboutPage = require('../models/AboutPage');
+// GET /api/aboutpage
 
 // GET /api/aboutpage
 exports.getAboutPage = async (req, res) => {
@@ -569,11 +588,7 @@ exports.updateAboutPage = async (req, res) => {
   }
 };
 
-// ═══════════════════════════════════════════════════════════
-// CAREERS PAGE CMS
-// ═══════════════════════════════════════════════════════════
-const CareersPage = require('../models/CareersPage');
-const CareersJob = require('../models/CareersJob');
+// GET /api/careers/page
 
 // GET /api/careers/page
 exports.getCareersPage = async (req, res) => {
@@ -868,3 +883,145 @@ exports.deleteCategory = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete category' });
   }
 };
+
+// --- Unified Settings & Submissions ---
+
+exports.getSettings = async (req, res) => {
+  try {
+    let settings = await Settings.findOne({ singleton: true });
+    if (!settings) {
+      settings = await Settings.create({ singleton: true });
+    }
+    res.json({ data: settings });
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    res.status(500).json({ error: 'Failed to fetch settings' });
+  }
+};
+
+exports.updateSettings = async (req, res) => {
+  try {
+    const settings = await Settings.findOneAndUpdate(
+      { singleton: true },
+      { $set: req.body },
+      { new: true, upsert: true }
+    );
+    res.json({ message: 'Settings updated successfully', data: settings });
+  } catch (error) {
+    console.error('Error updating settings:', error);
+    res.status(500).json({ error: 'Failed to update settings' });
+  }
+};
+
+exports.getUnifiedSubmissions = async (req, res) => {
+  try {
+    const { source } = req.query;
+    
+    let contacts = [];
+    let formSubs = [];
+
+    // Define source strings that should trigger fetching from the legacy Contact collection
+    const legacySources = ['Contact Us Form', 'Contact Us Page', 'Contact Us'];
+
+    // 1. Fetch from legacy Contact collection
+    if (!source || legacySources.includes(source)) {
+      contacts = await Contact.find().lean();
+    }
+
+    // 2. Fetch from Dynamic Form Submissions
+    if (!source || !legacySources.includes(source) || source === 'Contact Us Form') {
+      let query = {};
+      if (source) {
+        if (source === 'Contact Us Form') {
+          query = { formName: { $in: ['Contact Us Form', 'Contact Us', 'Contact Us Page'] } };
+        } else {
+          query = { formName: source };
+        }
+      }
+      formSubs = await FormSubmission.find(query).lean();
+    }
+
+    // Normalize contacts (legacy)
+    const normalizedContacts = contacts.map(c => ({
+      _id: c._id,
+      type: 'Contact',
+      source: 'Contact Us Form (Legacy)',
+      name: `${c.firstName || ''} ${c.lastName || ''}`.trim() || 'Anonymous',
+      email: c.email || 'N/A',
+      message: c.message || '',
+      status: c.status || 'New',
+      createdAt: c.createdAt,
+      data: {
+        'First Name': c.firstName,
+        'Last Name': c.lastName,
+        'Email': c.email,
+        'Message': c.message
+      }
+    })) || [];
+
+    // Helper to find a value in dynamic data by looking for likely keys
+    const findValue = (data, keys) => {
+      if (!data) return null;
+      for (const k of keys) {
+        // Try exact match
+        if (data[k]) return data[k];
+        // Try lowercase match
+        const foundKey = Object.keys(data).find(dk => dk.toLowerCase().replace(/[^a-z]/g, '') === k.toLowerCase().replace(/[^a-z]/g, ''));
+        if (foundKey) return data[foundKey];
+      }
+      return null;
+    };
+
+    // Normalize dynamic form submissions
+    const normalizedFormSubs = formSubs.map(s => {
+      const name = findValue(s.data, ['name', 'fullName', 'firstName', 'first_name', 'Full Name', 'First Name']) || 
+                   (s.data.firstName ? `${s.data.firstName} ${s.data.lastName || ''}` : null) ||
+                   'Anonymous';
+      
+      const email = findValue(s.data, ['email', 'emailAddress', 'email_address', 'Email', 'Corporate Email']) || 'N/A';
+      
+      const message = findValue(s.data, ['message', 'comment', 'description', 'Message', 'Message Box', 'Comments']) || 'Check details...';
+
+      return {
+        _id: s._id,
+        type: 'DynamicForm',
+        source: s.formName || 'Custom Form',
+        name: String(name).trim(),
+        email: String(email).trim(),
+        message: String(message).trim(),
+        status: s.status || 'New',
+        createdAt: s.createdAt,
+        data: s.data
+      };
+    }) || [];
+
+    const all = [...normalizedContacts, ...normalizedFormSubs].sort((a, b) => 
+      new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    res.json({ data: all });
+  } catch (error) {
+    console.error('Error fetching unified submissions:', error);
+    res.status(500).json({ error: 'Failed to fetch submissions' });
+  }
+};
+
+
+exports.updateSubmissionStatus = async (req, res) => {
+  try {
+    const { type, id } = req.params;
+    const { status } = req.body;
+    
+    if (type === 'Contact') {
+      await Contact.findByIdAndUpdate(id, { $set: { status } });
+    } else {
+      await FormSubmission.findByIdAndUpdate(id, { $set: { status } });
+    }
+    
+    res.json({ message: 'Status updated successfully' });
+  } catch (error) {
+    console.error('Error updating submission status:', error);
+    res.status(500).json({ error: 'Failed to update status' });
+  }
+};
+

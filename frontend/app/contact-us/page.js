@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { API_URL } from '@/lib/apiConfig';
+import DynamicFormRenderer from '@/components/DynamicFormRenderer';
 
 function useInView(threshold = 0.2) {
   const ref = useRef(null);
@@ -55,16 +56,9 @@ export default function ContactUs() {
   const [formRef, formInView] = useInView(0.1);
   const [officesRef, officesInView] = useInView(0.1);
   const [pageData, setPageData] = useState(null);
-  const [formConfig, setFormConfig] = useState(null); // dynamic form config
-  const [formValues, setFormValues] = useState({});
-  const [submitting, setSubmitting] = useState(false);
-  const [submitMsg, setSubmitMsg] = useState('');
-  const [agreed, setAgreed] = useState(false);
-
-  
+  const [formConfig, setFormConfig] = useState(null);
 
   useEffect(() => {
-    // Fetch contact page data
     fetch(`${API_URL}/api/contactpage`)
       .then(r => r.json())
       .then(json => {
@@ -79,14 +73,10 @@ export default function ContactUs() {
               offices: d.officesSection?.offices?.length > 0 ? d.officesSection.offices : FALLBACK.officesSection.offices,
             },
             ctaSection: { ...FALLBACK.ctaSection, ...d.ctaSection },
-            selectedFormId: d.selectedFormId,
           });
-
-          // If a form is selected and populated
           if (d.selectedFormId && typeof d.selectedFormId === 'object') {
-            setFormConfig(d.selectedFormId); // populated form object
+            setFormConfig(d.selectedFormId);
           } else if (d.selectedFormId) {
-            // fetch it
             fetch(`${API_URL}/api/forms/${d.selectedFormId}`).then(r => r.json()).then(j => setFormConfig(j.data));
           }
         } else {
@@ -96,35 +86,7 @@ export default function ContactUs() {
       .catch(() => setPageData(FALLBACK));
   }, []);
 
-  const effectiveForm = formConfig || FALLBACK_FORM;
   const d = pageData || FALLBACK;
-
-  const handleFieldChange = (name, value) => {
-    setFormValues(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setSubmitMsg('');
-    try {
-      const formId = formConfig?._id;
-      const url = formId ? `${API_URL}/api/forms/${formId}/submit` : `${API_URL}/api/contact`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formValues)
-      });
-      if (res.ok) {
-        setSubmitMsg('Thank you! Your message has been sent successfully.');
-        setFormValues({});
-        setAgreed(false);
-      } else {
-        setSubmitMsg('Something went wrong. Please try again.');
-      }
-    } catch { setSubmitMsg('Network error. Please try again.'); }
-    setSubmitting(false);
-  };
 
   // Contact icon helper for offices
   const contactIcon = (type) => {
@@ -137,69 +99,7 @@ export default function ContactUs() {
     return (prefixes[c.type] || '') + c.label;
   };
 
-  // ── RENDER DYNAMIC FORM FIELD ──
-  const renderField = (field) => {
-    const inputStyle = { width: '100%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', padding: '10px 14px', color: '#fff', outline: 'none' };
-    const selectStyle = { ...inputStyle, appearance: 'none', backgroundImage: `url("data:image/svg+xml;utf8,<svg fill='%23ffffff' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px top 50%' };
 
-    if (field.type === 'textarea') {
-      return <textarea suppressHydrationWarning rows="3" value={formValues[field.name] || ''} onChange={e => handleFieldChange(field.name, e.target.value)} required={field.required} style={{ ...inputStyle, resize: 'vertical' }} />;
-    }
-    if (field.type === 'select') {
-      return (
-        <select suppressHydrationWarning value={formValues[field.name] || ''} onChange={e => handleFieldChange(field.name, e.target.value)} required={field.required} style={selectStyle}>
-          <option value="" disabled>Please Select</option>
-          {(field.options || []).map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
-        </select>
-      );
-    }
-    if (field.type === 'checkbox') {
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <input suppressHydrationWarning type="checkbox" checked={!!formValues[field.name]} onChange={e => handleFieldChange(field.name, e.target.checked)} style={{ accentColor: 'var(--color-teal)' }} />
-          <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '14px' }}>{field.placeholder || field.label}</span>
-        </div>
-      );
-    }
-    return <input suppressHydrationWarning type={field.type || 'text'} value={formValues[field.name] || ''} onChange={e => handleFieldChange(field.name, e.target.value)} required={field.required} placeholder={field.placeholder || ''} style={inputStyle} />;
-  };
-
-  // Group half-width fields into rows of 2
-  const renderFormFields = () => {
-    const fields = effectiveForm.fields || [];
-    const rendered = [];
-    let i = 0;
-    while (i < fields.length) {
-      const field = fields[i];
-      if (field.width === 'half' && i + 1 < fields.length && fields[i + 1].width === 'half') {
-        // Pair of half-width fields
-        const field2 = fields[i + 1];
-        rendered.push(
-          <div key={i} style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-            <div className="form-col-half" style={{ flex: '1 1 calc(50% - 8px)' }}>
-              <label style={{ display: 'block', color: '#fff', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>{field.label}{field.required && <span style={{color: '#f05a28'}}>*</span>}</label>
-              {renderField(field)}
-            </div>
-            <div className="form-col-half" style={{ flex: '1 1 calc(50% - 8px)' }}>
-              <label style={{ display: 'block', color: '#fff', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>{field2.label}{field2.required && <span style={{color: '#f05a28'}}>*</span>}</label>
-              {renderField(field2)}
-            </div>
-          </div>
-        );
-        i += 2;
-      } else {
-        // Full-width field or single half-width
-        rendered.push(
-          <div key={i}>
-            {field.type !== 'checkbox' && <label style={{ display: 'block', color: '#fff', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>{field.label}{field.required && <span style={{color: '#f05a28'}}>*</span>}</label>}
-            {renderField(field)}
-          </div>
-        );
-        i++;
-      }
-    }
-    return rendered;
-  };
 
   return (
     <main style={{ paddingTop: 'var(--nav-height)' }}>
@@ -246,39 +146,14 @@ export default function ContactUs() {
 
             {/* Right Column: Dynamic Form */}
             <div className="form-container" ref={formRef} style={{ background: '#242424', padding: '40px', borderRadius: '30px', border: '1px solid rgba(255,255,255,0.05)', opacity: formInView ? 1 : 0, transform: formInView ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
-              <form className="contact-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                
-                {renderFormFields()}
-
-                {/* Consent */}
-                {effectiveForm.consentText && (
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '5px' }}>
-                    <input suppressHydrationWarning type="checkbox" id="agree" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop: '5px', accentColor: 'var(--color-teal)' }} />
-                    <label htmlFor="agree" style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', lineHeight: 1.4 }} dangerouslySetInnerHTML={{ __html: effectiveForm.consentText }} />
-                  </div>
-                )}
-
-                {/* Recaptcha Placeholder */}
-                <div style={{ background: '#f5f5f5', borderRadius: '4px', width: 'max-content', display: 'flex', alignItems: 'stretch', border: '1px solid #dcdcdc', overflow: 'hidden', height: '50px' }}>
-                  <div style={{ background: '#1a73e8', color: '#fff', fontSize: '11px', padding: '0 12px', fontWeight: '500', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    protected by reCAPTCHA
-                  </div>
-                  <div style={{ padding: '0 15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#a5a5a5"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.05 19.43 4.07 16.05 4.07 12C4.07 7.95 7.05 4.57 11 4.07V19.93ZM13 4.07C16.95 4.57 19.93 7.95 19.93 12C19.93 16.05 16.95 19.43 13 19.93V4.07Z"/></svg>
-                  </div>
+              {!formConfig ? (
+                <div style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '40px 20px' }}>
+                  <p style={{ fontSize: '15px' }}>No form configured yet.</p>
+                  <p style={{ fontSize: '13px', marginTop: '8px' }}>Please select a form in the Admin → Contact Us Settings.</p>
                 </div>
-
-                {submitMsg && (
-                  <div style={{ padding: '10px 16px', borderRadius: '8px', background: submitMsg.includes('Thank') ? 'rgba(71,188,135,0.15)' : 'rgba(239,68,68,0.15)', color: submitMsg.includes('Thank') ? '#4ade80' : '#f87171', fontSize: '14px', fontWeight: 600 }}>{submitMsg}</div>
-                )}
-
-                <button suppressHydrationWarning type="submit" disabled={submitting} style={{ marginTop: '8px', width: '100%', background: 'linear-gradient(90deg, #1aa390, #88c847)', color: '#fff', padding: '14px', borderRadius: '8px', fontWeight: '600', fontSize: '15px', border: 'none', cursor: 'pointer', transition: 'box-shadow 0.3s, transform 0.3s', boxShadow: '0 4px 15px rgba(0,0,0,0.2)', opacity: submitting ? 0.6 : 1 }}
-                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 6px 25px rgba(136,200,71,0.4)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                >
-                  {submitting ? 'Submitting...' : (effectiveForm.submitButtonText || 'Submit')}
-                </button>
-              </form>
+              ) : (
+                <DynamicFormRenderer formConfig={formConfig} theme="dark" />
+              )}
             </div>
             
           </div>

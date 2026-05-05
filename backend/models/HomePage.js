@@ -42,6 +42,19 @@ const HomePageSchema = new mongoose.Schema({
     buttonLink: String,
   }],
 
+  whoWeAreModals: [{
+    capabilityName: String,
+    mainTitle: String,
+    overview: String,
+    image: String,
+    tools: [String],
+    technicalSections: [{
+      title: String,
+      subtitle: String,
+      content: String
+    }]
+  }],
+
   workOnHeading: { type: String, default: "What would you like to work on?" },
   workOnDescription: { type: String, default: "Execution and Implementation partner for your business problems." },
   workOnCards: [{

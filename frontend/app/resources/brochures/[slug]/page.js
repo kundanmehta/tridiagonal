@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
-import WebinarRegistrationForm from '@/components/WebinarRegistrationForm';
+import DynamicFormRenderer from '@/components/DynamicFormRenderer';
 import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 const mockBrochures = [
@@ -153,7 +153,7 @@ export default function BrochureSinglePage() {
                   <>
                     {brochure.selectedFormId ? (
                       <div className="dynamic-form-container">
-                        <WebinarRegistrationForm webinarTitle={brochure.title} preloadedFormConfig={brochure.selectedFormId} customTitle="Register to Access" noStyles={true} />
+                        <DynamicFormRenderer formConfig={brochure.selectedFormId} onSuccess={() => setSubmitted(true)} />
                       </div>
                     ) : (
                       <>

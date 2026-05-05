@@ -44,6 +44,7 @@ export default function AdminHomePageEditor() {
           buttonLink: fetchedData.serviceCta?.buttonLink || "/contact-us",
         },
         whoWeAreCards: fetchedData.whoWeAreCards || [],
+        whoWeAreModals: fetchedData.whoWeAreModals || [],
         whoWeAreHeading: fetchedData.whoWeAreHeading || "Who We Are",
         whoWeAreDescription: fetchedData.whoWeAreDescription || "Leveraging advanced technologies to support process industry needs.",
         workOnHeading: fetchedData.workOnHeading || "What would you like to work on?",
@@ -781,6 +782,108 @@ export default function AdminHomePageEditor() {
               >
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 Add New "Who We Are" Card
+              </button>
+            </div>
+
+            <h3 style={{ marginTop: '3rem', marginBottom: '0.5rem', fontSize: '1rem', fontWeight: 600, color: '#333' }}>Capability Modals (Triggers on "VIEW MORE")</h3>
+            <p className="admin-subtitle" style={{ marginBottom: '1.5rem', fontSize: '0.9rem' }}>The modal will open if the capability name exactly matches the title of a "Who We Are" card above.</p>
+            <div className="admin-array-list">
+              {(data?.whoWeAreModals || []).map((modal, idx) => (
+                <div key={idx} className="admin-array-card">
+                  <div className="admin-array-card-header">
+                    <h3 className="admin-array-card-title">Modal #{idx + 1} ({modal.capabilityName || 'Unnamed'})</h3>
+                    <button type="button" onClick={() => removeArrayItem('whoWeAreModals', idx)} className="admin-btn-remove">Remove Modal</button>
+                  </div>
+                  
+                  <div className="admin-grid">
+                    <div>
+                      <label className="admin-label">Capability Name (Must match Card Title exactly)</label>
+                      <input type="text" value={modal.capabilityName || ''} onChange={e => updateArrayItem('whoWeAreModals', idx, 'capabilityName', e.target.value)} className="admin-input" placeholder="e.g. Technology Catalyst" />
+                    </div>
+                    <div>
+                      <label className="admin-label">Modal Main Title</label>
+                      <input type="text" value={modal.mainTitle || ''} onChange={e => updateArrayItem('whoWeAreModals', idx, 'mainTitle', e.target.value)} className="admin-input" placeholder="Main Title in Modal" />
+                    </div>
+                    <div className="admin-col-full">
+                      <label className="admin-label">Overview / Description</label>
+                      <textarea value={modal.overview || ''} onChange={e => updateArrayItem('whoWeAreModals', idx, 'overview', e.target.value)} rows={3} className="admin-textarea" />
+                    </div>
+
+                    <div>
+                      <label className="admin-label">Modal Header Image URL</label>
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                        <input type="text" value={modal.image || ''} onChange={e => updateArrayItem('whoWeAreModals', idx, 'image', e.target.value)} className="admin-input" placeholder="/hubfs/modal-image.png" />
+                        <label className="admin-btn-save" style={{ cursor: 'pointer', padding: '0.75rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap', boxShadow: 'none' }}>
+                          Upload
+                          <input type="file" accept="image/*" onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            try {
+                              const res = await fetch(`${API_URL}/api/upload`, {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
+                                body: formData,
+                              });
+                              const json = await res.json();
+                              if (json.url) updateArrayItem('whoWeAreModals', idx, 'image', json.url);
+                            } catch (err) { console.error(err); }
+                          }} style={{ display: 'none' }} />
+                        </label>
+                      </div>
+                      {modal.image && <img src={modal.image} alt="Preview" style={{ height: '100px', objectFit: 'cover', borderRadius: '8px', width: '100%' }} />}
+                    </div>
+
+                    <div>
+                      <label className="admin-label">Tools Applied (Comma separated)</label>
+                      <input type="text" value={(modal.tools || []).join(', ')} onChange={e => {
+                        const arr = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                        updateArrayItem('whoWeAreModals', idx, 'tools', arr);
+                      }} className="admin-input" placeholder="Simcenter, MATLAB, ..." />
+                    </div>
+                  </div>
+                  
+                  {/* Technical Sections inside Modal */}
+                  <div style={{ marginTop: '1.5rem', background: '#fff', padding: '1rem', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
+                    <h4 style={{ margin: '0 0 1rem 0', fontSize: '0.95rem', color: '#1e293b' }}>Technical Sections</h4>
+                    {(modal.technicalSections || []).map((sec, sIdx) => (
+                      <div key={sIdx} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e2e8f0' }}>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                          <input type="text" placeholder="Section Tag (e.g. CORE ACTIVITY)" value={sec.title || ''} onChange={e => {
+                            const newSecs = [...(modal.technicalSections || [])];
+                            newSecs[sIdx] = { ...newSecs[sIdx], title: e.target.value };
+                            updateArrayItem('whoWeAreModals', idx, 'technicalSections', newSecs);
+                          }} className="admin-input" style={{ flex: 1 }} />
+                          <input type="text" placeholder="Section Subtitle" value={sec.subtitle || ''} onChange={e => {
+                            const newSecs = [...(modal.technicalSections || [])];
+                            newSecs[sIdx] = { ...newSecs[sIdx], subtitle: e.target.value };
+                            updateArrayItem('whoWeAreModals', idx, 'technicalSections', newSecs);
+                          }} className="admin-input" style={{ flex: 2 }} />
+                          <button type="button" className="admin-btn-remove" style={{ padding: '0.5rem 1rem' }} onClick={() => {
+                            const newSecs = [...(modal.technicalSections || [])];
+                            newSecs.splice(sIdx, 1);
+                            updateArrayItem('whoWeAreModals', idx, 'technicalSections', newSecs);
+                          }}>X</button>
+                        </div>
+                        <textarea placeholder="Section Content" value={sec.content || ''} onChange={e => {
+                          const newSecs = [...(modal.technicalSections || [])];
+                          newSecs[sIdx] = { ...newSecs[sIdx], content: e.target.value };
+                          updateArrayItem('whoWeAreModals', idx, 'technicalSections', newSecs);
+                        }} className="admin-textarea" rows={2} />
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => {
+                      const newSecs = [...(modal.technicalSections || []), { title: '', subtitle: '', content: '' }];
+                      updateArrayItem('whoWeAreModals', idx, 'technicalSections', newSecs);
+                    }} style={{ fontSize: '0.85rem', color: '#00AEEF', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+                      + Add Technical Section
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="admin-btn-add" onClick={() => addArrayItem('whoWeAreModals', { capabilityName: 'Technology Catalyst', mainTitle: '', overview: '', technicalSections: [] })}>
+                + Add Modal
               </button>
             </div>
           </div>

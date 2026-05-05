@@ -192,11 +192,11 @@ export default function Careers() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }}>
                 <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-              <input type="text" placeholder="Search by title, department, or location…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="jobs-search-input" />
+              <input type="text" placeholder="Search by title, department, or location…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="jobs-search-input" suppressHydrationWarning />
             </div>
             <div className="jobs-dept-wrap">
               <label style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', whiteSpace: 'nowrap' }}>Department</label>
-              <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="jobs-dept-select">
+              <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="jobs-dept-select" suppressHydrationWarning>
                 {departments.map((d) => <option key={d} value={d}>{d}</option>)}
               </select>
             </div>

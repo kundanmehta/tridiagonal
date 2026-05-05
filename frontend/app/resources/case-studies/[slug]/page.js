@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
-import WebinarRegistrationForm from '@/components/WebinarRegistrationForm';
+import DynamicFormRenderer from '@/components/DynamicFormRenderer';
 import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 const mockCaseStudies = [
@@ -158,11 +158,9 @@ export default function CaseStudySinglePage() {
                   <>
                     {caseStudy.selectedFormId ? (
                       <div className="dynamic-form-container">
-                        <WebinarRegistrationForm
-                          webinarTitle={caseStudy.title}
-                          preloadedFormConfig={caseStudy.selectedFormId}
-                          customTitle="Register to Access"
-                          noStyles={true}
+                        <DynamicFormRenderer
+                          formConfig={caseStudy.selectedFormId}
+                          onSuccess={() => setSubmitted(true)}
                         />
                       </div>
                     ) : (

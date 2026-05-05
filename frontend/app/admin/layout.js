@@ -57,6 +57,7 @@ const sidebarNav = [
   { label: 'Media Library', href: '/admin/media', icon: ImageIcon },
   { label: 'Header & Footer', href: '/admin/header-footer', icon: Globe },
   { label: 'Contact Submissions', href: '/admin/contacts', icon: Mail },
+  { label: 'Global Settings', href: '/admin/settings', icon: Settings },
 ];
 
 export default function AdminLayout({ children }) {

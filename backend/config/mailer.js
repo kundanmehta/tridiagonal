@@ -1,30 +1,51 @@
 const nodemailer = require('nodemailer');
 
-// Create a reusable transporter
-const createTransporter = () => {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+const Settings = require('../models/Settings');
 
-  if (!host || !user || !pass) {
+// Create a reusable transporter
+const createTransporter = async () => {
+  // Try to get settings from database first
+  let smtpConfig = {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  };
+
+  try {
+    const dbSettings = await Settings.findOne({ singleton: true });
+    if (dbSettings && dbSettings.smtp && dbSettings.smtp.host && dbSettings.smtp.user) {
+      console.log('📧 Using Dashboard SMTP Settings');
+      smtpConfig = {
+        host: dbSettings.smtp.host,
+        port: dbSettings.smtp.port,
+        user: dbSettings.smtp.user,
+        pass: dbSettings.smtp.pass
+      };
+    }
+  } catch (err) {
+    console.warn('⚠️ Error fetching SMTP settings from DB, falling back to ENV:', err.message);
+  }
+
+  if (!smtpConfig.host || !smtpConfig.user || !smtpConfig.pass) {
     console.warn('⚠️ SMTP not configured. Email notifications will be skipped.');
     return null;
   }
 
   return nodemailer.createTransport({
-    host,
-    port: parseInt(port) || 587,
-    secure: parseInt(port) === 465,
-    auth: { user, pass }
+    host: smtpConfig.host,
+    port: parseInt(smtpConfig.port) || 587,
+    secure: parseInt(smtpConfig.port) === 465,
+    auth: { user: smtpConfig.user, pass: smtpConfig.pass }
   });
 };
+
 
 /**
  * Send form submission notification email to admin
  */
 const sendFormNotification = async (adminEmail, formName, submissionData) => {
-  const transporter = createTransporter();
+  const transporter = await createTransporter();
   if (!transporter || !adminEmail) {
     console.log('📧 Email skipped (SMTP not configured or no admin email).');
     return false;
@@ -48,8 +69,9 @@ const sendFormNotification = async (adminEmail, formName, submissionData) => {
   `;
 
   try {
+    const authUser = transporter.options.auth.user;
     await transporter.sendMail({
-      from: `"Website CMS" <${process.env.SMTP_USER}>`,
+      from: `"Website CMS" <${authUser}>`,
       to: adminEmail,
       subject: `New ${formName} Submission`,
       html

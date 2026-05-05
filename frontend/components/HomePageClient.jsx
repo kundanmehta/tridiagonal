@@ -147,6 +147,11 @@ export default function HomePageClient({ initialData }) {
   const wwaCards = initialData?.whoWeAreCards?.length > 0 ? initialData.whoWeAreCards.map(c => ({
     ...c, bg: c.backgroundImage ? (c.backgroundImage.startsWith('url') ? c.backgroundImage : `url("${getFullImageUrl(c.backgroundImage)}")`) : c.bg
   })) : wwCards;
+
+  const whoWeAreModalsFromDb = initialData?.whoWeAreModals || [];
+  const dynamicWwaModals = {};
+  whoWeAreModalsFromDb.forEach(m => { dynamicWwaModals[m.capabilityName || m.mainTitle] = m; });
+
   const metrics = initialData?.keyHighlights?.counters?.length > 0 ? initialData.keyHighlights.counters : counters;
   const clientLogosList = initialData?.clientLogos?.length > 0 ? initialData.clientLogos.map(l => l.name) : clientLogos;
   const workOnUiCards = initialData?.workOnCards?.length > 0 ? initialData.workOnCards : workOnCards;
@@ -154,6 +159,7 @@ export default function HomePageClient({ initialData }) {
   const videoRef = useRef(null);
   const [counterRef, counterInView] = useInView(0.3);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [selectedWwaCapability, setSelectedWwaCapability] = useState(null);
   const [resourceSlide, setResourceSlide] = useState(0);
   const [resInTransition, setResInTransition] = useState(true);
   const [resRef, resInView] = useInView(0.2);
@@ -532,13 +538,16 @@ export default function HomePageClient({ initialData }) {
                   <h3 className="wwa-card-title" style={{ fontSize: '28px', marginBottom: '15px' }}>{card.title}</h3>
                   <p className="wwa-card-desc" style={{ fontSize: '15.5px', lineHeight: 1.6, marginBottom: '25px', opacity: 0.9 }}>{card.desc}</p>
                 </div>
-                <button suppressHydrationWarning
-                  className="btn-outline-white"
-                  style={{ fontSize: '15px', fontWeight: 700, padding: '10px 22px', cursor: 'pointer', letterSpacing: '0.05em', alignSelf: 'flex-start' }}
-                  aria-label={`View more about ${card.title}`}
-                >
-                  VIEW MORE <ArrowRight size={14} />
-                </button>
+                {dynamicWwaModals[card.title] && (
+                  <button suppressHydrationWarning
+                    onClick={() => setSelectedWwaCapability(card.title)}
+                    className="btn-outline-white"
+                    style={{ fontSize: '15px', fontWeight: 700, padding: '10px 22px', cursor: 'pointer', letterSpacing: '0.05em', alignSelf: 'flex-start' }}
+                    aria-label={`View more about ${card.title}`}
+                  >
+                    VIEW MORE <ArrowRight size={14} />
+                  </button>
+                )}
               </div>
             </article>
           ))}
@@ -1361,6 +1370,86 @@ export default function HomePageClient({ initialData }) {
           </div>
         </div>
       </section>
+
+      {/* ── WHO WE ARE CAPABILITY MODAL ── */}
+      {selectedWwaCapability && dynamicWwaModals[selectedWwaCapability] && (() => {
+        const modalItem = dynamicWwaModals[selectedWwaCapability];
+        return (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 100000, background: 'rgba(10,10,10,0.98)', backdropFilter: 'blur(20px)', overflowY: 'auto', padding: '40px 0' }}>
+            <div className="content-wrapper-lg" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '60px' }}>
+              <button onClick={() => setSelectedWwaCapability(null)} style={{ background: 'none', border: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', cursor: 'pointer', opacity: 0.8 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+                Back to Home
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <span style={{ background: 'rgba(71,188,135,0.1)', color: 'var(--color-teal)', padding: '6px 16px', borderRadius: '30px', fontSize: '13px', fontWeight: '800', letterSpacing: '1px' }}>WHO WE ARE</span>
+                <button onClick={() => setSelectedWwaCapability(null)} style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                </button>
+              </div>
+            </div>
+            <div className="content-wrapper-lg">
+              <h1 style={{ color: 'var(--color-teal)', fontSize: '40px', fontWeight: '600', marginBottom: '80px', maxWidth: '1000px', lineHeight: 1.1 }}>{modalItem.mainTitle || selectedWwaCapability}</h1>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '60px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
+                  {(modalItem.overview || modalItem.image) && (
+                    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '32px', padding: '48px' }}>
+                      <div style={{ display: 'flex', gap: '24px' }}>
+                        <div style={{ width: '4px', background: 'var(--color-teal)', borderRadius: '2px' }} />
+                        <div>
+                          <span style={{ color: 'var(--color-teal)', fontSize: '14px', fontWeight: '800', letterSpacing: '2px', display: 'block', marginBottom: '24px' }}>OVERVIEW</span>
+                          <p style={{ color: '#fff', fontSize: '20px', lineHeight: 1.6, opacity: 0.9 }}>{modalItem.overview || "Delivering high-value optimization and analysis."}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {modalItem.image && (
+                    <div style={{ position: 'relative', borderRadius: '32px', overflow: 'hidden', aspectRatio: '21/9', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <img src={getFullImageUrl(modalItem.image)} alt="Technical Feature" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,transparent 60%,rgba(10,10,10,0.6) 100%)' }} />
+                    </div>
+                  )}
+                  {modalItem.tools?.length > 0 && (
+                    <div>
+                      <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '32px' }}>
+                        <div style={{ width: '4px', height: '16px', background: 'var(--color-teal)', borderRadius: '2px' }} />
+                        <span style={{ color: 'var(--color-teal)', fontSize: '14px', fontWeight: '800', letterSpacing: '2px' }}>TOOLS APPLIED</span>
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                        {modalItem.tools.map(tool => (
+                          <span key={tool} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', padding: '12px 24px', borderRadius: '40px', fontSize: '14px', fontWeight: '600', border: '1px solid rgba(255,255,255,0.1)' }}>{tool}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                    {modalItem.technicalSections?.map((sec, idx) => (
+                      <div key={idx} style={{ paddingLeft: '24px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+                        <span style={{ color: 'var(--color-teal)', fontSize: '13px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>{sec.title}</span>
+                        <h4 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', marginBottom: '16px' }}>{sec.subtitle}</h4>
+                        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px', lineHeight: 1.7 }}>{sec.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', padding: '32px' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '16px' }}>CAPABILITY</span>
+                    <h5 style={{ color: '#fff', fontSize: '18px', fontWeight: '700' }}>{selectedWwaCapability}</h5>
+                  </div>
+                  <div style={{ background: 'linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', padding: '40px', textAlign: 'center' }}>
+                    <h5 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '16px' }}>Interested in this solution?</h5>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '15px', lineHeight: 1.5, marginBottom: '32px' }}>Our experts will design an approach tailored to your goals.</p>
+                    <Link href="/contact-us" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: 'linear-gradient(90deg,#0dd0e1,#8fe03c)', color: '#000', padding: '16px 32px', borderRadius: '40px', fontSize: '15px', fontWeight: '800', textDecoration: 'none' }}>
+                      Contact Us <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
     </main>
   );

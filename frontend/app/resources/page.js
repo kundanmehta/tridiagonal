@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, X, ChevronDown } from 'lucide-react';
-import { resolveImageUrl } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 function CustomSelect({ label, value, options, onChange, style = {} }) {
   const [isOpen, setIsOpen] = useState(false);

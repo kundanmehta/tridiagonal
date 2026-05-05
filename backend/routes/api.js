@@ -59,6 +59,12 @@ router.delete('/webinars/:slug', verifyToken, apiController.deleteWebinar);
 router.post('/webinars/register', apiController.submitWebinarRegistration);
 router.get('/webinars/:id/registrations', verifyToken, apiController.getWebinarRegistrations);
 
+// --- Unified Settings & Submissions ---
+router.get('/admin/submissions', verifyToken, apiController.getUnifiedSubmissions);
+router.patch('/admin/submissions/:type/:id', verifyToken, apiController.updateSubmissionStatus);
+router.get('/admin/settings', verifyToken, apiController.getSettings);
+router.put('/admin/settings', verifyToken, apiController.updateSettings);
+
 router.get('/news/all', verifyToken, apiController.getAllNews);
 router.get('/news', apiController.getNews);
 router.post('/news', verifyToken, apiController.createNews);
