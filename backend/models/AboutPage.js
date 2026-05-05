@@ -66,6 +66,13 @@ const AboutPageSchema = new mongoose.Schema({
     buttonText: { type: String, default: '' },
     buttonLink: { type: String, default: '' },
     bgImage: { type: String, default: '' }
+  },
+
+  seo: {
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
   }
 
 }, { timestamps: true });

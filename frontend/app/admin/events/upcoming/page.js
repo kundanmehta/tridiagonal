@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown, X, Users, Calendar as CalendarIcon, Clock, Globe, Plus, Trash2, Layout, Video, UserCheck } from 'lucide-react';
 import RichTextEditor from '../../../../components/RichTextEditor';
 import { API_URL } from '@/lib/apiConfig';
+import AdminSEOEditor from '@/components/AdminSEOEditor';
 
 const EMPTY_WEBINAR = {
   title: '', slug: '', eventDate: '', duration: '45 mins', sessionType: 'Online Technical Session',
   description: '', fullDescription: '', learnPoints: [], attendees: [], presenters: [], thumbnail: '', videoUrl: '', 
   accessType: 'On-Demand', format: 'Technical Presentation', host: 'Tridiagonal Solutions',
-  isActive: true, type: 'Live'
+  isActive: true, type: 'Live',
+  seo: { metaTitle: '', metaDescription: '', focusKeyword: '', ogImage: '' }
 };
 
 export default function AdminWebinars({ typeFilter = 'Upcoming' }) {
@@ -351,6 +353,15 @@ export default function AdminWebinars({ typeFilter = 'Upcoming' }) {
                   </div>
                 ))}
              </div>
+          </div>
+
+          <div className="admin-card">
+            <h2 style={{ fontSize: '18px', marginBottom: '1.5rem' }}>Search Engine Optimization</h2>
+            <AdminSEOEditor 
+              seoData={editing.seo || { metaTitle: '', metaDescription: '', focusKeyword: '', ogImage: '' }}
+              onChange={(updated) => setEditing(prev => ({ ...prev, seo: updated }))}
+              pagePath={`/events/webinars/${editing.slug}`}
+            />
           </div>
 
           <div className="admin-bottom-bar">

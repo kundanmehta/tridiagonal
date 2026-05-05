@@ -170,6 +170,13 @@ const HomePageSchema = new mongoose.Schema({
     image: String,
   }],
 
+  seo: {
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
+  }
+
 }, { timestamps: true });
 
 // Ensure we only have one Home Page document

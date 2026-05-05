@@ -29,8 +29,10 @@ const ResourceSchema = new mongoose.Schema({
   fileUrl: { type: String }, // For PDF Brochures
   externalUrl: { type: String }, // For Publication links
   seo: {
-    metaTitle: String,
-    metaDescription: String,
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
   },
   selectedFormId: { type: mongoose.Schema.Types.ObjectId, ref: 'DynamicForm' },
   isActive: { type: Boolean, default: true }

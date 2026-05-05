@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { API_URL } from '@/lib/apiConfig';
+import { constructMetadata } from '@/lib/seoUtils';
 
 
 
@@ -18,8 +19,12 @@ async function getNewsItem(slug) {
 export const generateMetadata = async ({ params }) => {
   const { slug } = await params;
   const item = await getNewsItem(slug);
-  if (!item) return { title: 'Not Found' };
-  return { title: `${item.title} | News & Updates | Tridiagonal Solutions` };
+  if (!item) return constructMetadata({ metaTitle: 'Not Found' });
+  
+  return constructMetadata(item?.seo, {
+    title: `${item?.title} | News & Updates | Tridiagonal Solutions`,
+    description: item?.description || 'Stay informed with the latest news, press releases, and updates.'
+  });
 };
 
 export default async function NewsDetail({ params }) {

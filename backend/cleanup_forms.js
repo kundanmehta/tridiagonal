@@ -1,7 +1,8 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const DynamicForm = require('./models/DynamicForm');
 
-const MONGODB_URI = 'mongodb://kundan:elc2GEn9GPDVRQAd@ac-btdfeeo-shard-00-00.kyykxaa.mongodb.net:27017,ac-btdfeeo-shard-00-01.kyykxaa.mongodb.net:27017,ac-btdfeeo-shard-00-02.kyykxaa.mongodb.net:27017/?ssl=true&replicaSet=atlas-d8d2ga-shard-0&authSource=admin&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 async function cleanup() {
     try {

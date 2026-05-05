@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_URL } from '@/lib/apiConfig';
+import AdminSEOEditor from '@/components/AdminSEOEditor';
 
 export default function AdminAboutPageEditor() {
   const router = useRouter();
@@ -93,6 +94,12 @@ export default function AdminAboutPageEditor() {
           buttonText: d.ctaSection?.buttonText || 'CONTACT US NOW',
           buttonLink: d.ctaSection?.buttonLink || '/contact-us',
           bgImage: d.ctaSection?.bgImage || '/hubfs/topography-bg.webp'
+        },
+        seo: d.seo || {
+          metaTitle: '',
+          metaDescription: '',
+          focusKeyword: '',
+          ogImage: ''
         }
       };
 
@@ -594,7 +601,7 @@ export default function AdminAboutPageEditor() {
           </div>
         </div>
 
-        {/* 7. CTA SECTION */}
+        {/* CTA SECTION */}
         <div className="admin-section">
           <div className="admin-section-header">
             <span className="admin-badge">7</span>
@@ -632,6 +639,21 @@ export default function AdminAboutPageEditor() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* SEO EDITOR */}
+        <div className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">SEO</span>
+            <h2>Search Engine Optimization</h2>
+          </div>
+          <div className="admin-form-body">
+            <AdminSEOEditor 
+              seoData={data.seo} 
+              onChange={(updatedSeo) => setData(prev => ({ ...prev, seo: updatedSeo }))}
+              pagePath="/about-us"
+            />
           </div>
         </div>
 

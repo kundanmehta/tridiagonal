@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { API_URL } from '@/lib/apiConfig';
+import AdminSEOEditor from '@/components/AdminSEOEditor';
 
 export default function AdminContactPageEditor() {
   const [data, setData] = useState(null);
@@ -73,6 +74,12 @@ export default function AdminContactPageEditor() {
           buttonText: d.ctaSection?.buttonText || 'CHECK OUT OUR OPEN POSITIONS',
           buttonLink: d.ctaSection?.buttonLink || '/careers',
           backgroundImage: d.ctaSection?.backgroundImage || '/hubfs/topography-bg.webp'
+        },
+        seo: d.seo || {
+          metaTitle: '',
+          metaDescription: '',
+          focusKeyword: '',
+          ogImage: ''
         }
       });
       setForms(formsJson.data || []);
@@ -476,6 +483,21 @@ export default function AdminContactPageEditor() {
                 )}
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* SEO EDITOR */}
+        <section className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">SEO</span>
+            <h2 style={{ margin: 0, fontWeight: 700 }}>Search Engine Optimization</h2>
+          </div>
+          <div className="admin-form-body">
+            <AdminSEOEditor 
+              seoData={data.seo} 
+              onChange={(updatedSeo) => setData(prev => ({ ...prev, seo: updatedSeo }))}
+              pagePath="/contact-us"
+            />
           </div>
         </section>
 

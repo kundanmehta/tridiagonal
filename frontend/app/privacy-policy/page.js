@@ -1,34 +1,31 @@
-'use client';
-import { useState, useEffect } from 'react';
 import { API_URL } from '@/lib/apiConfig';
+import { constructMetadata } from '@/lib/seoUtils';
 
-export default function PrivacyPolicy() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  
-
-  useEffect(() => {
-    fetch(`${API_URL}/api/privacy-policy`)
-      .then(res => res.json())
-      .then(json => {
-        setData(json.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching Privacy Policy:', err);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return (
-      <main style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a1a' }}>
-        <p style={{ color: '#fff' }}>Loading Privacy Policy...</p>
-      </main>
-    );
+async function getPrivacyPolicyData() {
+  try {
+    const res = await fetch(`${API_URL}/api/privacy-policy`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      return json.data || null;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching Privacy Policy data:', error);
+    return null;
   }
+}
 
-  // Fallback if no data is found
+export async function generateMetadata() {
+  const data = await getPrivacyPolicyData();
+  return constructMetadata(data?.seo, {
+    title: 'Privacy Policy | Tridiagonal Solutions',
+    description: 'We are committed to protecting your privacy and ensuring your data is handled securely.'
+  });
+}
+
+export default async function PrivacyPolicy() {
+  const data = await getPrivacyPolicyData();
+
   if (!data) {
     return (
       <main style={{ paddingTop: 'var(--nav-height)' }}>
@@ -60,7 +57,6 @@ export default function PrivacyPolicy() {
           
           {data.contentSections && data.contentSections.map((section, index) => (
             <div key={index} style={{ marginBottom: index === 0 ? '0' : '20px' }}>
-              {/* Hide the visual title for 'Introduction' to adhere to the existing design where the first paragraph has no explicit H2. */}
               {section.title !== 'Introduction' && (
                 <h2 style={{ fontSize: '28px', color: '#fff', fontWeight: 'bold', marginBottom: '20px', marginTop: '50px' }}>
                   {section.title}
@@ -74,39 +70,13 @@ export default function PrivacyPolicy() {
         </div>
       </section>
 
-      {/* Scoped styles for rich-text content from Quill editor */}
       <style dangerouslySetInnerHTML={{ __html: `
-        .rich-content ul {
-          list-style-type: disc;
-          padding-left: 1.5em;
-          margin: 1em 0;
-        }
-        .rich-content ol {
-          list-style-type: decimal;
-          padding-left: 1.5em;
-          margin: 1em 0;
-        }
-        .rich-content li {
-          margin-bottom: 0.5em;
-          padding-left: 0.25em;
-        }
-        .rich-content ul ul {
-          list-style-type: circle;
-        }
-        .rich-content ul ul ul {
-          list-style-type: square;
-        }
-        .rich-content p {
-          margin-bottom: 0.75em;
-        }
-        .rich-content strong, .rich-content b {
-          color: #fff;
-          font-weight: 700;
-        }
-        .rich-content a {
-          color: var(--color-teal, #47BC87);
-          text-decoration: underline;
-        }
+        .rich-content ul { list-style-type: disc; padding-left: 1.5em; margin: 1em 0; }
+        .rich-content ol { list-style-type: decimal; padding-left: 1.5em; margin: 1em 0; }
+        .rich-content li { margin-bottom: 0.5em; padding-left: 0.25em; }
+        .rich-content p { margin-bottom: 0.75em; }
+        .rich-content strong, .rich-content b { color: #fff; font-weight: 700; }
+        .rich-content a { color: var(--color-teal, #47BC87); text-decoration: underline; }
       `}} />
     </main>
   );

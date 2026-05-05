@@ -101,5 +101,10 @@ router.post('/industries', verifyToken, apiController.createIndustry);
 router.put('/industries/:id', verifyToken, apiController.updateIndustry);
 router.delete('/industries/:id', verifyToken, apiController.deleteIndustry);
 
+// Services Admin
+router.post('/services', verifyToken, apiController.createService);
+router.put('/services/:id', verifyToken, apiController.updateService);
+router.delete('/services/:id', verifyToken, apiController.deleteService);
+
 module.exports = router;
 

@@ -108,11 +108,11 @@ export default function WebinarRegistrationForm({ webinarId, webinarTitle, formS
     const selectStyle = { ...inputStyle, appearance: 'none', backgroundImage: `url("data:image/svg+xml;utf8,<svg fill='%23ffffff' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px top 50%', cursor: 'pointer' };
 
     if (field.type === 'textarea') {
-      return <textarea rows="3" value={formValues[field.name] || ''} onChange={e => handleChange(field.name, e.target.value)} required={field.required} style={{ ...inputStyle, resize: 'vertical' }} />;
+      return <textarea suppressHydrationWarning rows="3" value={formValues[field.name] || ''} onChange={e => handleChange(field.name, e.target.value)} required={field.required} style={{ ...inputStyle, resize: 'vertical' }} />;
     }
     if (field.type === 'select') {
       return (
-        <select value={formValues[field.name] || ''} onChange={e => handleChange(field.name, e.target.value)} required={field.required} style={selectStyle}>
+        <select suppressHydrationWarning value={formValues[field.name] || ''} onChange={e => handleChange(field.name, e.target.value)} required={field.required} style={selectStyle}>
           <option value="" disabled>Please Select</option>
           {(field.options || []).map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
         </select>
@@ -121,12 +121,12 @@ export default function WebinarRegistrationForm({ webinarId, webinarTitle, formS
     if (field.type === 'checkbox') {
       return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <input type="checkbox" checked={!!formValues[field.name]} onChange={e => handleChange(field.name, e.target.checked)} style={{ accentColor: '#43bd94' }} />
+          <input suppressHydrationWarning type="checkbox" checked={!!formValues[field.name]} onChange={e => handleChange(field.name, e.target.checked)} style={{ accentColor: '#43bd94' }} />
           <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>{field.placeholder || field.label}</span>
         </div>
       );
     }
-    return <input type={field.type || 'text'} value={formValues[field.name] || ''} onChange={e => handleChange(field.name, e.target.value)} required={field.required} placeholder={field.placeholder || ''} style={inputStyle} />;
+    return <input suppressHydrationWarning type={field.type || 'text'} value={formValues[field.name] || ''} onChange={e => handleChange(field.name, e.target.value)} required={field.required} placeholder={field.placeholder || ''} style={inputStyle} />;
   };
 
   if (!mounted) return <div style={{ minHeight: '400px', background: '#242424', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}></div>;
@@ -173,12 +173,12 @@ export default function WebinarRegistrationForm({ webinarId, webinarTitle, formS
         {/* Consent */}
         {effectiveForm.consentText && (
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '5px' }}>
-            <input type="checkbox" required id="agree" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop: '5px', accentColor: '#43bd94' }} />
+            <input suppressHydrationWarning type="checkbox" required id="agree" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop: '5px', accentColor: '#43bd94' }} />
             <label htmlFor="agree" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', lineHeight: 1.4 }} dangerouslySetInnerHTML={{ __html: effectiveForm.consentText }} />
           </div>
         )}
 
-        <button type="submit" disabled={submitting} className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '10px', padding: '14px', background: '#43bd94', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}>
+        <button suppressHydrationWarning type="submit" disabled={submitting} className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '10px', padding: '14px', background: '#43bd94', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}>
           {submitting ? 'Registering...' : (effectiveForm.submitButtonText || 'Register Now')}
         </button>
 

@@ -103,6 +103,41 @@ exports.deleteIndustry = async (req, res) => {
   }
 };
 
+// --- Service Admin ---
+exports.createService = async (req, res) => {
+  try {
+    const service = new Service(req.body);
+    await service.save();
+    res.status(201).json({ message: 'Service created successfully', data: service });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to create service' });
+  }
+};
+
+exports.updateService = async (req, res) => {
+  try {
+    const service = await Service.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!service) return res.status(404).json({ error: 'Service not found' });
+    res.json({ message: 'Service updated successfully', data: service });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to update service' });
+  }
+};
+
+exports.deleteService = async (req, res) => {
+  try {
+    const service = await Service.findByIdAndDelete(req.params.id);
+    if (!service) return res.status(404).json({ error: 'Service not found' });
+    res.json({ message: 'Service deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete service' });
+  }
+};
+
 
 exports.getResources = async (req, res) => {
   try {

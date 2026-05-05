@@ -15,6 +15,12 @@ const NewsSchema = new mongoose.Schema({
   }],
   thumbnail: { type: String },
   isActive: { type: Boolean, default: true },
+  seo: {
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
+  }
 }, { timestamps: true });
 
 // Auto-generate slug

@@ -41,6 +41,13 @@ const ContactPageSchema = new mongoose.Schema({
     buttonText: { type: String, default: 'CHECK OUT OUR OPEN POSITIONS' },
     buttonLink: { type: String, default: '/careers' },
     backgroundImage: { type: String, default: '/hubfs/topography-bg.webp' }
+  },
+
+  seo: {
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
   }
 
 }, { timestamps: true });

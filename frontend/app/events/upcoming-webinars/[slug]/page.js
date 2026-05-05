@@ -3,8 +3,7 @@ import { notFound } from 'next/navigation';
 import WebinarRegistrationForm from '../../../../components/WebinarRegistrationForm';
 import { eventsData } from '../../data';
 import { API_URL } from '@/lib/apiConfig';
-
-
+import { constructMetadata } from '@/lib/seoUtils';
 
 async function getWebinar(slug) {
   try {
@@ -35,8 +34,12 @@ export const generateMetadata = async ({ params }) => {
   const dbWebinar = await getWebinar(slug);
   const webinar = dbWebinar || localWebinar;
 
-  if (!webinar) return { title: 'Webinar Not Found' };
-  return { title: `${webinar.title} | Upcoming Webinars | Tridiagonal Solutions` };
+  if (!webinar) return constructMetadata({ metaTitle: 'Webinar Not Found' });
+  
+  return constructMetadata(webinar.seo, {
+    title: `${webinar.title} | Upcoming Webinars | Tridiagonal Solutions`,
+    description: webinar.description || 'Register for our upcoming technical webinar and learn from industrial experts.'
+  });
 };
 
 export default async function WebinarDetail({ params }) {

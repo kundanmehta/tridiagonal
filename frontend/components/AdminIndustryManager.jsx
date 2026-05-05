@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '@/lib/apiConfig';
 import {
     Factory, Layout, Plus, Trash2, ChevronRight,
-    Monitor, ShieldCheck, Image as ImageIcon, Save, X, Eye
+    Monitor, ShieldCheck, Image as ImageIcon, Save, X, Eye, Search
 } from 'lucide-react';
+import AdminSEOEditor from './AdminSEOEditor';
 
 
 
@@ -218,6 +219,7 @@ export default function AdminIndustryManager({ slug }) {
                             editing={editing}
                         />
                     )}
+
 
                     <div className="admin-bottom-bar">
                         <button type="submit" disabled={saving} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 30px' }}>
@@ -525,7 +527,7 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                             <button type="button" onClick={() => addItem(`${area}.whyChooseUs.items`, { title: '', desc: '', icon: 'Users' })} className="btn-add">+ Add Item</button>
                         </div>
 
-                        {/* Technical Details (Modals) Section - Only for Modeling */}
+                        {/* TECHNICAL MODALS (Modeling only) */}
                         {area === 'modelingSimulation' && (
                             <div style={{ marginTop: '3rem' }}>
                                 <h4 className="section-subtitle">Technical Details (Modals)</h4>
@@ -600,6 +602,16 @@ function ServiceAreaEditor({ area, data, updateField, addItem, removeItem, handl
                                 <button type="button" onClick={() => addItem(`${area}.modals`, { capabilityName: '', mainTitle: '', overview: '', technicalSections: [], tools: [], image: '' })} className="btn-add">+ Add Technical Modal Details</button>
                             </div>
                         )}
+
+                        {/* SEO AREA */}
+                        <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '2px solid #f1f5f9' }}>
+                            <h4 className="section-subtitle">Search Engine Optimization (Sub-page)</h4>
+                            <AdminSEOEditor
+                                seoData={data.seo || { metaTitle: '', metaDescription: '', focusKeyword: '', ogImage: '' }}
+                                onChange={(updated) => updateField(`${area}.seo`, updated)}
+                                pagePath={`/industries/${editing.slug}/${area === 'modelingSimulation' ? 'advance-modeling-and-simulation' : 'technology-validation-scale-up-centre'}`}
+                            />
+                        </div>
                     </>
                 )}
             </div>

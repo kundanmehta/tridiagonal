@@ -32,7 +32,13 @@ const WebinarSchema = new mongoose.Schema({
   format: { type: String, default: 'Technical Presentation' },
   host: { type: String, default: 'Tridiagonal Solutions' },
   isActive: { type: Boolean, default: true },
-  type: { type: String, enum: ['Live', 'On-Demand'], default: 'Live' }
+  type: { type: String, enum: ['Live', 'On-Demand'], default: 'Live' },
+  seo: {
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
+  }
 }, { timestamps: true });
 
 // Auto-generate slug from title if not provided

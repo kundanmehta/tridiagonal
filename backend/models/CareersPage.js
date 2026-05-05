@@ -23,7 +23,13 @@ const CareersPageSchema = new mongoose.Schema({
     heading: { type: String, default: 'Apply for this position' },
     description: { type: String, default: 'Interested in this role? Click the button below to submit your application through our official careers portal. We look forward to hearing from you!' }
   },
-  selectedFormId: { type: mongoose.Schema.Types.ObjectId, ref: 'DynamicForm', default: null }
+  selectedFormId: { type: mongoose.Schema.Types.ObjectId, ref: 'DynamicForm', default: null },
+  seo: {
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('CareersPage', CareersPageSchema);

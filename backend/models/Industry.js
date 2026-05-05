@@ -65,7 +65,13 @@ const ServiceAreaSchema = new mongoose.Schema({
       subtitle: String,
       content: String,
     }]
-  }]
+  }],
+  seo: {
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
+  }
 }, { _id: false });
 
 const IndustrySchema = new mongoose.Schema({
@@ -80,8 +86,10 @@ const IndustrySchema = new mongoose.Schema({
   techValidation: { type: ServiceAreaSchema, default: () => ({}) },
 
   seo: {
-    metaTitle: String,
-    metaDescription: String,
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
   }
 }, { timestamps: true });
 

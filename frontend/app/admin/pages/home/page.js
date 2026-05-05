@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_URL } from '@/lib/apiConfig';
+import AdminSEOEditor from '@/components/AdminSEOEditor';
 
 export default function AdminHomePageEditor() {
   const router = useRouter();
@@ -93,13 +94,19 @@ export default function AdminHomePageEditor() {
             fetchedData.cultureSection?.image4
           ].filter(img => img && img.trim() !== "")
         },
-        trustedPartnerSection: fetchedData.trustedPartnerSection || {
-          title: "Looking for Trusted Partner for executing your programs?",
-          description: "We bring together unparalleled expertise...",
-          ctaText: "CONTACT US NOW",
-          ctaLink: "/contact-us"
-        },
-      };
+          trustedPartnerSection: fetchedData.trustedPartnerSection || {
+            title: "Looking for Trusted Partner for executing your programs?",
+            description: "We bring together unparalleled expertise...",
+            ctaText: "CONTACT US NOW",
+            ctaLink: "/contact-us"
+          },
+          seo: fetchedData.seo || {
+            metaTitle: '',
+            metaDescription: '',
+            focusKeyword: '',
+            ogImage: ''
+          }
+        };
       
       setData(mergedData);
       setLoading(false);
@@ -542,6 +549,13 @@ export default function AdminHomePageEditor() {
       )}
 
       <form onSubmit={handleSave}>
+        {/* SEO SECTION */}
+        <div style={{ marginBottom: '2.5rem' }}>
+          <AdminSEOEditor 
+            data={data?.seo} 
+            onChange={(newSeo) => setData(prev => ({ ...prev, seo: newSeo }))} 
+          />
+        </div>
         {/* HERO SECTION */}
         <div className="admin-section">
           <div className="admin-section-header">

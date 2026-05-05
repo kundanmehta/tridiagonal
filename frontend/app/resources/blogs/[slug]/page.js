@@ -26,11 +26,18 @@ async function getBlog(slug) {
   }
 }
 
+import { constructMetadata } from '@/lib/seoUtils';
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const blog = await getBlog(slug) || mockBlogs.find(b => b.slug === slug);
-  if (!blog) return { title: 'Blog Not Found' };
-  return { title: `${blog.title} | Blogs | Tridiagonal Solutions` };
+  if (!blog) return constructMetadata({ metaTitle: 'Blog Not Found' });
+  
+  return constructMetadata(blog.seo, {
+    title: `${blog.title} | Blogs | Tridiagonal Solutions`,
+    description: blog.excerpt || 'Read the latest technical insights and success stories from Tridiagonal Solutions.',
+    image: blog.coverImage
+  });
 }
 
 // Helper to slugify heading text for ID

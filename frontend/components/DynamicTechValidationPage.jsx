@@ -313,6 +313,7 @@ export default function DynamicTechValidationPage({ data, parentIndustryName, in
 
                                         {cap.link ? (
                                             <Link
+                                                suppressHydrationWarning
                                                 href={cap.link}
                                                 style={{
                                                     display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -330,6 +331,7 @@ export default function DynamicTechValidationPage({ data, parentIndustryName, in
                                             </Link>
                                         ) : (
                                             <button
+                                                suppressHydrationWarning
                                                 onClick={() => {
                                                     if (isContactCard) {
                                                         window.location.href = '/contact-us';

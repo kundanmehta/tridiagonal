@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_URL } from '@/lib/apiConfig';
+import AdminSEOEditor from '@/components/AdminSEOEditor';
 
 const EMPTY_JOB = {
   id: '', title: '', department: '', location: 'Pune, India', type: 'Full-time',
@@ -68,6 +69,12 @@ export default function AdminCareersEditor() {
           heading: d.applicationSection?.heading || 'Apply for this position',
           description: d.applicationSection?.description || 'Interested in this role? Click the button below to submit your application through our official careers portal. We look forward to hearing from you!',
         },
+        seo: d.seo || {
+          metaTitle: '',
+          metaDescription: '',
+          focusKeyword: '',
+          ogImage: ''
+        }
       });
       setJobs(jobsJson.data || []);
       setForms(formsJson.data || []);
@@ -439,6 +446,21 @@ export default function AdminCareersEditor() {
             </p>
           </div>
         </section>
+        {/* SEO EDITOR */}
+        <section className="admin-section">
+          <div className="admin-section-header">
+            <span className="admin-badge">SEO</span>
+            <h2 style={{ margin: 0, fontWeight: 700 }}>Search Engine Optimization</h2>
+          </div>
+          <div className="admin-form-body">
+            <AdminSEOEditor 
+              seoData={pageData.seo} 
+              onChange={(updatedSeo) => setPageData(prev => ({ ...prev, seo: updatedSeo }))}
+              pagePath="/careers"
+            />
+          </div>
+        </section>
+
         <div className="admin-bottom-bar">
           <button type="submit" disabled={saving} className="admin-btn-save">
             {saving ? (

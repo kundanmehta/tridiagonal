@@ -8,8 +8,10 @@ const ServiceSchema = new mongoose.Schema({
   heroImage: { type: String },
   contentImages: [{ type: String }],
   seo: {
-    metaTitle: String,
-    metaDescription: String,
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    focusKeyword: { type: String, default: '' },
+    ogImage: { type: String, default: '' }
   }
 }, { timestamps: true });
 

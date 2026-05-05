@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown, X } from 'lucide-react';
 import RichTextEditor from '../../../../components/RichTextEditor';
 import { API_URL } from '@/lib/apiConfig';
+import AdminSEOEditor from '@/components/AdminSEOEditor';
 
 const EMPTY_NEWS = {
-  title: '', slug: '', date: '', type: 'News',
-  description: '', sections: [], thumbnail: '', isActive: true
+  description: '', sections: [], thumbnail: '', isActive: true,
+  seo: { metaTitle: '', metaDescription: '', focusKeyword: '', ogImage: '' }
 };
 
 export default function AdminNewsEditor() {
@@ -251,6 +252,15 @@ export default function AdminNewsEditor() {
                 </div>
               ))
             )}
+          </div>
+
+          <div className="admin-card">
+            <h2 style={{ fontSize: '18px', marginBottom: '1.5rem', color: '#0f172a' }}>Search Engine Optimization</h2>
+            <AdminSEOEditor 
+              seoData={editing.seo || { metaTitle: '', metaDescription: '', focusKeyword: '', ogImage: '' }}
+              onChange={(updated) => setEditing(prev => ({ ...prev, seo: updated }))}
+              pagePath={`/events/news-and-press-release/${editing.slug}`}
+            />
           </div>
 
           <div className="admin-bottom-bar">
