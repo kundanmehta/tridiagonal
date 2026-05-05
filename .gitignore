@@ -17,3 +17,23 @@ yarn-error.log*
 
 # Tridiagonal specific things
 trigoanl/
+
+# Temporary Scripts & Data
+backend/*.txt
+backend/*.js
+!backend/server.js
+!backend/controllers/*.js
+!backend/models/*.js
+!backend/routes/*.js
+!backend/config/*.js
+!backend/middleware/*.js
+*.json
+!package.json
+!package-lock.json
+!composer.json
+!tsconfig.json
+!jsconfig.json
+!next.config.*
+!tailwind.config.*
+!postcss.config.*
+!*.artifact.json
