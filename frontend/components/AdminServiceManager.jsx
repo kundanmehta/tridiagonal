@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { 
   Settings, Plus, Edit2, Trash2, Save, X, ArrowUp, ArrowDown, 
   ChevronDown, ChevronRight, Users, MessageSquare, Monitor, 
-  Zap, Cpu, Award, Layout, Eye, ArrowLeft
+  Zap, Cpu, Award, Layout, Eye, ArrowLeft, RefreshCw
 } from 'lucide-react';
 import Link from 'next/link';
 import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
@@ -26,33 +26,146 @@ const S = {
 
 /* ─── Media Upload Helper (Image/Video) ─── */
 function MediaField({ label, value, onChange, token, type = 'image' }) {
-  const handleUpload = async (e) => {
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState('');
+
+  const handleUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Reset state
+    setError('');
+    setUploading(true);
+    setProgress(0);
+
     const fd = new FormData();
     fd.append('file', file);
-    const res = await fetch(`${API_URL}/api/upload-public`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
-    const json = await res.json();
-    if (res.ok) onChange(json.url);
+
+    // Use XMLHttpRequest for progress tracking on large video files
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_URL}/api/upload-public`);
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    xhr.upload.onprogress = (ev) => {
+      if (ev.lengthComputable) {
+        setProgress(Math.round((ev.loaded / ev.total) * 100));
+      }
+    };
+
+    xhr.onload = () => {
+      setUploading(false);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const json = JSON.parse(xhr.responseText);
+          if (json.url) {
+            onChange(json.url);
+            setError('');
+          } else {
+            setError('Upload failed: No URL returned from server.');
+          }
+        } catch {
+          setError('Upload failed: Invalid response from server.');
+        }
+      } else {
+        try {
+          const json = JSON.parse(xhr.responseText);
+          setError(`Upload failed: ${json.error || xhr.statusText}`);
+        } catch {
+          setError(`Upload failed: Server returned status ${xhr.status}`);
+        }
+      }
+    };
+
+    xhr.onerror = () => {
+      setUploading(false);
+      setError('Upload failed: Network error. Is the backend server running?');
+    };
+
+    xhr.ontimeout = () => {
+      setUploading(false);
+      setError('Upload timed out. The file may be too large.');
+    };
+
+    xhr.send(fd);
+
+    // Reset file input so same file can be re-selected
+    e.target.value = '';
   };
 
-  const isVideo = value && (value.toLowerCase().endsWith('.mp4') || value.toLowerCase().endsWith('.webm') || value.toLowerCase().endsWith('.mov'));
+  const isVideo = value && (
+    value.toLowerCase().endsWith('.mp4') ||
+    value.toLowerCase().endsWith('.webm') ||
+    value.toLowerCase().endsWith('.mov')
+  );
 
   return (
     <div>
       <label style={S.label}>{label}</label>
-      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        <input style={S.input} value={value || ''} onChange={e => onChange(e.target.value)} placeholder="URL or uploaded path" />
-        <label style={{ ...S.btnSecondary, cursor: 'pointer', flexShrink: 0 }}>
-          Upload <input type="file" hidden accept={type === 'video' ? "video/*" : "image/*,video/*"} onChange={handleUpload} />
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <input
+          style={S.input}
+          value={value || ''}
+          onChange={e => onChange(e.target.value)}
+          placeholder="Paste URL or upload a file"
+        />
+        <label style={{
+          ...S.btnSecondary,
+          cursor: uploading ? 'not-allowed' : 'pointer',
+          flexShrink: 0,
+          opacity: uploading ? 0.6 : 1,
+          minWidth: '80px',
+          textAlign: 'center'
+        }}>
+          {uploading ? `${progress}%` : 'Upload'}
+          <input
+            type="file"
+            hidden
+            disabled={uploading}
+            accept={type === 'video' ? 'video/mp4,video/webm,video/mov,video/*' : 'image/*,video/*'}
+            onChange={handleUpload}
+          />
         </label>
-        {value && !isVideo && <img src={resolveImageUrl(value)} style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover', border: '1px solid #e2e8f0', flexShrink: 0 }} alt="" />}
+
+        {/* Preview */}
+        {value && !isVideo && (
+          <img
+            src={resolveImageUrl(value)}
+            style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover', border: '1px solid #e2e8f0', flexShrink: 0 }}
+            alt=""
+          />
+        )}
         {value && isVideo && (
           <div style={{ width: 48, height: 48, borderRadius: 8, background: '#f1f5f9', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Monitor size={20} color="#64748b" />
           </div>
         )}
       </div>
+
+      {/* Upload Progress Bar */}
+      {uploading && (
+        <div style={{ marginTop: 8 }}>
+          <div style={{ height: 4, background: '#e2e8f0', borderRadius: 4, overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              width: `${progress}%`,
+              background: 'linear-gradient(90deg, #00AEEF, #47bc87)',
+              borderRadius: 4,
+              transition: 'width 0.2s ease'
+            }} />
+          </div>
+          <p style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>
+            Uploading... {progress}% — please wait
+          </p>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <p style={{ fontSize: 12, color: '#ef4444', marginTop: 6, background: '#fef2f2', padding: '6px 10px', borderRadius: 6, border: '1px solid #fecaca' }}>
+          ⚠️ {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -108,32 +221,88 @@ function PartnersTab({ data, onChange, token }) {
     next[i] = { ...next[i], [key]: val };
     onChange({ ...data, technologyPartners: next });
   };
+
   return (
     <div style={S.card}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
         <h2 style={S.title}>Technology Partners / Clients</h2>
-        <button type="button" style={S.btnSecondary} onClick={add}>+ Add Partner</button>
+        <button type="button" style={{ ...S.btnPrimary, display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }} onClick={add}>
+          + Add Partner
+        </button>
       </div>
       <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '1.5rem' }}>
-        These logos will appear in the scrolling marquee on the service page.
+        These logos appear in the scrolling marquee on the service page. Upload PNG/SVG with transparent background for best results.
       </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
-        {partners.map((p, i) => (
-          <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: '1.25rem', background: '#fafafa' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <span style={{ fontWeight: 700 }}>Partner {i + 1}</span>
-              <button type="button" style={S.btnDanger} onClick={() => remove(i)}>Remove</button>
+
+      {/* Empty state */}
+      {partners.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '40px 20px', background: '#f8fafc', borderRadius: 12, border: '2px dashed #e2e8f0' }}>
+          <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏢</div>
+          <p style={{ color: '#64748b', fontWeight: 600, marginBottom: '4px' }}>No partners added yet</p>
+          <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '16px' }}>Add your technology partners and clients to display their logos on the service page.</p>
+          <button type="button" style={S.btnPrimary} onClick={add}>+ Add First Partner</button>
+        </div>
+      )}
+
+      {/* Partner cards grid */}
+      {partners.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+          {partners.map((p, i) => (
+            <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden', background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+              
+              {/* Logo Preview area */}
+              <div style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                {p.logo ? (
+                  <img
+                    src={resolveImageUrl(p.logo)}
+                    alt={p.name || 'Partner logo'}
+                    style={{ maxHeight: '80px', maxWidth: '80%', objectFit: 'contain' }}
+                    onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex'; }}
+                  />
+                ) : null}
+                <div style={{ display: p.logo ? 'none' : 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: '#94a3b8' }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                  <span style={{ fontSize: 12 }}>No logo</span>
+                </div>
+                {/* Partner number badge */}
+                <div style={{ position: 'absolute', top: 8, left: 10, background: '#e2e8f0', color: '#64748b', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>
+                  #{i + 1}
+                </div>
+                <button
+                  type="button"
+                  style={{ position: 'absolute', top: 8, right: 8, background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', borderRadius: 6, padding: '3px 8px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}
+                  onClick={() => remove(i)}
+                >
+                  Remove
+                </button>
+              </div>
+
+              {/* Fields */}
+              <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div>
+                  <label style={S.label}>Partner / Client Name</label>
+                  <input
+                    style={S.input}
+                    value={p.name || ''}
+                    onChange={e => update(i, 'name', e.target.value)}
+                    placeholder="e.g. Siemens, ANSYS, Shell..."
+                  />
+                </div>
+                <MediaField
+                  label="Logo Image (PNG/SVG recommended)"
+                  value={p.logo}
+                  onChange={v => update(i, 'logo', v)}
+                  token={token}
+                />
+              </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div><label style={S.label}>Partner Name</label><input style={S.input} value={p.name || ''} onChange={e => update(i, 'name', e.target.value)} /></div>
-              <MediaField label="Logo" value={p.logo} onChange={v => update(i, 'logo', v)} token={token} />
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
 
 /* ─── Sub-component: FullContent editor inside a capability ─── */
 function FullContentEditor({ items, onChange, token }) {
@@ -564,6 +733,24 @@ function ContactTab({ data, onChange, allForms }) {
 
 
 /* ─── Main Export ─── */
+/* ─── Default trailing cards ─── */
+const DEFAULT_TRAILING_CARDS = [
+  {
+    title: 'Resources',
+    desc: 'Access our library of blogs, case studies, brochures, and technical publications curated for this practice.',
+    href: '/resources',
+    btnLabel: 'VIEW RESOURCES',
+    background: ''
+  },
+  {
+    title: 'Contact Us',
+    desc: 'Talk to our experts about how we can support your technology validation and scale-up challenges.',
+    href: '/contact-us',
+    btnLabel: 'GET IN TOUCH',
+    background: 'linear-gradient(135deg, #0c7196 0%, #6ca03e 100%)'
+  }
+];
+
 export default function AdminServiceManager() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -582,7 +769,7 @@ export default function AdminServiceManager() {
   const fetchServices = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/services`);
+      const res = await fetch(`${API_URL}/api/services?t=${Date.now()}`);
       const json = await res.json();
       setServices(json.data || []);
       
@@ -611,7 +798,13 @@ export default function AdminServiceManager() {
     if (sid) {
       const found = services.find(s => s._id === sid);
       if (found) {
-        setEditing(JSON.parse(JSON.stringify(found)));
+        const copy = JSON.parse(JSON.stringify(found));
+        // Pre-populate trailing cards with defaults if none are configured
+        if (!copy.capabilitiesTrailingCards || copy.capabilitiesTrailingCards.length === 0) {
+          copy.capabilitiesTrailingCards = DEFAULT_TRAILING_CARDS;
+        }
+        if (!copy.technologyPartners) copy.technologyPartners = [];
+        setEditing(copy);
         if (tab) {
           const isValidTab = TABS.some(t => t.key === tab);
           setActiveTab(isValidTab ? tab : 'general');
@@ -661,7 +854,7 @@ export default function AdminServiceManager() {
     { key: 'seo', label: 'SEO' },
   ];
 
-  const newService = { title: '', slug: '', description: '', hero: {}, about: {}, capabilitiesIntro: {}, capabilities: [], industries: [], whyItems: [], practiceHeads: [], resourcesSection: { categories: [], allResourcesBtn: {} }, heroResourceSlides: [], contactSection: { heading: '', description: '', formSlug: 'contact-form' }, seo: {} };
+  const newService = { title: '', slug: '', description: '', hero: {}, about: {}, capabilitiesIntro: {}, capabilities: [], industries: [], whyItems: [], practiceHeads: [], resourcesSection: { categories: [], allResourcesBtn: {} }, heroResourceSlides: [], capabilitiesTrailingCards: DEFAULT_TRAILING_CARDS, technologyPartners: [], contactSection: { heading: '', description: '', formSlug: 'contact-form' }, seo: {} };
 
   if (loading) return <div style={{ padding: '2rem', color: '#64748b' }}>Loading...</div>;
 
@@ -759,9 +952,14 @@ export default function AdminServiceManager() {
           </h1>
           <p style={{ color: '#64748b', marginTop: '6px' }}>Manage service pages, capabilities, practice heads, and more.</p>
         </div>
-        <button onClick={() => { setEditing(newService); setActiveTab('general'); }} style={{ ...S.btnPrimary, display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: 10 }}>
-          <Plus size={18} /> Add New Service
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button onClick={fetchServices} style={{ ...S.btnSecondary, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <RefreshCw size={16} /> Refresh
+          </button>
+          <button onClick={() => { setEditing(newService); setActiveTab('general'); }} style={{ ...S.btnPrimary, display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: 10 }}>
+            <Plus size={18} /> Add New Service
+          </button>
+        </div>
       </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -788,7 +986,15 @@ export default function AdminServiceManager() {
                   {caps.length} capabilities
                 </span>
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
-                  <button onClick={() => { setEditing(svc); setActiveTab('general'); }} style={{ background: '#eff6ff', color: '#3b82f6', border: 'none', padding: '8px 12px', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, fontWeight: 600 }}>
+                  <button onClick={() => { 
+                    const copy = JSON.parse(JSON.stringify(svc));
+                    if (!copy.capabilitiesTrailingCards || copy.capabilitiesTrailingCards.length === 0) {
+                      copy.capabilitiesTrailingCards = DEFAULT_TRAILING_CARDS;
+                    }
+                    if (!copy.technologyPartners) copy.technologyPartners = [];
+                    setEditing(copy); 
+                    setActiveTab('general'); 
+                  }} style={{ background: '#eff6ff', color: '#3b82f6', border: 'none', padding: '8px 12px', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, fontWeight: 600 }}>
                     <Edit2 size={14} /> Edit
                   </button>
                   <button onClick={() => handleDelete(svc._id)} style={{ ...S.btnDanger, border: 'none', padding: '8px 12px', display: 'flex', alignItems: 'center' }}>
@@ -826,7 +1032,15 @@ export default function AdminServiceManager() {
                             </span>
                           )}
                           <button
-                            onClick={e => { e.stopPropagation(); setEditing(svc); setActiveTab('capabilities'); }}
+                            onClick={e => { e.stopPropagation(); 
+                            const copy = JSON.parse(JSON.stringify(svc));
+                            if (!copy.capabilitiesTrailingCards || copy.capabilitiesTrailingCards.length === 0) {
+                              copy.capabilitiesTrailingCards = DEFAULT_TRAILING_CARDS;
+                            }
+                            if (!copy.technologyPartners) copy.technologyPartners = [];
+                            setEditing(copy); 
+                            setActiveTab('capabilities'); 
+                          }}
                             style={{ background: 'transparent', border: '1px solid #e2e8f0', color: '#64748b', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}>
                             Edit
                           </button>

@@ -37,3 +37,7 @@ backend/*.js
 !tailwind.config.*
 !postcss.config.*
 !*.artifact.json
+
+# Local storage & Scratch
+backend/uploads/
+backend/scratch/

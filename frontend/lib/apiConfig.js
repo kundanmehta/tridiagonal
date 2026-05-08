@@ -5,6 +5,8 @@ export const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL ||
     ? 'https://silver-wasp-603471.hostingersite.com' 
     : 'http://localhost:5000');
 
+console.log('--- API_URL initialized as:', API_URL);
+
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 
   (isProduction 
     ? 'https://tridiagonal.com' 

@@ -30,23 +30,38 @@ export default function DynamicCapabilityClient({ serviceSlug, capabilitySlug })
         setLoading(true);
         // 1. Fetch Service Data
         const res = await fetch(`${API_URL}/api/services/${serviceSlug}?t=${Date.now()}`);
+        
+        // Guard against non-JSON responses (HTML error pages)
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Backend server is not reachable. Please ensure it is running.');
+        }
+
         const json = await res.json();
-        if (!json.data) throw new Error('Service not found');
+        if (!json.data) throw new Error(`Service "${serviceSlug}" not found in database.`);
         
         setService(json.data);
 
-        // 2. Find Capability
-        const cap = json.data.capabilities?.find(c => c.slug === capabilitySlug || c.id === capabilitySlug);
-        if (!cap) throw new Error('Capability not found');
+        // 2. Find Capability by slug OR id (case-insensitive)
+        const cap = json.data.capabilities?.find(c => 
+          c.slug === capabilitySlug || 
+          c.id === capabilitySlug ||
+          c.slug?.toLowerCase() === capabilitySlug?.toLowerCase()
+        );
+        if (!cap) throw new Error(`Capability "${capabilitySlug}" not found. It may not be configured in the service yet.`);
         setCapability(cap);
 
         // 3. Fetch Use Cases filtered by service
-        const ucRes = await fetch(`${API_URL}/api/resources?type=Case Study&service=${serviceSlug}&t=${Date.now()}`);
-        const ucJson = await ucRes.json();
-        setUseCases(ucJson.data || []);
+        try {
+          const ucRes = await fetch(`${API_URL}/api/resources?type=Case Study&service=${serviceSlug}&t=${Date.now()}`);
+          const ucJson = await ucRes.json();
+          setUseCases(ucJson.data || []);
+        } catch {
+          setUseCases([]); // Non-critical — don't fail page load
+        }
 
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error('DynamicCapabilityClient fetch error:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -54,6 +69,7 @@ export default function DynamicCapabilityClient({ serviceSlug, capabilitySlug })
     }
     fetchData();
   }, [serviceSlug, capabilitySlug]);
+
 
   // Use Case Carousel Auto-scroll
   useEffect(() => {

@@ -20,23 +20,30 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp|svg|mp4|webm|pdf|doc|docx/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype) || 
-                   file.mimetype === 'application/msword' || 
-                   file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const allowedExtensions = /\.(jpeg|jpg|png|gif|webp|svg|mp4|webm|mov|pdf|doc|docx)$/i;
+  const allowedMimeTypes = [
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+    'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/mpeg',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
 
-  if (extname || mimetype) {
+  const extOk = allowedExtensions.test(file.originalname);
+  const mimeOk = allowedMimeTypes.includes(file.mimetype);
+
+  if (extOk || mimeOk) {
     cb(null, true);
   } else {
-    cb(new Error('Only images, videos, PDFs, and Word docs are allowed'), false);
+    console.warn(`[Upload] Rejected file: ${file.originalname}, mime: ${file.mimetype}`);
+    cb(new Error(`File type not allowed: ${file.mimetype}`), false);
   }
 };
 
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB max for videos
 });
 
 module.exports = upload;

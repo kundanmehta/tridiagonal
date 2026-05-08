@@ -268,28 +268,6 @@ export default function TechValidationPage() {
   ]);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/services/technology-validation-scale-up-centre`)
-      .then(r => r.json())
-      .then(json => {
-        const d = json.data;
-        if (!d) return;
-        if (d.capabilities?.length) setCapsData(d.capabilities);
-        if (d.industries?.length) setIndustriesData(d.industries);
-        if (d.whyItems?.length) setWhyData(d.whyItems);
-        if (d.whyItemsIntro) setWhyIntro(prev => ({ ...prev, ...d.whyItemsIntro }));
-        if (d.industriesIntro) setIndsIntro(prev => ({ ...prev, ...d.industriesIntro }));
-        if (d.capabilitiesTrailingCards?.length) setTrailingCards(d.capabilitiesTrailingCards);
-        if (d.practiceHeads?.length) setHeadsData(d.practiceHeads);
-        if (d.heroResourceSlides?.length) setSlidesData(d.heroResourceSlides);
-        if (d.hero) setHeroData(prev => ({ ...prev, ...d.hero }));
-        if (d.about) setAboutData(prev => ({ ...prev, ...d.about }));
-        if (d.capabilitiesIntro) setCapsIntroData(prev => ({ ...prev, ...d.capabilitiesIntro }));
-        if (d.resourcesSection) setResSectionData(prev => ({ ...prev, ...d.resourcesSection }));
-        if (d.technologyPartners?.length) setPartnersData(d.technologyPartners);
-        if (d.industries) setIndustriesOverrides(d.industries);
-      })
-      .catch(() => { /* use fallback data */ });
-
     const INDUSTRY_ORDER = [
       'Oil & Gas',
       'Pharma and Medical Devices',
@@ -300,15 +278,47 @@ export default function TechValidationPage() {
       'Others'
     ];
 
+    const normalize = s => s?.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, '').trim();
+
+    // Step 1: Fetch service-specific CMS data
+    let serviceOverrides = [];
+    fetch(`${API_URL}/api/services/technology-validation-scale-up-centre`)
+      .then(r => r.json())
+      .then(json => {
+        const d = json.data;
+        if (!d) return;
+        if (d.capabilities?.length) setCapsData(d.capabilities);
+        if (d.whyItems?.length) setWhyData(d.whyItems);
+        if (d.whyItemsIntro) setWhyIntro(prev => ({ ...prev, ...d.whyItemsIntro }));
+        if (d.industriesIntro) setIndsIntro(prev => ({ ...prev, ...d.industriesIntro }));
+        // Trailing cards: use DB data if any exist, otherwise keep defaults
+        if (d.capabilitiesTrailingCards && d.capabilitiesTrailingCards.length > 0) {
+          setTrailingCards(d.capabilitiesTrailingCards);
+        }
+        // If DB returns [] or undefined, the useState defaults (Resources + Contact Us) remain
+
+        if (d.practiceHeads?.length) setHeadsData(d.practiceHeads);
+        if (d.heroResourceSlides?.length) setSlidesData(d.heroResourceSlides);
+        if (d.hero) setHeroData(prev => ({ ...prev, ...d.hero }));
+        if (d.about) setAboutData(prev => ({ ...prev, ...d.about }));
+        if (d.capabilitiesIntro) setCapsIntroData(prev => ({ ...prev, ...d.capabilitiesIntro }));
+        if (d.resourcesSection) setResSectionData(prev => ({ ...prev, ...d.resourcesSection }));
+        if (d.technologyPartners?.length) setPartnersData(d.technologyPartners);
+        // Store overrides in local var (not state) to avoid re-render loop
+        if (d.industries?.length) serviceOverrides = d.industries;
+      })
+      .catch(() => { /* use fallback data */ });
+
+    // Step 2: Fetch global industries list (runs independently, not triggered by state)
     fetch(`${API_URL}/api/industries`)
       .then(r => r.json())
       .then(json => {
         if (json.data && Array.isArray(json.data)) {
-          const normalize = s => s?.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, '').trim();
           const filtered = json.data
             .filter(ind => ind.techValidation && ind.techValidation.enabled === true)
             .map(ind => {
-              const override = industriesOverrides.find(o => normalize(o.name) === normalize(ind.title));
+              // Apply any service-specific description overrides
+              const override = serviceOverrides.find(o => normalize(o.name) === normalize(ind.title));
               return {
                 name: ind.title,
                 desc: (override && override.desc) ? override.desc : ind.overview,
@@ -327,8 +337,9 @@ export default function TechValidationPage() {
           if (filtered.length > 0) setIndustriesData(filtered);
         }
       })
-      .catch(err => console.error("Error fetching industries:", err));
-  }, [industriesOverrides]);
+      .catch(err => console.error('Error fetching industries:', err));
+  }, []); // Run only once on mount — no state dependencies
+
 
   useEffect(() => {
     // 2. Fetch Global Resources for this service
@@ -486,6 +497,16 @@ export default function TechValidationPage() {
 
 
       {/* ── ABOUT PRACTICE ── */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes playPulse {
+          0% { box-shadow: 0 0 0 0 rgba(71,188,135,0.7); }
+          70% { box-shadow: 0 0 0 16px rgba(71,188,135,0); }
+          100% { box-shadow: 0 0 0 0 rgba(71,188,135,0); }
+        }
+        .about-play-btn-active { animation: playPulse 2s infinite; }
+        .about-img-container:hover .about-play-overlay { opacity: 1 !important; }
+        .about-img-container:hover .about-play-btn-active { transform: scale(1.1); }
+      ` }} />
       <section
         id="about-practice"
         data-section="About Practice"
@@ -494,6 +515,7 @@ export default function TechValidationPage() {
       >
         <div className="content-wrapper-lg">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%,480px),1fr))', gap: '60px', alignItems: 'center' }}>
+            {/* Left: Text */}
             <div>
               <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.1)', padding: '4px 14px', borderRadius: '20px', marginBottom: '20px' }}>
                 <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>About Practice</span>
@@ -504,39 +526,89 @@ export default function TechValidationPage() {
               <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '16px', marginBottom: '20px' }}>
                 {aboutData.body1}
               </p>
-              <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '16px' }}>
-                {aboutData.body2}
-              </p>
+              {aboutData.body2 && (
+                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '16px' }}>
+                  {aboutData.body2}
+                </p>
+              )}
             </div>
-            {aboutData.videoUrl && (
+
+            {/* Right: Image with Video Play Overlay */}
+            <div
+              className="about-img-container"
+              onClick={() => aboutData.videoUrl && setIsVideoOpen(true)}
+              style={{
+                borderRadius: '20px',
+                overflow: 'hidden',
+                position: 'relative',
+                minHeight: '380px',
+                border: '1px solid rgba(255,255,255,0.06)',
+                cursor: aboutData.videoUrl ? 'pointer' : 'default',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                background: '#1c1c1c'
+              }}
+            >
+              {/* Background Image */}
+              {aboutData.image && (
+                <img
+                  src={resolveImageUrl(aboutData.image)}
+                  alt={aboutData.heading}
+                  style={{
+                    width: '100%', height: '100%',
+                    objectFit: 'cover',
+                    position: 'absolute', inset: 0,
+                    filter: aboutData.videoUrl ? 'brightness(0.75)' : 'none',
+                    transition: 'filter 0.3s'
+                  }}
+                />
+              )}
+
+              {/* Dark gradient overlay */}
+              {aboutData.videoUrl && (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 60%)',
+                  zIndex: 1
+                }} />
+              )}
+
+              {/* Play Button Overlay */}
               <div
-                onClick={() => setIsVideoOpen(true)}
+                className="about-play-overlay"
                 style={{
-                  borderRadius: '20px',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  minHeight: '380px',
-                  background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${resolveImageUrl(aboutData.image)}') center/cover no-repeat`,
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                  position: 'absolute', inset: 0, zIndex: 2,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: '14px',
+                  opacity: aboutData.videoUrl ? 1 : 0.35,
+                  transition: 'opacity 0.3s'
                 }}
               >
-                <div className="video-play-btn" style={{ position: 'relative', zIndex: 2, background: 'rgba(255,255,255,0.9)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-teal)" aria-hidden="true" style={{ marginLeft: '4px' }}>
+                <div
+                  className={aboutData.videoUrl ? 'about-play-btn-active' : ''}
+                  style={{
+                    width: '72px', height: '72px', borderRadius: '50%',
+                    background: aboutData.videoUrl ? 'rgba(71,188,135,0.95)' : 'rgba(180,180,180,0.8)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'transform 0.3s, background 0.3s',
+                    boxShadow: aboutData.videoUrl ? '0 0 0 8px rgba(71,188,135,0.2)' : 'none'
+                  }}
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" style={{ marginLeft: '4px' }}>
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
+                {aboutData.videoUrl && (
+                  <span style={{ color: '#fff', fontSize: '13px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
+                    Watch Video
+                  </span>
+                )}
+                {!aboutData.videoUrl && (
+                  <span style={{ color: '#fff', fontSize: '12px', fontWeight: '600', opacity: 0.7, textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
+                    No video uploaded
+                  </span>
+                )}
               </div>
-            )}
-            {!aboutData.videoUrl && (
-              <div className="about-img-box" style={{ borderRadius: '20px', overflow: 'hidden', position: 'relative', minHeight: '380px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <img src={resolveImageUrl(aboutData.image)} alt={aboutData.heading} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </section>
@@ -580,10 +652,11 @@ export default function TechValidationPage() {
               cursor: pointer;
             }
             .cap-card:hover { transform: translateY(-8px); border-color: rgba(71,188,135,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-            .cap-card-img { position: absolute; inset: 0; opacity: 0.3; transition: transform 0.6s ease, opacity 0.4s; z-index: 0; }
-            .cap-card:hover .cap-card-img { transform: scale(1.1); opacity: 0.45; }
-            .cap-card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(26,26,26,0.2) 0%, rgba(26,26,26,0.95) 100%); z-index: 1; }
+            .cap-card-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: transform 0.6s ease; z-index: 0; }
+            .cap-card:hover .cap-card-bg-img { transform: scale(1.08); }
             .cap-card-content { position: relative; z-index: 2; padding: 40px; height: 100%; display: flex; flex-direction: column; }
+            .cap-card-content h3 { text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+            .cap-card-content p { text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
             
             @media (max-width: 1100px) { .cap-grid { grid-template-columns: repeat(2, 1fr); } }
             @media (max-width: 700px) { .cap-grid { grid-template-columns: 1fr; } .cap-card { height: 380px; } }
@@ -592,10 +665,22 @@ export default function TechValidationPage() {
           <div className="cap-grid">
             {capsData.map((cap, i) => (
               <Link key={i} href={`/services/technology-validation-scale-up-centre/${cap.slug}`} className="cap-card" style={{ textDecoration: 'none' }}>
-                <div className="cap-card-img">
-                  <Image src={resolveImageUrl(cap.img)} alt={cap.title} fill style={{ objectFit: 'cover' }} />
-                </div>
-                <div className="cap-card-overlay" />
+                {/* Use plain img — Next.js Image with fill doesn't work inside position:absolute parent */}
+                {cap.img && (
+                  <img
+                    src={resolveImageUrl(cap.img)}
+                    alt={cap.title || ''}
+                    style={{
+                      position: 'absolute', inset: 0,
+                      width: '100%', height: '100%',
+                      objectFit: 'cover',
+                      opacity: 0.3,
+                      transition: 'transform 0.6s ease, opacity 0.4s',
+                      zIndex: 0
+                    }}
+                    className="cap-card-bg-img"
+                  />
+                )}
                 <div className="cap-card-content">
                   <h3 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', marginBottom: '16px' }}>{cap.title}</h3>
                   <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: 1.6, flex: 1 }}>{cap.desc}</p>
@@ -1249,20 +1334,42 @@ export default function TechValidationPage() {
       )}
 
 
-      {/* Video Modal */}
+      {/* ── Video Modal ── */}
       {isVideoOpen && aboutData.videoUrl && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsVideoOpen(false)}>
-          <div style={{ width: '90%', maxWidth: '900px', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-            <button suppressHydrationWarning
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 10001, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(8px)', animation: 'overlayFade 0.3s ease' }}
+          onClick={() => setIsVideoOpen(false)}
+        >
+          <div style={{ width: '100%', maxWidth: '960px', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+            {/* Close Button */}
+            <button
+              suppressHydrationWarning
               onClick={() => setIsVideoOpen(false)}
-              style={{ position: 'absolute', top: '-40px', right: '0', background: 'transparent', color: '#fff', border: 'none', fontSize: '32px', cursor: 'pointer' }}>
-              &times;
+              style={{
+                position: 'absolute', top: '-52px', right: '0',
+                background: 'rgba(255,255,255,0.1)', color: '#fff',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '50%', width: '40px', height: '40px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', fontSize: '20px', lineHeight: 1, transition: 'background 0.2s'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+            >
+              ✕
             </button>
-            {aboutData.videoUrl.includes('youtube') || aboutData.videoUrl.includes('vimeo') ? (
-              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
+
+            {/* Video Player */}
+            {(aboutData.videoUrl.includes('youtube.com') || aboutData.videoUrl.includes('youtu.be') || aboutData.videoUrl.includes('vimeo.com')) ? (
+              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '16px', background: '#000', boxShadow: '0 30px 80px rgba(0,0,0,0.8)' }}>
                 <iframe
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-                  src={aboutData.videoUrl}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0, borderRadius: '16px' }}
+                  src={aboutData.videoUrl.includes('youtu.be')
+                    ? `https://www.youtube.com/embed/${aboutData.videoUrl.split('/').pop()}?autoplay=1`
+                    : aboutData.videoUrl.includes('watch?v=')
+                    ? `https://www.youtube.com/embed/${new URLSearchParams(aboutData.videoUrl.split('?')[1]).get('v')}?autoplay=1`
+                    : aboutData.videoUrl
+                  }
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
@@ -1271,8 +1378,10 @@ export default function TechValidationPage() {
               <video
                 controls
                 autoPlay
-                style={{ width: '100%', height: 'auto', borderRadius: '8px', outline: 'none', background: '#000' }}>
+                style={{ width: '100%', height: 'auto', borderRadius: '16px', outline: 'none', background: '#000', boxShadow: '0 30px 80px rgba(0,0,0,0.8)', display: 'block' }}
+              >
                 <source src={resolveImageUrl(aboutData.videoUrl)} type="video/mp4" />
+                <source src={resolveImageUrl(aboutData.videoUrl)} type="video/webm" />
                 Your browser does not support the video tag.
               </video>
             )}
