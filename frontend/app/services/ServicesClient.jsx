@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { Activity, Hexagon, Globe2, Cpu, Leaf, ArrowRight } from 'lucide-react';
-import { FadeUp } from '@/components/Animations';
+import FadeUp from '@/components/animations/FadeUp';
 
 const services = [
   { slug: "process-engineering", title: "Process Engineering", icon: <Activity size={40} />, desc: "Design, optimize and troubleshoot complex chemical processes with our expert engineering team." },

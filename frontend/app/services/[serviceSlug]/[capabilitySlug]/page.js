@@ -1,20 +1,23 @@
-import DynamicSubPageClient from '@/components/DynamicSubPageClient';
+import DynamicCapabilityClient from '@/components/DynamicCapabilityClient';
 import { API_URL } from '@/lib/apiConfig';
 
 export async function generateMetadata({ params }) {
-  const { capabilitySlug } = params;
+  const { serviceSlug, capabilitySlug } = params;
   try {
-    const res = await fetch(`${API_URL}/api/sub-pages/${capabilitySlug}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${API_URL}/api/services/${serviceSlug}`, { next: { revalidate: 60 } });
     const json = await res.json();
-    const data = json.data;
-    if (!data) return { title: 'Tridiagonal Solutions' };
+    const service = json.data;
+    const capability = service?.capabilities?.find(c => c.slug === capabilitySlug);
+    
+    if (!capability) return { title: 'Tridiagonal Solutions' };
+    
     return {
-      title: data.seo?.metaTitle || `${data.title} | Tridiagonal Solutions`,
-      description: data.seo?.metaDescription || data.hero?.description || data.subtitle,
+      title: `${capability.title} | Tridiagonal Solutions`,
+      description: capability.subtitle || capability.desc,
       openGraph: {
-        title: data.seo?.metaTitle || data.title,
-        description: data.seo?.metaDescription || data.subtitle,
-        images: [data.seo?.ogImage || data.hero?.image || '/images/og-default.jpg'],
+        title: capability.title,
+        description: capability.subtitle || capability.desc,
+        images: [capability.heroImage || '/images/og-default.jpg'],
       }
     };
   } catch {
@@ -23,6 +26,6 @@ export async function generateMetadata({ params }) {
 }
 
 export default function CapabilitySubPage({ params }) {
-  const { capabilitySlug } = params;
-  return <DynamicSubPageClient slug={capabilitySlug} />;
+  const { serviceSlug, capabilitySlug } = params;
+  return <DynamicCapabilityClient serviceSlug={serviceSlug} capabilitySlug={capabilitySlug} />;
 }
