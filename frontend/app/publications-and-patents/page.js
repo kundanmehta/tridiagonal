@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, extractExcerpt } from '@/lib/apiConfig';
 
 const mockData = [
   {
@@ -66,8 +66,6 @@ export default function PublicationsPatentsPage() {
   const [types, setTypes] = useState(['All Types']);
   const [industries, setIndustries] = useState(['All Industries']);
 
-  
-
   useEffect(() => {
     // Fetch Publications
     fetch(`${API_URL}/api/resources?type=Publication`)
@@ -107,7 +105,7 @@ export default function PublicationsPatentsPage() {
 
   const filteredData = items.filter(item => {
     const matchesSearch = (item.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.author || '').toLowerCase().includes(searchQuery.toLowerCase());
+      (extractExcerpt(item.content) || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = activeType === 'All Types' || item.category === activeType;
     const matchesIndustry = activeIndustry === 'All Industries' || item.industry === activeIndustry;
     return matchesSearch && matchesType && matchesIndustry;
@@ -189,7 +187,8 @@ export default function PublicationsPatentsPage() {
                       <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '12px' }}>•</span>
                       <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '600' }}>{item.industry}</span>
                     </div>
-                    <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: '700', lineHeight: '1.4', marginBottom: '15px' }}>{item.title}</h3>
+                    <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: '700', lineHeight: '1.4', marginBottom: '10px' }}>{item.title}</h3>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '15px', lineHeight: '1.6', marginBottom: '15px' }}>{extractExcerpt(item.content, 180)}</p>
                     <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -197,7 +196,7 @@ export default function PublicationsPatentsPage() {
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        {new Date(item.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        {new Date(item.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                       </div>
                     </div>
                   </div>

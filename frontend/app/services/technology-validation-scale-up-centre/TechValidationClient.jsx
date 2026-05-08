@@ -1,18 +1,18 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { ArrowRight, Users, MessageSquare, Monitor, Settings, Zap, Cpu, Award } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { TECH_VAL_DATA } from './data';
+import { API_URL, resolveImageUrl, extractExcerpt } from '@/lib/apiConfig';
 
 const NAV_SECTIONS = ['About Practice', 'Capabilities', 'Industries', 'Resources', 'Why Tridiagonal', 'Practice Heads', 'Contact Us'];
 
-function ArrowRight({ size = 16, color = '#fff' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 20 20" fill={color} aria-hidden="true">
-      <path fillRule="evenodd" d="M5 10a.75.75 0 01.75-.75h6.59l-2.13-2.13a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.13-2.13H5.75A.75.75 0 015 10z" clipRule="evenodd" />
-    </svg>
-  );
-}
+const DynamicIcon = ({ name, size = 24, ...props }) => {
+  const icons = { Users, MessageSquare, Monitor, Settings, Zap, Cpu, Award };
+  const IconComponent = icons[name] || icons['Users'];
+  return <IconComponent size={size} {...props} />;
+};
 
 function useInView(threshold = 0.2) {
   const ref = useRef(null);
@@ -104,36 +104,12 @@ const industries = [
 ];
 
 const whyItems = [
-  { title: 'State of the Art Facility', desc: "250k+ sq. ft. facility, Advanced equipment's, Lab & field scale testing, 24/7 utility", icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-    </svg>
-  ) },
-  { title: 'Domain Experts', desc: "50+ domain experts with Masters, Ph.D.'s, Consultants.", icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-    </svg>
-  ) },
-  { title: 'Cost-Effective Solutions', desc: 'Leverage cheap labour and pre-built loops tailored to client needs.', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
-    </svg>
-  ) },
-  { title: 'Quick Turnaround', desc: 'Quick testing, Single-window for analysis, verification, validation.', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-    </svg>
-  ) },
-  { title: 'Custom-Built Set-Up', desc: 'Our EPC team creates custom skids quickly. Local network accelerates projects.', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line>
-    </svg>
-  ) },
-  { title: 'Value Creation', desc: 'Deploying sustainable practices to efficiently create and deliver value for customers.', icon: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M11 3 8 9l4 13"></path><path d="M13 3l3 6-4 13"></path>
-    </svg>
-  ) },
+  { title: 'State of the Art Facility', desc: "250k+ sq. ft. facility, Advanced equipment's, Lab & field scale testing, 24/7 utility", icon: 'Monitor' },
+  { title: 'Domain Experts', desc: "50+ domain experts with Masters, Ph.D.'s, Consultants.", icon: 'Users' },
+  { title: 'Cost-Effective Solutions', desc: 'Leverage cheap labour and pre-built loops tailored to client needs.', icon: 'Settings' },
+  { title: 'Quick Turnaround', desc: 'Quick testing, Single-window for analysis, verification, validation.', icon: 'Zap' },
+  { title: 'Custom-Built Set-Up', desc: 'Our EPC team creates custom skids quickly. Local network accelerates projects.', icon: 'Cpu' },
+  { title: 'Value Creation', desc: 'Deploying sustainable practices to efficiently create and deliver value for customers.', icon: 'Award' },
 ];
 
 const practiceHeads = [
@@ -184,7 +160,7 @@ function LeaderCard({ leader, onClick }) {
       {/* Top Image Banner */}
       <div style={{ width: '100%', height: '240px', background: 'var(--gradient-brand)', position: 'relative' }}>
         {leader.image ? (
-           <img src={leader.image} alt={leader.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+           <img src={resolveImageUrl(leader.image)} alt={leader.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
         ) : (
            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '64px', fontWeight: 'bold' }}>
               {leader.name.charAt(0)}
@@ -198,7 +174,9 @@ function LeaderCard({ leader, onClick }) {
         <div style={{ color: 'var(--color-teal)', fontSize: '14px', fontWeight: '600', letterSpacing: '0.5px', marginBottom: '15px' }}>{leader.role}</div>
         
         <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '15px', lineHeight: 1.6, flex: 1, marginBottom: '20px' }}>
-          {leader.desc.substring(0, 100).trim()}...
+          {leader.desc && leader.desc.length > 100 
+            ? `${leader.desc.substring(0, 100).trim()}...` 
+            : (leader.desc || '')}
         </p>
 
         {/* Footer: Social + Read More */}
@@ -228,6 +206,154 @@ export default function TechValidationPage() {
   const [resInTransition, setResInTransition] = useState(true);
   const [resRef, resInView] = useInView(0.2);
   const sectionRefs = useRef({});
+
+  // Dynamic data – initialized to hardcoded fallbacks
+  const [capsData, setCapsData] = useState(TECH_VAL_DATA);
+  const [industriesData, setIndustriesData] = useState(industries);
+  const [industriesOverrides, setIndustriesOverrides] = useState([]);
+  const [whyData, setWhyData] = useState(whyItems);
+  const [whyIntro, setWhyIntro] = useState({
+    label: 'Why Tridiagonal?',
+    heading: 'Why Choose Us?',
+    description: 'Tridiagonal Solutions, a top facility in Asia, offers cost-effective flow assurance testing for Oil & Gas majors. We are specialized in multiphase flow, erosion-corrosion, wax deposition, and sand management, etc. We collaborate with industry leaders, consultants, EPCs, OEMs and service providers, with flexible business models.'
+  });
+  const [headsData, setHeadsData] = useState(practiceHeads);
+  const [slidesData, setSlidesData] = useState(heroResourceSlides);
+  const [indsIntro, setIndsIntro] = useState({ 
+    title: 'Industries', 
+    subtitle: 'Your Trusted Partner in Technology Validation.' 
+  });
+  const [trailingCards, setTrailingCards] = useState([
+    { title: 'Resources', desc: 'Explore technical brochures, case studies, and webinars detailing our validation methodologies and success stories.', href: '/resources', btnLabel: 'VIEW RESOURCES' },
+    { title: 'Contact Us', desc: 'Uncover how our capabilities can propel your organization forward. Connect with our technology experts today.', href: '/contact-us', btnLabel: 'GET IN TOUCH', background: 'linear-gradient(135deg, #0c7196 0%, #6ca03e 100%)' }
+  ]);
+  const [heroData, setHeroData] = useState({
+    badge: 'TECHNOLOGY VALIDATION',
+    title: 'Technology Validation &',
+    gradientText: 'Scale-up Centre',
+    subtitle: 'Test | Validate | Scale',
+    description: 'Future of flow is unfolding through rigorous testing, validation & proof of concept, upgrade the technology from TRL 3 to TRL 10 & shape the future of green energy.',
+    ctaLabel: 'Talk to an Expert',
+    brochureLink: '/resources/brochures',
+    bannerImage: '/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png'
+  });
+  const [aboutData, setAboutData] = useState({
+    heading: 'Technology Validation & Scale-up Centre',
+    body1: 'Tridiagonal Solutions Pvt. Ltd., leveraging one of the Asia\'s largest experimentation lab and field-scale flow testing facilities to access indispensable production enhancement data.',
+    body2: 'For over 15+ years, we\'ve been catering to the needs of Fortune 500 companies, to bridge the gap between data and informed decision-making, providing validation and proof of concept for optimal field operations.',
+    image: '/hubfs/Advanced Modeling Service Page Banner.png'
+  });
+  const [capsIntroData, setCapsIntroData] = useState({
+    label: 'Expertise',
+    heading: 'Our',
+    gradientText: 'Capabilities',
+    description: ''
+  });
+  const [resSectionData, setResSectionData] = useState({
+    heading: 'Resources',
+    description: 'Explore the best practices and success stories of application of technology in process industry',
+    categories: [
+      { label: 'USE CASES', link: '#' },
+      { label: 'WEBINARS', link: '#' },
+      { label: 'BLOGS', link: '#' },
+      { label: 'BROCHURE', link: '#' },
+      { label: 'PUBLICATIONS', link: '#' }
+    ],
+    allResourcesBtn: { label: 'ALL RESOURCES', link: '/resources' }
+  });
+  const [partnersData, setPartnersData] = useState([
+    { name: 'Coreform', logo: '/hubfs/coreform-logo.png' },
+    { name: 'Siemens', logo: '/hubfs/siemens-logo.png' },
+    { name: 'FactSage', logo: '/hubfs/factsage-logo.png' }
+  ]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/services/technology-validation-scale-up-centre`)
+      .then(r => r.json())
+      .then(json => {
+        const d = json.data;
+        if (!d) return;
+        if (d.capabilities?.length) setCapsData(d.capabilities);
+        if (d.industries?.length) setIndustriesData(d.industries);
+        if (d.whyItems?.length) setWhyData(d.whyItems);
+        if (d.whyItemsIntro) setWhyIntro(prev => ({ ...prev, ...d.whyItemsIntro }));
+        if (d.industriesIntro) setIndsIntro(prev => ({ ...prev, ...d.industriesIntro }));
+        if (d.capabilitiesTrailingCards?.length) setTrailingCards(d.capabilitiesTrailingCards);
+        if (d.practiceHeads?.length) setHeadsData(d.practiceHeads);
+        if (d.heroResourceSlides?.length) setSlidesData(d.heroResourceSlides);
+        if (d.hero) setHeroData(prev => ({ ...prev, ...d.hero }));
+        if (d.about) setAboutData(prev => ({ ...prev, ...d.about }));
+        if (d.capabilitiesIntro) setCapsIntroData(prev => ({ ...prev, ...d.capabilitiesIntro }));
+        if (d.resourcesSection) setResSectionData(prev => ({ ...prev, ...d.resourcesSection }));
+        if (d.technologyPartners?.length) setPartnersData(d.technologyPartners);
+        if (d.industries) setIndustriesOverrides(d.industries);
+      })
+      .catch(() => { /* use fallback data */ });
+
+    const INDUSTRY_ORDER = [
+      'Oil & Gas',
+      'Pharma and Medical Devices',
+      'Metals, Mining & Cement',
+      'Food, Beverages & CPG',
+      'Chemicals & Petrochemicals',
+      'Power & Renewables',
+      'Others'
+    ];
+
+    fetch(`${API_URL}/api/industries`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.data && Array.isArray(json.data)) {
+          const normalize = s => s?.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, '').trim();
+          const filtered = json.data
+            .filter(ind => ind.techValidation && ind.techValidation.enabled === true)
+            .map(ind => {
+              const override = industriesOverrides.find(o => normalize(o.name) === normalize(ind.title));
+              return {
+                name: ind.title,
+                desc: (override && override.desc) ? override.desc : ind.overview,
+                href: `/industries/${ind.slug}/technology-validation-scale-up-centre`,
+                image: ind.heroImage || ind.techValidation?.intro?.image || ''
+              };
+            })
+            .sort((a, b) => {
+              const idxA = INDUSTRY_ORDER.indexOf(a.name);
+              const idxB = INDUSTRY_ORDER.indexOf(b.name);
+              if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+              if (idxA !== -1) return -1;
+              if (idxB !== -1) return 1;
+              return a.name.localeCompare(b.name);
+            });
+          if (filtered.length > 0) setIndustriesData(filtered);
+        }
+      })
+      .catch(err => console.error("Error fetching industries:", err));
+  }, [industriesOverrides]);
+
+  useEffect(() => {
+    // 2. Fetch Global Resources for this service
+    fetch(`${API_URL}/api/resources?service=Technology Validation %26 Scale-up Centre`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.success && json.data.length > 0) {
+          const types = ['Blog', 'Case Study', 'Publication', 'Brochure'];
+          const latestByType = types.map(t => {
+            return json.data.find(r => r.resourceType === t);
+          }).filter(Boolean);
+
+          if (latestByType.length > 0) {
+            setSlidesData(latestByType.map(r => ({
+              type: r.resourceType.toUpperCase() + (r.resourceType === 'Brochure' ? '' : 'S'),
+              title: r.title,
+              desc: extractExcerpt(r.content, 120),
+              image: r.coverImage || '/hubfs/grid-1.jpg',
+              href: r.resourceType === 'Brochure' ? (r.fileUrl || '#') : `/resources/${r.slug}`
+            })));
+          }
+        }
+      })
+      .catch(err => console.error("Error fetching global resources:", err));
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -263,19 +389,18 @@ export default function TechValidationPage() {
         style={{
           position: 'relative',
           overflow: 'hidden',
-          background: "url('/hubfs/Advanced%20Modeling%20Service%20Page%20Banner.png') center center / cover no-repeat",
+          background: `url('${resolveImageUrl(heroData.bannerImage)}') center center / cover no-repeat`,
           minHeight: 'auto',
           padding: '80px 0 60px',
         }}
       >
         {/* Dark overlay like careers */}
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(26, 26, 26, 0.88)' }} />
 
         <div className="content-wrapper-lg" style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
 
           {/* Badge */}
           <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.12)', border: '1px solid rgba(71,188,135,0.3)', borderRadius: '30px', padding: '6px 20px', marginBottom: '24px' }}>
-            <span style={{ color: 'var(--color-teal)', fontSize: '13px', fontWeight: '700', letterSpacing: '1px' }}>TECHNOLOGY VALIDATION</span>
+            <span style={{ color: 'var(--color-teal)', fontSize: '13px', fontWeight: '700', letterSpacing: '1px' }}>{heroData.badge}</span>
           </div>
 
           <h1
@@ -288,12 +413,12 @@ export default function TechValidationPage() {
               lineHeight: 1.2,
             }}
           >
-            Technology Validation &amp;{' '}
-            <span className="gradient-text">Scale-up Centre</span>
+            {heroData.title}{' '}
+            <span className="gradient-text">{heroData.gradientText}</span>
           </h1>
 
           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '18px', marginBottom: '14px', letterSpacing: '0.5px' }}>
-            Test | Validate | Scale
+            {heroData.subtitle}
           </p>
 
           <p
@@ -305,7 +430,7 @@ export default function TechValidationPage() {
               margin: '0 auto 40px',
             }}
           >
-            Future of flow is unfolding through rigorous testing, validation &amp; proof of concept, upgrade the technology from TRL 3 to TRL 10 &amp; shape the future of green energy.
+            {heroData.description}
           </p>
 
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -314,10 +439,10 @@ export default function TechValidationPage() {
               className="btn-primary"
               style={{ padding: '14px 32px', borderRadius: '30px', fontWeight: '800', fontSize: '14px', border: 'none', cursor: 'pointer', letterSpacing: '0.5px' }}
             >
-              Talk to an Expert
+              {heroData.ctaLabel}
             </button>
             <Link
-              href="/resources/brochures"
+              href={heroData.brochureLink}
               style={{
                 background: 'transparent',
                 color: '#fff',
@@ -374,37 +499,44 @@ export default function TechValidationPage() {
                 <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>About Practice</span>
               </div>
               <h2 style={{ color: '#fff', fontSize: 'clamp(1.8rem,3vw,2.6rem)', fontWeight: '800', marginBottom: '24px', lineHeight: 1.3 }}>
-                Technology Validation &amp; <span className="gradient-text">Scale-up Centre</span>
+                {aboutData.heading}
               </h2>
               <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '16px', marginBottom: '20px' }}>
-                Tridiagonal Solutions Pvt. Ltd., leveraging one of the Asia's largest experimentation lab and field-scale flow testing facilities to access indispensable production enhancement data.
+                {aboutData.body1}
               </p>
               <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '16px' }}>
-                For over 15+ years, we've been catering to the needs of Fortune 500 companies, to bridge the gap between data and informed decision-making, providing validation and proof of concept for optimal field operations.
+                {aboutData.body2}
               </p>
             </div>
-            <div
-              onClick={() => setIsVideoOpen(true)}
-              style={{
-                borderRadius: '20px',
-                overflow: 'hidden',
-                position: 'relative',
-                minHeight: '380px',
-                background: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/hubfs/Advanced Modeling Service Page Banner.png') center/cover no-repeat",
-                border: '1px solid rgba(255,255,255,0.06)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
-              }}
-            >
-              <div className="video-play-btn" style={{ position: 'relative', zIndex: 2, background: 'rgba(255,255,255,0.9)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-teal)" aria-hidden="true" style={{ marginLeft: '4px' }}>
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+            {aboutData.videoUrl && (
+              <div
+                onClick={() => setIsVideoOpen(true)}
+                style={{
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  minHeight: '380px',
+                  background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${resolveImageUrl(aboutData.image)}') center/cover no-repeat`,
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                }}
+              >
+                <div className="video-play-btn" style={{ position: 'relative', zIndex: 2, background: 'rgba(255,255,255,0.9)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-teal)" aria-hidden="true" style={{ marginLeft: '4px' }}>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
               </div>
-            </div>
+            )}
+            {!aboutData.videoUrl && (
+              <div className="about-img-box" style={{ borderRadius: '20px', overflow: 'hidden', position: 'relative', minHeight: '380px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <img src={resolveImageUrl(aboutData.image)} alt={aboutData.heading} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -421,14 +553,16 @@ export default function TechValidationPage() {
           {/* Section header */}
           <div style={{ marginBottom: '80px', textAlign: 'center' }}>
             <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.1)', padding: '4px 14px', borderRadius: '20px', marginBottom: '20px' }}>
-              <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>Expertise</span>
+              <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>{capsIntroData.label}</span>
             </div>
             <h2 style={{ color: '#fff', fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: '800', marginBottom: '24px', lineHeight: 1.2 }}>
-              Our <span className="gradient-text">Capabilities</span>
+              {capsIntroData.heading} <span className="gradient-text">{capsIntroData.gradientText}</span>
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.7)', maxWidth: '850px', margin: '0 auto', lineHeight: '1.8', fontSize: '17px' }}>
-              Bridging the gap between theory and field performance through rigorous multiphase flow testing and process optimization. Our validation services span from molecular-level analysis to full pilot-scale testing.
-            </p>
+            {capsIntroData.description && (
+              <p className="section-desc" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: '800px', margin: '0 auto', lineHeight: '1.8', fontSize: '16px' }}>
+                {capsIntroData.description}
+              </p>
+            )}
           </div>
 
           <style dangerouslySetInnerHTML={{ __html: `
@@ -456,10 +590,10 @@ export default function TechValidationPage() {
           ` }} />
 
           <div className="cap-grid">
-            {TECH_VAL_DATA.map((cap, i) => (
+            {capsData.map((cap, i) => (
               <Link key={i} href={`/services/technology-validation-scale-up-centre/${cap.slug}`} className="cap-card" style={{ textDecoration: 'none' }}>
                 <div className="cap-card-img">
-                  <Image src={cap.img} alt={cap.title} fill style={{ objectFit: 'cover' }} />
+                  <Image src={resolveImageUrl(cap.img)} alt={cap.title} fill style={{ objectFit: 'cover' }} />
                 </div>
                 <div className="cap-card-overlay" />
                 <div className="cap-card-content">
@@ -474,38 +608,24 @@ export default function TechValidationPage() {
               </Link>
             ))}
 
-            {/* Resources Card */}
-            <Link href="/resources" className="cap-card" style={{ textDecoration: 'none' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.02)', zIndex: 0 }} />
-              <div className="cap-card-content">
-                <h3 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', marginBottom: '16px' }}>Resources</h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: 1.6, flex: 1 }}>
-                  Explore technical brochures, case studies, and webinars detailing our validation methodologies and success stories.
-                </p>
-                <div style={{ marginTop: 'auto' }}>
-                  <div style={{ background: 'var(--gradient-brand)', color: '#000', padding: '10px 24px', borderRadius: '40px', fontSize: '12px', fontWeight: '800', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    VIEW RESOURCES <ArrowRight size={14} color="#000" />
-                  </div>
-                </div>
-              </div>
-            </Link>
-
-            {/* Contact Us Card - LINKED AS REQUESTED */}
-            <Link href="/contact-us" className="cap-card" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, #0c7196 0%, #6ca03e 100%)' }}>
-               <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.1)', zIndex: 0 }} />
-               <div className="cap-card-content">
-                 <div style={{ width: '40px', height: '2px', background: 'var(--color-teal)', marginBottom: '24px' }} />
-                 <h3 style={{ color: '#fff', fontSize: '28px', fontWeight: '700', marginBottom: '16px' }}>Contact Us</h3>
-                 <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '16px', lineHeight: 1.7, flex: 1 }}>
-                    Uncover how our capabilities can propel your organization forward. Connect with our technology experts today.
-                 </p>
-                 <div style={{ marginTop: 'auto' }}>
-                   <div style={{ background: 'transparent', border: '1px solid #fff', color: '#fff', padding: '10px 24px', borderRadius: '40px', fontSize: '12px', fontWeight: '800', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                     GET IN TOUCH <ArrowRight size={14} color="#fff" />
+            {trailingCards.map((card, i) => (
+              <Link key={i} href={card.href} className="cap-card" style={{ textDecoration: 'none', background: card.background || '#1a1a1a' }}>
+                 {card.background && <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.1)', zIndex: 0 }} />}
+                 {!card.background && <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.02)', zIndex: 0 }} />}
+                 <div className="cap-card-content">
+                   <div style={{ width: '40px', height: '2px', background: 'var(--color-teal)', marginBottom: '24px' }} />
+                   <h3 style={{ color: '#fff', fontSize: '28px', fontWeight: '700', marginBottom: '16px' }}>{card.title}</h3>
+                   <p style={{ color: card.background ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)', fontSize: '16px', lineHeight: 1.7, flex: 1 }}>
+                      {card.desc}
+                   </p>
+                   <div style={{ marginTop: 'auto' }}>
+                     <div style={{ background: 'transparent', border: card.background ? '1px solid #fff' : '1px solid var(--color-teal)', color: '#fff', padding: '10px 24px', borderRadius: '40px', fontSize: '12px', fontWeight: '800', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                       {card.btnLabel} <ArrowRight size={14} color={card.background ? '#fff' : 'var(--color-teal)'} />
+                     </div>
                    </div>
                  </div>
-               </div>
-            </Link>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -555,16 +675,16 @@ export default function TechValidationPage() {
             <div className="inds-sticky" style={{ position: 'sticky', top: '120px' }}>
               <div className="dvr-line" style={{ marginBottom: '16px' }} />
               <h2 className="section-title" style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px' }}>
-                Industries
+                {indsIntro.title}
               </h2>
               <p className="section-desc" style={{ color: '#fff', opacity: 0.9, fontSize: '18px', lineHeight: 1.6, marginBottom: '40px' }}>
-                Your Trusted Partner in Technology Validation.
+                {indsIntro.subtitle}
               </p>
               
               <div className="inds-img" style={{ width: '100%', aspectRatio: '1/1.1', borderRadius: '40px', overflow: 'hidden', position: 'relative' }}>
                 <Image 
-                  src={industries[activeIndustryIdx !== null ? activeIndustryIdx : 0].image} 
-                  alt={industries[activeIndustryIdx !== null ? activeIndustryIdx : 0].name} 
+                  src={resolveImageUrl(industriesData[activeIndustryIdx !== null ? activeIndustryIdx : 0]?.image || '')} 
+                  alt={industriesData[activeIndustryIdx !== null ? activeIndustryIdx : 0]?.name || ''} 
                   fill 
                   style={{ objectFit: 'cover' }} 
                   unoptimized 
@@ -574,7 +694,7 @@ export default function TechValidationPage() {
 
             {/* Right Column Custom Accordion */}
             <div style={{ display: 'flex', flexDirection: 'column' }} onMouseLeave={() => setActiveIndustryIdx(null)}>
-              {industries.map((ind, i) => {
+              {industriesData.map((ind, i) => {
                 const isActive = activeIndustryIdx === i;
                 return (
                   <div 
@@ -649,34 +769,34 @@ export default function TechValidationPage() {
             <div className="resources-left">
               <div className={`dvr-line ${resInView ? 'fade-in-up' : ''}`} style={{ marginBottom: '16px', opacity: resInView ? 1 : 0 }} />
               <h2 className={`section-title ${resInView ? 'fade-in-up delay-100' : ''}`} style={{ color: 'var(--color-teal)', fontSize: '50px', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px', opacity: resInView ? 1 : 0 }}>
-                Resources
+                {resSectionData.heading}
               </h2>
               <p className={`section-desc ${resInView ? 'fade-in-up delay-200' : ''}`} style={{ color: '#fff', opacity: resInView ? 0.9 : 0, transition: 'opacity 0.6s', fontSize: '18px', lineHeight: 1.6, marginBottom: '40px', maxWidth: '400px' }}>
-                Explore examples and success stories of how various technologies was applied to address the needs of our customers (Flow Assurance, Corrosion Testing, Erosion Testing and New Energy)
+                {resSectionData.description}
               </p>
 
               <div className={resInView ? 'fade-in-up delay-300' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px', opacity: resInView ? 1 : 0 }}>
-                {['USE CASES', 'WEBINARS', 'BLOGS', 'BROCHURE', 'PUBLICATIONS'].map((item) => (
-                  <Link href="#" key={item} className="resource-link-card" style={{
+                {(resSectionData.categories || []).map((cat, i) => (
+                  <Link href={cat.link || '#'} key={i} className="resource-link-card" style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '16px 20px', background: '#2d2d2d', borderRadius: '4px',
                     borderLeft: '2px solid var(--color-teal)', color: 'var(--color-teal)',
                     textDecoration: 'none', fontWeight: '800', letterSpacing: '0.02em', fontSize: '18px'
                   }}>
-                    {item} <ArrowRight size={16} color="var(--color-teal)" />
+                    {cat.label} <ArrowRight size={16} color="var(--color-teal)" />
                   </Link>
                 ))}
               </div>
 
               <span className={resInView ? 'fade-in-up delay-400' : ''} style={{ opacity: resInView ? 1 : 0 }}>
-                <Link href="/resources" style={{
+                <Link href={resSectionData.allResourcesBtn?.link || '/resources'} style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   background: 'var(--gradient-brand)', color: '#000',
                   fontWeight: '700', textTransform: 'uppercase',
                   padding: '12px 24px', borderRadius: '40px',
                   fontSize: '13px', letterSpacing: '0.04em', textDecoration: 'none'
                 }}>
-                  ALL RESOURCES <ArrowRight size={14} color="#000" />
+                  {resSectionData.allResourcesBtn?.label || 'ALL RESOURCES'} <ArrowRight size={14} color="#000" />
                 </Link>
               </span>
             </div>
@@ -695,16 +815,16 @@ export default function TechValidationPage() {
                 }}>
                   {/* Slider */}
                   <div style={{
-                    display: 'flex', width: `${(heroResourceSlides.length + 1) * 100}%`,
-                    transform: `translateX(-${resourceSlide * (100 / (heroResourceSlides.length + 1))}%)`,
+                    display: 'flex', width: `${(slidesData.length + 1) * 100}%`,
+                    transform: `translateX(-${resourceSlide * (100 / (slidesData.length + 1))}%)`,
                     transition: resInTransition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none', height: '100%'
                   }}>
-                    {[...heroResourceSlides, heroResourceSlides[0]].map((slide, idx) => (
-                      <div key={idx} style={{ width: `${100 / (heroResourceSlides.length + 1)}%`, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    {[...slidesData, slidesData[0]].map((slide, idx) => (
+                      <div key={idx} style={{ width: `${100 / (slidesData.length + 1)}%`, display: 'flex', flexDirection: 'column', height: '100%' }}>
                         {/* Top Image Box */}
                         <div className="resource-card-image" style={{ position: 'relative', background: '#ccc' }}>
                           <Image
-                            src={slide.image}
+                            src={resolveImageUrl(slide.image)}
                             alt={slide.title}
                             fill
                             style={{ objectFit: 'cover' }}
@@ -748,7 +868,7 @@ export default function TechValidationPage() {
 
               {/* Slider Dots below the card */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '30px' }}>
-                {heroResourceSlides.map((_, idx) => (
+                {slidesData.map((_, idx) => (
                   <button suppressHydrationWarning
                     key={idx}
                     onClick={() => {
@@ -757,9 +877,9 @@ export default function TechValidationPage() {
                     }}
                     style={{
                       width: '12px', height: '12px', borderRadius: '50%',
-                      background: (resourceSlide === heroResourceSlides.length ? 0 : resourceSlide) === idx ? 'var(--color-teal)' : '#fff',
+                      background: (resourceSlide === slidesData.length ? 0 : resourceSlide) === idx ? 'var(--color-teal)' : '#fff',
                       border: 'none', cursor: 'pointer', padding: 0,
-                      opacity: (resourceSlide === heroResourceSlides.length ? 0 : resourceSlide) === idx ? 1 : 0.8
+                      opacity: (resourceSlide === slidesData.length ? 0 : resourceSlide) === idx ? 1 : 0.8
                     }}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
@@ -817,18 +937,20 @@ export default function TechValidationPage() {
           
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <div style={{ display: 'inline-block', background: 'rgba(71,188,135,0.1)', padding: '4px 14px', borderRadius: '20px', marginBottom: '16px' }}>
-              <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>Why Tridiagonal?</span>
+              <span style={{ color: 'var(--color-teal)', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>{whyIntro.label}</span>
             </div>
             <h2 style={{ color: '#fff', fontSize: 'clamp(1.8rem,3vw,2.4rem)', fontWeight: '800', marginBottom: '20px' }}>
-              Why Choose Us?
+              {whyIntro.heading}
             </h2>
-            <p className="section-desc" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: '800px', margin: '0 auto', lineHeight: '1.8', fontSize: '16px' }}>
-               Tridiagonal Solutions, a top facility in Asia, offers cost-effective flow assurance testing for Oil &amp; Gas majors. We are specialized in multiphase flow, erosion-corrosion, wax deposition, and sand management, etc. We collaborate with industry leaders, consultants, EPCs, OEMs and service providers, with flexible business models.
-            </p>
+            {whyIntro.description && (
+              <p className="section-desc" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: '800px', margin: '0 auto', lineHeight: '1.8', fontSize: '16px' }}>
+                {whyIntro.description}
+              </p>
+            )}
           </div>
           
           <div className="why-grid-layout">
-            {whyItems.map((item, i) => (
+            {whyData.map((item, i) => (
               <div key={i} className="why-grid-cell">
                 <div style={{ 
                   width: '64px', height: '64px', 
@@ -840,7 +962,7 @@ export default function TechValidationPage() {
                   border: '1px solid rgba(71,188,135,0.15)',
                   boxShadow: 'inset 0 2px 10px rgba(71,188,135,0.05)'
                 }}>
-                  {item.icon}
+                  <DynamicIcon name={item.icon} size={32} strokeWidth={1.5} />
                 </div>
                 <h3 style={{ color: '#fff', fontSize: '22px', fontWeight: '700' }}>{item.title}</h3>
                 <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '16px', lineHeight: '1.7' }}>{item.desc}</p>
@@ -917,11 +1039,14 @@ export default function TechValidationPage() {
                   {/* Render 4 identical groups to ensure enough width for ultra-wide screens and perfect 50% translation looping */}
                   {[...Array(4)].map((_, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '80px', paddingRight: '80px' }}>
-                      <img src="/hubfs/coreform-logo.png" alt="Coreform" style={{ height: '35px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
-                      <img src="/hubfs/siemens-logo.png" alt="Siemens" style={{ height: '50px', width: 'auto', objectFit: 'contain', filter: 'brightness(10)', flexShrink: 0 }} />
-                      <img src="/hubfs/factsage-logo.png" alt="FactSage" style={{ height: '45px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
-                      <img src="/hubfs/coreform-logo.png" alt="Coreform" style={{ height: '35px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
-                      <img src="/hubfs/siemens-logo.png" alt="Siemens" style={{ height: '50px', width: 'auto', objectFit: 'contain', filter: 'brightness(10)', flexShrink: 0 }} />
+                      {partnersData.map((p, pIdx) => (
+                        <img 
+                          key={pIdx}
+                          src={resolveImageUrl(p.logo)} 
+                          alt={p.name} 
+                          style={{ height: p.logo.includes('siemens') ? '50px' : '35px', width: 'auto', objectFit: 'contain', filter: p.logo.includes('siemens') ? 'brightness(10)' : 'none', flexShrink: 0 }} 
+                        />
+                      ))}
                     </div>
                   ))}
                 </div>
@@ -1125,7 +1250,7 @@ export default function TechValidationPage() {
 
 
       {/* Video Modal */}
-      {isVideoOpen && (
+      {isVideoOpen && aboutData.videoUrl && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsVideoOpen(false)}>
           <div style={{ width: '90%', maxWidth: '900px', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
             <button suppressHydrationWarning
@@ -1133,13 +1258,24 @@ export default function TechValidationPage() {
               style={{ position: 'absolute', top: '-40px', right: '0', background: 'transparent', color: '#fff', border: 'none', fontSize: '32px', cursor: 'pointer' }}>
               &times;
             </button>
-            <video
-              controls
-              autoPlay
-              style={{ width: '100%', height: 'auto', borderRadius: '8px', outline: 'none', background: '#000' }}>
-              <source src="/hubfs/brand_video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            {aboutData.videoUrl.includes('youtube') || aboutData.videoUrl.includes('vimeo') ? (
+              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
+                <iframe
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                  src={aboutData.videoUrl}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <video
+                controls
+                autoPlay
+                style={{ width: '100%', height: 'auto', borderRadius: '8px', outline: 'none', background: '#000' }}>
+                <source src={resolveImageUrl(aboutData.videoUrl)} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
           </div>
         </div>
       )}

@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, X, ChevronDown } from 'lucide-react';
-import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl, extractExcerpt } from '@/lib/apiConfig';
 
 function CustomSelect({ label, value, options, onChange, style = {} }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -148,8 +148,6 @@ export default function Resources() {
     types: ['All', 'Blogs', 'Case Study', 'Brochures', 'Publications']
   };
 
-  
-
   useEffect(() => {
     // Fetch Resources
     fetch(`${API_URL}/api/resources`)
@@ -183,7 +181,7 @@ export default function Resources() {
         }
       })
       .catch(err => console.error('Services fetch error:', err));
-  }, [API_URL]);
+  }, []);
 
   const filteredResources = useMemo(() => {
     return resources.filter(res => {
@@ -198,7 +196,7 @@ export default function Resources() {
 
       const matchSearch = filters.search === '' ||
         (res.title || '').toLowerCase().includes(filters.search.toLowerCase()) ||
-        (res.excerpt || '').toLowerCase().includes(filters.search.toLowerCase());
+        (extractExcerpt(res.content) || '').toLowerCase().includes(filters.search.toLowerCase());
 
       return matchType && matchService && matchIndustry && matchSearch;
     });
@@ -335,10 +333,16 @@ export default function Resources() {
                       </div>
                     </div>
                     <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{res.industry}</span>
+                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>
+                          {res.date ? new Date(res.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}
+                        </span>
                       </div>
-                      <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#fff', marginBottom: '20px', lineHeight: '1.4', flex: 1 }}>{res.title}</h3>
+                      <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#fff', marginBottom: '15px', lineHeight: '1.4' }}>{res.title}</h3>
+                      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', lineHeight: '1.5', marginBottom: '20px', flex: 1, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {extractExcerpt(res.content, 130)}
+                      </p>
                       <div style={{ fontSize: '13px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 'auto' }}>
                         <span className="gradient-text">{res.resourceType === 'Publication' ? 'EXTERNAL LINK' : 'READ MORE'}</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ color: '#00AEEF' }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
@@ -367,16 +371,3 @@ export default function Resources() {
     </main>
   );
 }
-
-const selectStyle = {
-  background: 'rgba(255,255,255,0.05)',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: '12px',
-  padding: '12px 16px',
-  color: '#fff',
-  fontSize: '14px',
-  outline: 'none',
-  cursor: 'pointer',
-  minWidth: '180px',
-  transition: 'border-color 0.3s'
-};

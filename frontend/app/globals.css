@@ -726,7 +726,18 @@ ol {
 .hero-content {
   position: relative;
   z-index: 10;
-  padding-top: var(--nav-height);
+  padding-top: calc(var(--nav-height) + 40px);
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    padding-top: 120px;
+  }
+}
+@media (max-width: 480px) {
+  .hero-content {
+    padding-top: 100px;
+  }
 }
 
 .hero-tagline {
@@ -745,6 +756,20 @@ ol {
   margin-bottom: 1.5rem;
   font-weight: 700;
   line-height: 1.1;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
 }
 
 .hero-desc {
@@ -1370,7 +1395,7 @@ ol {
   }
 
   .resource-card-image {
-    height: auto;
+    height: 280px;
   }
 }
 
@@ -1384,7 +1409,7 @@ ol {
   }
 
   .resource-card-image {
-    height: auto;
+    height: 320px;
   }
 }
 

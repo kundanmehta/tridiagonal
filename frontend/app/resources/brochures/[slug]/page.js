@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
 import DynamicFormRenderer from '@/components/DynamicFormRenderer';
-import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl, extractExcerpt } from '@/lib/apiConfig';
 
 const mockBrochures = [
   { title: 'Advanced Computational Fluid Dynamics Services Overview', service: 'Advanced Modeling & Simulation', industry: 'Oil & Gas', excerpt: 'Comprehensive overview of our CFD consulting solutions, encompassing multiphase flows, reacting flows, and heat transfer.', coverImage: '/hubfs/Digital Twin.jpg', slug: 'cfd-services-overview', date: '2023-12-15', content: ["Our Advanced Computational Fluid Dynamics (CFD) Services brochure offers an in-depth look at our core consulting capabilities. Tridiagonal Solutions has spent over a decade perfecting simulation workflows that directly impact the bottom line of heavy industry operations.", "Inside this brochure, you will find detailed explanations of our multiphase flow modeling, reacting flow analysis, and conjugate heat transfer services. We outline our standard operating procedures, software expertise (including Ansys Fluent, OpenFOAM, and STAR-CCM+), and hardware capabilities.", "Whether you are looking to optimize a single mixing tank or validate the flow assurance of a subsea production network, this document serves as the foundational guide to understanding how our engineering team integrates with yours."] },
@@ -134,7 +134,6 @@ export default function BrochureSinglePage() {
             <div className="cs-detail-left">
 
               <div className="blog-body-text">
-                <p className="blog-lead-text" style={{ borderLeftColor: '#FF7E00' }}>{cleanHTML(brochure.excerpt)}</p>
                 {Array.isArray(brochure.content) ? (
                   brochure.content.map((para, i) => (
                     <div key={i} dangerouslySetInnerHTML={{ __html: cleanHTML(para) }} style={{ marginBottom: '20px' }} />
@@ -219,21 +218,24 @@ export default function BrochureSinglePage() {
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
                 </Link>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '20px' }}>
                 {relatedBrochures.map((insight) => (
                   <Link key={insight.slug} href={`/resources/brochures/${insight.slug}`} style={{ textDecoration: 'none' }}>
-                    <article className="cs-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#1a1a1a', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)' }}>
+                    <article className="br-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#1a1a1a', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)' }}>
                       <div style={{ position: 'relative', width: '100%', height: '350px' }}>
                         <Image src={resolveImageUrl(insight.coverImage) || '/hubfs/Digital Twin.jpg'} alt={insight.title} fill style={{ objectFit: 'cover' }} unoptimized={true} />
                       </div>
-                      <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ marginBottom: '12px' }}>
-                          <span style={{ color: '#FF7E00', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>{insight.industry}</span>
+                      <div style={{ padding: '30px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '15px' }}>
+                          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>{insight.industry}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
+                          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>{insight.service}</span>
                         </div>
-                        <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', lineHeight: '1.4', marginBottom: '20px' }}>{insight.title}</h3>
-                        <div style={{ fontSize: '13px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 'auto' }}>
-                          <span className="gradient-text">READ MORE</span>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ color: '#00AEEF' }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                        <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '600', lineHeight: '1.4', marginBottom: '15px' }}>{insight.title}</h3>
+                        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: '1.6', marginBottom: '25px', flex: 1 }}>{extractExcerpt(insight.content, 130)}</p>
+                        <div style={{ fontSize: '14px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 'auto' }}>
+                          <span className="gradient-text">VIEW BROCHURE</span>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ color: '#9b51e0' }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                         </div>
                       </div>
                     </article>

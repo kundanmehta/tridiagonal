@@ -6,7 +6,7 @@ const WebinarSchema = new mongoose.Schema({
   eventDate: { type: Date, required: true },
   duration: { type: String, default: '45 mins' },
   sessionType: { type: String, default: 'Online Technical Session' },
-  description: { type: String, required: true }, // SEO / Summary
+  description: { type: String }, // SEO / Summary
   fullDescription: { type: String }, // Detailed HTML content
   formSlug: { type: String, default: '' }, // Link to dynamic registration form
   sections: [{

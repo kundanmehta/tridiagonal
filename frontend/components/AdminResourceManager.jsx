@@ -406,13 +406,9 @@ export default function AdminResourceManager({ resType }) {
                                 </div>
                             </div>
                         ) : (
-                            (resType === 'Blog' || resType === 'Case Study') && (
+                            (resType === 'Blog' || resType === 'Case Study' || resType === 'Brochure' || resType === 'Publication') && (
                                 <div className="admin-card">
                                     <h2 className="admin-card-title">Content Area</h2>
-                                    <div style={{ marginBottom: '1.5rem' }}>
-                                        <label className="admin-label">Short Excerpt (Summary)</label>
-                                        <textarea className="admin-textarea" rows={3} value={editing.excerpt} onChange={e => setEditing(p => ({ ...p, excerpt: e.target.value }))} />
-                                    </div>
                                     <RichTextEditor
                                         label="Full Content (HTML)"
                                         value={editing.content || ''}
@@ -544,7 +540,7 @@ export default function AdminResourceManager({ resType }) {
                                 <div style={{ flex: 1 }}>
                                     <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{item.title}</h3>
                                     <div style={{ display: 'flex', gap: '12px', marginTop: '6px', fontSize: '12px', color: '#64748b' }}>
-                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CalendarIcon size={12} /> {new Date(item.date).toLocaleDateString()}</span>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CalendarIcon size={12} /> {new Date(item.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Briefcase size={12} /> {item.category || 'General'}</span>
                                     </div>
                                 </div>

@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { TECH_VAL_DATA } from './data';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 function ArrowRight({ size = 16, color = '#fff' }) {
   return (
@@ -15,9 +16,21 @@ function ArrowRight({ size = 16, color = '#fff' }) {
 export default function CapabilityContent({ capabilityId }) {
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', company: '', industry: '', comments: '', privacy: false });
   const [submitted, setSubmitted] = useState(false);
+  const [activeCap, setActiveCap] = useState(() => TECH_VAL_DATA.find(c => c.id === capabilityId));
 
-  const activeCap = TECH_VAL_DATA.find(c => c.id === capabilityId);
-  if (!activeCap) return <div>Capability not found</div>;
+  useEffect(() => {
+    fetch(`${API_URL}/api/services/technology-validation-scale-up-centre`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.data && json.data.capabilities) {
+          const cap = json.data.capabilities.find(c => c.id === capabilityId || c.slug === capabilityId);
+          if (cap) setActiveCap(cap);
+        }
+      })
+      .catch(err => console.error("Error fetching capability:", err));
+  }, [capabilityId]);
+
+  if (!activeCap) return <div style={{ padding: '100px', textAlign: 'center', color: '#fff' }}>Loading capability...</div>;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -107,7 +120,7 @@ export default function CapabilityContent({ capabilityId }) {
                   <div style={{ order: isImageLeft ? 1 : 2 }}>
                     <div style={{ position: 'relative', borderRadius: '24px', overflow: 'hidden', height: '480px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 30px 60px rgba(0,0,0,0.5)' }}>
                       <Image 
-                        src={section.image || activeCap.img} 
+                        src={resolveImageUrl(section.image || activeCap.img)} 
                         alt={section.heading} 
                         fill 
                         style={{ objectFit: 'cover' }} 

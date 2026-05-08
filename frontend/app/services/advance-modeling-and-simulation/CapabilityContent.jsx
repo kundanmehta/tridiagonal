@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CAPABILITIES_DATA } from './data';
+import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
 
 function ArrowRight({ size = 16, color = '#fff' }) {
   return (
@@ -26,9 +27,21 @@ function useInView(threshold = 0.2) {
 export default function CapabilityContent({ capabilityId }) {
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', company: '', industry: '', comments: '', privacy: false });
   const [submitted, setSubmitted] = useState(false);
+  const [activeCap, setActiveCap] = useState(() => CAPABILITIES_DATA.find(c => c.id === capabilityId));
 
-  const activeCap = CAPABILITIES_DATA.find(c => c.id === capabilityId);
-  if (!activeCap) return <div>Capability not found</div>;
+  useEffect(() => {
+    fetch(`${API_URL}/api/services/advance-modeling-and-simulation`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.data && json.data.capabilities) {
+          const cap = json.data.capabilities.find(c => c.id === capabilityId || c.slug === capabilityId);
+          if (cap) setActiveCap(cap);
+        }
+      })
+      .catch(err => console.error("Error fetching capability:", err));
+  }, [capabilityId]);
+
+  if (!activeCap) return <div style={{ padding: '100px', textAlign: 'center', color: '#fff' }}>Loading capability...</div>;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,7 +68,7 @@ export default function CapabilityContent({ capabilityId }) {
             <span style={{ color: 'var(--color-teal)', fontSize: '13px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>Modeling Services</span>
           </div>
           <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.8rem)', fontWeight: '800', lineHeight: 1.1, marginBottom: '28px', letterSpacing: '-0.02em' }}>
-             {activeCap.title.split('(')[0]} <span className="gradient-text">{activeCap.title.includes('(') ? `(${activeCap.title.split('(')[1]}` : ''}</span>
+             {activeCap.title?.split('(')[0]} <span className="gradient-text">{activeCap.title?.includes('(') ? `(${activeCap.title.split('(')[1]}` : ''}</span>
           </h1>
           <p style={{ maxWidth: '850px', margin: '0 auto 48px', fontSize: '22px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, fontWeight: '400' }}>
              {activeCap.subtitle}
@@ -120,7 +133,7 @@ export default function CapabilityContent({ capabilityId }) {
                   <div style={{ order: isImageLeft ? 1 : 2 }}>
                     <div style={{ position: 'relative', borderRadius: '24px', overflow: 'hidden', height: '480px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 30px 60px rgba(0,0,0,0.5)' }}>
                       <Image 
-                        src={section.image || activeCap.img} 
+                        src={resolveImageUrl(section.image || activeCap.img)} 
                         alt={section.heading} 
                         fill 
                         style={{ objectFit: 'cover' }} 

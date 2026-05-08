@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown, X, Users, Calendar as CalendarIcon, Clock, Globe, Plus, Trash2, Layout, Video, UserCheck } from 'lucide-react';
 import RichTextEditor from '../../../../components/RichTextEditor';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, extractExcerpt } from '@/lib/apiConfig';
 import AdminSEOEditor from '@/components/AdminSEOEditor';
 
 const EMPTY_WEBINAR = {
@@ -68,11 +68,17 @@ export default function AdminWebinars({ typeFilter = 'Upcoming' }) {
     const method = editing._id ? 'PUT' : 'POST';
     const url = editing._id ? `${API_URL}/api/webinars/${editing.slug}` : `${API_URL}/api/webinars`;
 
+    const payload = {
+      ...editing,
+      fullDescription: (editing.fullDescription || '').replace(/&nbsp;/g, ' '),
+      description: editing.description || extractExcerpt(editing.fullDescription || '', 200) || 'Webinar summary'
+    };
+
     try {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(editing)
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         const updatedItem = await res.json();

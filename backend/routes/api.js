@@ -10,6 +10,7 @@ router.get('/industries', apiController.getIndustries);
 router.get('/blogs', apiController.getBlogs);
 router.get('/events', apiController.getEvents);
 router.get('/careers', apiController.getCareers);
+router.get('/search', apiController.searchEverything);
 
 // Dynamic slug routes
 router.get('/services/:slug', apiController.getServiceBySlug);
@@ -105,6 +106,9 @@ router.delete('/industries/:id', verifyToken, apiController.deleteIndustry);
 router.post('/services', verifyToken, apiController.createService);
 router.put('/services/:id', verifyToken, apiController.updateService);
 router.delete('/services/:id', verifyToken, apiController.deleteService);
+
+// Sub-pages Admin routes removed as per user request
+
 
 module.exports = router;
 

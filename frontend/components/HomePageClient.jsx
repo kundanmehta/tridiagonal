@@ -259,7 +259,6 @@ export default function HomePageClient({ initialData }) {
           ============================================================ */}
       <section
         className="hero-section"
-        style={{ paddingTop: 0 }}
         aria-label="Hero"
       >
         {/* Background Support: Video or Image Choice */}
@@ -289,8 +288,8 @@ export default function HomePageClient({ initialData }) {
           )}
         </div>
         <div className="hero-overlay" aria-hidden="true" />
-
-        <div className="content-wrapper-xl" style={{ position: 'relative', zIndex: 10, width: '100%', marginTop: '60px' }}>
+        <div className="hero-content">
+          <div className="content-wrapper-xl" style={{ position: 'relative', zIndex: 10, width: '100%' }}>
           <h1 className="hero-title fade-in-up delay-100">
             {heroTitleLine1}<br />
             <span className="gradient-text">{heroTitleLine2}</span>
@@ -304,6 +303,7 @@ export default function HomePageClient({ initialData }) {
             </a>
           </div>
         </div>
+      </div>
 
         {/* Scroll indicator */}
         <a href="#services" className="scroll-indicator" aria-label="Scroll down">

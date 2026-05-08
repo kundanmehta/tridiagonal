@@ -62,9 +62,9 @@ export default async function WebinarDetail({ params }) {
     attendees: dbWebinar?.sections?.find(s => s.type === 'who_attend')?.items ||
       dbWebinar?.attendees ||
       localWebinar?.attendees || [],
-    fullDescription: dbWebinar?.fullDescription ||
+    fullDescription: (dbWebinar?.fullDescription ||
       (dbWebinar?.sections?.find(s => s.type === 'text')?.value) ||
-      (localWebinar?.fullDescription ? (Array.isArray(localWebinar.fullDescription) ? localWebinar.fullDescription.join('<br><br>') : localWebinar.fullDescription) : localWebinar?.description)
+      (localWebinar?.fullDescription ? (Array.isArray(localWebinar.fullDescription) ? localWebinar.fullDescription.join('<br><br>') : localWebinar.fullDescription) : localWebinar?.description) || '').replace(/&nbsp;/g, ' ')
   };
 
   const formConfig = await getFormConfig(webinar.formSlug);
@@ -127,7 +127,7 @@ export default async function WebinarDetail({ params }) {
           </h1>
 
           <div className="webinar-hero-meta" style={{ display: 'flex', flexWrap: 'wrap', gap: '25px', color: 'rgba(255,255,255,0.65)', fontSize: '16px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>{new Date(webinar.eventDate || webinar.date || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>{new Date(webinar.eventDate || webinar.date || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>{webinar.duration || '45 mins'}</span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>{webinar.sessionType || 'Online Technical Session'}</span>
           </div>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { API_URL, resolveImageUrl } from '@/lib/apiConfig';
+import { API_URL, resolveImageUrl, extractExcerpt } from '@/lib/apiConfig';
 
 const mockBlogs = [
   {
@@ -117,7 +117,7 @@ export default function BlogsClient() {
 
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = (blog.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (blog.excerpt || '').toLowerCase().includes(searchQuery.toLowerCase());
+      (extractExcerpt(blog.content) || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeCategory === 'All' || blog.category === activeCategory;
     const matchesIndustry = activeIndustry === 'All Industries' || blog.industry === activeIndustry;
     const matchesService = activeService === 'All Services' || blog.service === activeService;
@@ -227,8 +227,8 @@ export default function BlogsClient() {
                       <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '15px', fontWeight: '500' }}>
                         {new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                       </span>
-                      <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '600', lineHeight: '1.4', marginBottom: '15px' }}>{blog.title}</h3>
-                      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: '1.6', marginBottom: '25px', flex: 1 }}>{blog.excerpt && blog.excerpt.length > 130 ? blog.excerpt.substring(0, 130) + '...' : blog.excerpt}</p>
+                      <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: '700', lineHeight: '1.4', marginBottom: '15px' }}>{blog.title}</h3>
+                      <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '15px', lineHeight: '1.6', marginBottom: '25px', flex: 1 }}>{extractExcerpt(blog.content, 140)}</p>
                       <div style={{ fontSize: '14px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span className="gradient-text">READ ARTICLE</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ color: '#00AEEF' }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>

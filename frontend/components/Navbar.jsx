@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 import { API_URL } from '@/lib/apiConfig';
+import SearchModal from './SearchModal';
 
 /* ─── Navigation Data ─── */
 const navItemsTemplate = [
@@ -103,7 +104,6 @@ const navItemsTemplate = [
     links: [
       { title: 'Upcoming Webinars', href: '/events/upcoming-webinars' },
       { title: 'On Demand Webinars', href: '/events/on-demand-webinars' },
-      { title: 'News and Press Release', href: '/events/news-and-press-release' },
     ],
     featured: [
       { title: 'Finite Element Analysis (FEA) in Oil & Gas', href: '#' },
@@ -118,11 +118,6 @@ const navItemsTemplate = [
     links: [
       { title: 'About Us', href: '/about-us' },
       { title: 'Our Team', href: '/about-us#our-team' },
-      { title: 'News and Press Release', href: '/events/news-and-press-release', subAreas: [
-        { title: 'Hannover Messe 2025', href: '/events/news-and-press-release' },
-        { title: 'GRPC Event 2024', href: '/events/news-and-press-release' },
-        { title: 'Tridiagonal Solutions Unveils New Brand Identity', href: '/events/news-and-press-release' },
-      ]},
     ],
     featured: [
       { title: 'Finite Element Analysis (FEA) in Oil & Gas', href: '#' },
@@ -131,42 +126,7 @@ const navItemsTemplate = [
   },
 ];
 
-const mobileSubLinks = {
-  Services: [
-    { title: 'Advanced Modeling & Simulation', href: '/services/advance-modeling-and-simulation' },
-    { title: 'Technology Validation & Scale-up', href: '/services/technology-validation-scale-up-centre' },
-    { title: 'Software – Scale-up & Tech Transfer', href: 'https://tridiagonalsoftware.com' },
-    { title: 'Tridiagonal.ai – Domain-Driven AI', href: 'https://tridiagonal.ai' },
-    { title: 'Partner Solutions', href: '/partner-solutions' },
-  ],
-  Industries: [
-    { title: 'Oil & Gas', href: '/industries/oil-gas' },
-    { title: 'Pharma & Medical Devices', href: '/industries/pharma' },
-    { title: 'Metals, Mining & Cement', href: '/industries/metals-mining' },
-    { title: 'Food, Beverages & CPG', href: '/industries/food-beverages' },
-    { title: 'Chemicals & Petrochemicals', href: '/industries/chemicals' },
-    { title: 'Power & Renewables', href: '/industries/power' },
-  ],
-  Resources: [
-    { title: 'Blogs', href: '/resources/blogs' },
-    { title: 'Case Studies', href: '/resources/case-studies' },
-    { title: 'Publications / Patents', href: '/publications-and-patents' },
-    { title: 'Brochures', href: '/resources/brochures' },
-  ],
-  Events: [
-    { title: 'Upcoming Webinars', href: '/events/upcoming-webinars' },
-    { title: 'On Demand Webinars', href: '/events/on-demand-webinars' },
-    { title: 'News and Press Release', href: '/events/news-and-press-release' },
-  ],
-  'Who We Are': [
-    { title: 'About Us', href: '/about-us' },
-    { title: 'Our Team', href: '/about-us#our-team' },
-    { title: 'News and Press Release', href: '/events/news-and-press-release' },
-    { title: '↳ Hannover Messe 2025', href: '/events/news-and-press-release' },
-    { title: '↳ GRPC Event 2024', href: '/events/news-and-press-release' },
-    { title: '↳ Tridiagonal Solutions Unveils New Brand Identity', href: '/events/news-and-press-release' },
-  ],
-};
+const mobileSubLinks = {}; // Deprecated in favor of navItems hierarchy
 
 /* ─── Chevron SVG ─── */
 function ChevronDown({ size = 16 }) {
@@ -214,6 +174,8 @@ export default function Navbar() {
   const [activeWhoWeAre, setActiveWhoWeAre] = useState(null);
   const [mobileOpen, setMobileOpen]   = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(null);
+  const [mobileSubExpanded, setMobileSubExpanded] = useState(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   const menuRef = useRef(null);
   const closeTimer = useRef(null);
 
@@ -224,68 +186,65 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* Fetch dynamic industries for the menu */
+  /* Fetch dynamic industries & services for the menu */
   useEffect(() => {
+    // 1. Fetch Industries
     fetch(`${API_URL}/api/industries`)
       .then(res => res.json())
       .then(json => {
         if (!json.data) return;
-
-        // Deduplicate industries by title
         const seen = new Set();
         let uniqueIndustries = json.data.filter(ind => {
           if (seen.has(ind.title)) return false;
           seen.add(ind.title);
           return true;
         });
+        const desiredOrder = ['Oil & Gas', 'Pharma and Medical Devices', 'Metals, Mining & Cement', 'Food, Beverages & CPG', 'Chemicals & Petrochemicals', 'Power & Renewables', 'Others'];
+        uniqueIndustries.sort((a, b) => (desiredOrder.indexOf(a.title) === -1 ? 999 : desiredOrder.indexOf(a.title)) - (desiredOrder.indexOf(b.title) === -1 ? 999 : desiredOrder.indexOf(b.title)));
 
-        // Enforce the requested sorting order
-        const desiredOrder = [
-          'Oil & Gas',
-          'Pharma and Medical Devices',
-          'Metals, Mining & Cement',
-          'Food, Beverages & CPG',
-          'Chemicals & Petrochemicals',
-          'Power & Renewables',
-          'Others'
-        ];
+        const dynamicLinks = uniqueIndustries.map(ind => ({
+          title: ind.title,
+          href: `/industries/${ind.slug}`,
+          subAreas: [
+            ...(ind.modelingSimulation?.enabled ? [{ title: 'Advance Modeling & Simulation (CFD/FEA)', href: `/industries/${ind.slug}/advance-modeling-and-simulation` }] : []),
+            ...(ind.techValidation?.enabled ? [{ title: 'Technology Validation & Scale-up Centre', href: `/industries/${ind.slug}/technology-validation-scale-up-centre` }] : [])
+          ]
+        }));
+        setNavItems(prev => prev.map(item => item.label === 'Industries' ? { ...item, links: dynamicLinks } : item));
+      })
+      .catch(err => console.error("Industries fetching error:", err));
 
-        uniqueIndustries.sort((a, b) => {
-          const indexA = desiredOrder.indexOf(a.title);
-          const indexB = desiredOrder.indexOf(b.title);
-          const weightA = indexA === -1 ? 999 : indexA;
-          const weightB = indexB === -1 ? 999 : indexB;
-          return weightA - weightB;
-        });
-
-        const dynamicLinks = uniqueIndustries.map(ind => {
-          const subAreas = [];
-          if (ind.modelingSimulation?.enabled) {
-            subAreas.push({ title: 'Advance Modeling & Simulation (CFD/FEA)', href: `/industries/${ind.slug}/advance-modeling-and-simulation` });
-          }
-          if (ind.techValidation?.enabled) {
-            subAreas.push({ title: 'Technology Validation & Scale-up Centre', href: `/industries/${ind.slug}/technology-validation-scale-up-centre` });
-          }
-
-          return {
-            title: ind.title,
-            href: `/industries/${ind.slug}`,
-            subAreas: subAreas.length > 0 ? subAreas : []
-          };
-        });
-
-        // Update Desktop Nav
-        setNavItems(prev => prev.map(item => {
-          if (item.label === 'Industries') {
-            return { ...item, links: dynamicLinks };
-          }
-          return item;
+    // 2. Fetch Services
+    fetch(`${API_URL}/api/services`)
+      .then(res => res.json())
+      .then(json => {
+        if (!json.data) return;
+        const dynamicSvcLinks = json.data.map(svc => ({
+          title: svc.title,
+          href: `/services/${svc.slug}`,
+          sub: svc.description?.substring(0, 50) + '...',
+          subAreas: (svc.capabilities || []).map(cap => ({
+            title: cap.title,
+            href: `/services/${svc.slug}/${cap.slug || slugify(cap.title)}`
+          }))
         }));
 
-        // Update Mobile Nav
-        setDynamicMobileIndustries(dynamicLinks.map(link => ({ title: link.title, href: link.href })));
+        // Preserve external/partner links if not in DB
+        const preservedLinks = [
+          { title: 'Software – Scale-up & Tech Transfer', sub: 'MixIT, SimSight, PERMIT', href: 'https://tridiagonalsoftware.com', external: true },
+          { title: 'Tridiagonal.ai – Domain-Driven AI', sub: 'Agentic AI, Digital Twins, Process Insights', href: 'https://tridiagonal.ai', external: true },
+          { title: 'Partner Solutions', sub: 'Siemens, FactSage, Coreform', href: '/partner-solutions' }
+        ];
+
+        // Merge DB services with preserved ones (avoiding duplicates)
+        const finalLinks = [...dynamicSvcLinks];
+        preservedLinks.forEach(pl => {
+          if (!finalLinks.find(dl => dl.title === pl.title)) finalLinks.push(pl);
+        });
+
+        setNavItems(prev => prev.map(item => item.label === 'Services' ? { ...item, links: finalLinks } : item));
       })
-      .catch(err => console.error("Nav fetching error:", err));
+      .catch(err => console.error("Services fetching error:", err));
   }, []);
 
   /* Lock body when mobile open */
@@ -348,7 +307,7 @@ export default function Navbar() {
               alt="Tridiagonal Solutions"
               width={800}
               height={280}
-              style={{ objectFit: 'contain', height: '80px', width: 'auto' }}
+              className="navbar-logo-img"
               quality={100}
               unoptimized={true}
               priority
@@ -386,7 +345,7 @@ export default function Navbar() {
               <button
                 suppressHydrationWarning
                 aria-label="Search"
-                onClick={() => alert("Search functionality coming soon!")}
+                onClick={() => setSearchOpen(true)}
                 style={{ background:'none', border:'none', cursor:'pointer', color:'#fff', padding:'8px 12px', display:'flex', transition: 'color 0.2s' }}
                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-teal)'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#fff'}
@@ -408,7 +367,7 @@ export default function Navbar() {
             {/* Search Icon */}
             <button
               aria-label="Search"
-              onClick={() => alert("Search functionality coming soon!")}
+              onClick={() => setSearchOpen(true)}
               style={{ background:'none', border:'none', cursor:'pointer', color:'#fff', padding:0, display:'flex', transition: 'color 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-teal)'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#fff'}
@@ -617,7 +576,10 @@ export default function Navbar() {
               <button
                 suppressHydrationWarning
                 className="mobile-nav-link"
-                onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
+                onClick={() => {
+                  setMobileExpanded(mobileExpanded === item.label ? null : item.label);
+                  setMobileSubExpanded(null); // Reset Level 2 when toggling Level 1
+                }}
                 aria-expanded={mobileExpanded === item.label}
               >
                 {item.label}
@@ -625,17 +587,54 @@ export default function Navbar() {
                   <ChevronDown size={16} />
                 </span>
               </button>
+              
               <div className={`mobile-sub-links${mobileExpanded === item.label ? ' open' : ''}`}>
-                {(item.label === 'Industries' ? dynamicMobileIndustries : mobileSubLinks[item.label] || []).map((sub) => (
-                  <Link
-                    key={sub.title}
-                    href={sub.href}
-                    className="mobile-sub-link"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {sub.title}
-                  </Link>
-                ))}
+                {item.links.map((sub) => {
+                  const hasSubAreas = sub.subAreas && sub.subAreas.length > 0;
+                  
+                  return (
+                    <div key={sub.title} className="mobile-sub-item-wrap">
+                      {hasSubAreas ? (
+                        <>
+                          <button
+                            suppressHydrationWarning
+                            className="mobile-sub-link"
+                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', border: 'none', background: 'none', textAlign: 'left' }}
+                            onClick={() => setMobileSubExpanded(mobileSubExpanded === sub.title ? null : sub.title)}
+                          >
+                            {sub.title}
+                            <span style={{ transition:'transform 0.25s', transform: mobileSubExpanded === sub.title ? 'rotate(180deg)' : 'none' }}>
+                              <ChevronDown size={14} />
+                            </span>
+                          </button>
+                          <div className={`mobile-sub-sub-links${mobileSubExpanded === sub.title ? ' open' : ''}`} style={{ paddingLeft: '1.5rem', background: 'rgba(255,255,255,0.02)' }}>
+                            {sub.subAreas.map((ssa) => (
+                              <Link
+                                key={ssa.title}
+                                href={ssa.href}
+                                className="mobile-sub-link"
+                                style={{ fontSize: '0.85rem', opacity: 0.8 }}
+                                onClick={() => setMobileOpen(false)}
+                              >
+                                {ssa.title}
+                              </Link>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <Link
+                          href={sub.href}
+                          className="mobile-sub-link"
+                          target={sub.external ? '_blank' : undefined}
+                          rel={sub.external ? 'noopener noreferrer' : undefined}
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {sub.title}
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -655,6 +654,18 @@ export default function Navbar() {
 
       {/* ── Responsive show/hide ── */}
       <style>{`
+        .mobile-sub-sub-links {
+          overflow: hidden;
+          max-height: 0;
+          transition: max-height 0.35s ease-out;
+        }
+        .mobile-sub-sub-links.open {
+          max-height: 500px;
+        }
+        .mobile-sub-links.open {
+          max-height: 2000px; /* Increased to accommodate nested menus */
+        }
+
         @media (max-width: 1023px) {
           .desktop-nav { display: none !important; }
           .mobile-hamburger { display: flex !important; }
@@ -662,7 +673,41 @@ export default function Navbar() {
         @media (min-width: 1024px) {
           .mobile-hamburger { display: none !important; }
         }
+
+        /* Responsive Logo and Header Padding */
+        .navbar-logo-img {
+          object-fit: contain;
+          height: 80px;
+          width: auto;
+          transition: height 0.3s ease;
+        }
+        .site-header {
+          padding: 35px 0;
+          transition: padding 0.3s ease, background 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+          .navbar-logo-img {
+            height: 50px;
+          }
+          .site-header {
+            padding: 15px 0;
+          }
+          .mobile-hamburger {
+            gap: 16px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .navbar-logo-img {
+            height: 40px;
+          }
+          /* Ensure search and hamburger don't crowd out logo */
+          .nav-inner {
+            padding: 0 12px;
+          }
+        }
       `}</style>
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );
 }

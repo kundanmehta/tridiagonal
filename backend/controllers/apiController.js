@@ -16,6 +16,8 @@ const PrivacyPolicy = require('../models/PrivacyPolicy');
 const WebinarRegistration = require('../models/WebinarRegistration');
 const News = require('../models/News');
 const Webinar = require('../models/Webinar');
+// SubPage model removed as per user request
+
 
 exports.getPages = async (req, res) => {
   res.json({ message: 'Success', data: [] });
@@ -116,14 +118,21 @@ exports.createService = async (req, res) => {
 
 exports.updateService = async (req, res) => {
   try {
-    const service = await Service.findByIdAndUpdate(
+    const { _id, __v, createdAt, updatedAt, ...updates } = req.body;
+    
+    // Using findByIdAndUpdate with $set is more robust for nested objects
+    const saved = await Service.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      { $set: updates },
       { new: true, runValidators: true }
     );
-    if (!service) return res.status(404).json({ error: 'Service not found' });
-    res.json({ message: 'Service updated successfully', data: service });
+
+    if (!saved) return res.status(404).json({ error: 'Service not found' });
+
+    console.log('[updateService] Successfully updated service:', saved._id, 'Fields:', Object.keys(updates));
+    res.json({ message: 'Service updated successfully', data: saved });
   } catch (error) {
+    console.error('[updateService] Error:', error);
     res.status(500).json({ error: error.message || 'Failed to update service' });
   }
 };
@@ -1060,3 +1069,90 @@ exports.updateSubmissionStatus = async (req, res) => {
   }
 };
 
+// SubPages CMS handlers removed as per user request
+
+
+exports.searchEverything = async (req, res) => {
+  console.log('--- Global Search Requested ---');
+  const q = req.query.q ? String(req.query.q).trim() : '';
+  console.log('Query:', q);
+  
+  if (!q || q.length < 2) return res.json({ message: 'Success', data: [] });
+
+  try {
+    // Escape regex special characters
+    const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedQ, 'i');
+
+    // Search in Resources
+    const resources = await Resource.find({
+      $or: [
+        { title: regex },
+        { content: regex },
+        { resourceType: regex }
+      ]
+    }).limit(10);
+
+    // Search in Webinars
+    const webinars = await Webinar.find({
+      $or: [
+        { title: regex },
+        { description: regex },
+        { fullDescription: regex }
+      ]
+    }).limit(10);
+
+    // Search in Services
+    const services = await Service.find({
+      $or: [
+        { title: regex },
+        { description: regex }
+      ]
+    }).limit(5);
+
+    // Search in Industries
+    const industries = await Industry.find({
+      $or: [
+        { title: regex },
+        { description: regex }
+      ]
+    }).limit(5);
+
+    // Format results with safe checks
+    const results = [
+      ...resources.map(r => ({ 
+        id: r._id, 
+        title: r.title, 
+        type: r.resourceType || 'Resource', 
+        href: `/resources/${(r.resourceType || 'blog').toLowerCase().replace(/ /g, '-')}/${r.slug}`,
+        category: 'Resource'
+      })),
+      ...webinars.map(w => ({ 
+        id: w._id, 
+        title: w.title, 
+        type: w.type || (new Date(w.eventDate) > new Date() ? 'Upcoming' : 'On-Demand'), 
+        href: `/events/${new Date(w.eventDate) > new Date() ? 'upcoming-webinars' : 'on-demand-webinars'}/${w.slug}`,
+        category: 'Event'
+      })),
+      ...services.map(s => ({ 
+        id: s._id, 
+        title: s.title, 
+        type: 'Service', 
+        href: `/services/${s.slug}`,
+        category: 'Service'
+      })),
+      ...industries.map(i => ({ 
+        id: i._id, 
+        title: i.title, 
+        type: 'Industry', 
+        href: `/industries/${i.slug}`,
+        category: 'Industry'
+      }))
+    ];
+
+    res.json({ message: 'Success', data: results });
+  } catch (err) {
+    console.error('Search error in controller:', err);
+    res.status(500).json({ error: 'Search failed', details: err.message });
+  }
+};
